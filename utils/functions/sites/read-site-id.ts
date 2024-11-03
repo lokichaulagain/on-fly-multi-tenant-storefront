@@ -11,7 +11,7 @@ export const readSiteId = async (id: string) => {
   const supabase = await createClient();
 
   try {
-    const { data, error } = await supabase.from("sites").select().eq("user_id", userId).eq("site_id", id);
+    const { data, error } = await supabase.from("sites").select().eq("user_id", userId).eq("id", id);
 
     if (error?.code) return error;
 

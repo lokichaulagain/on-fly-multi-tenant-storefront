@@ -1,10 +1,10 @@
 import { readSiteById } from "@/utils/actions/sites/read-site-id";
 import React from "react";
 
-
-
 export default async function Page({ params }) {
   const result = await readSiteById(params?.site_id);
+  console.log(result);
+  
 
   return (
     <div>
@@ -20,4 +20,3 @@ export default async function Page({ params }) {
     </div>
   );
 }
-
