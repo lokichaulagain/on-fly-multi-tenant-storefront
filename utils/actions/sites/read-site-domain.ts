@@ -6,14 +6,10 @@ export const readSiteDomain = async (domain: string) => {
 
   // middleware
   try {
-    const { data, error } = await supabase
-      .from("sites")
-      .select()
-      .eq("site_subdomain", domain);
-
+    const { data, error } = await supabase.from("sites").select().eq("site_subdomain", domain);
     if (error?.code) return error;
 
-    return data;
+    return data || []; 
   } catch (error) {
     return error;
   }

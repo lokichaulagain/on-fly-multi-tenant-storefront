@@ -1,91 +1,6 @@
-// import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-// import { NextResponse } from "next/server";
-// import { readSiteDomain } from "./utils/actions/sites/read-site-domain";
-// // import { readSiteDomain } from "./utils/actions/sites/read-site-domain";
-
-// // Define the routes that require authentication
-// const isProtectedRoute = createRouteMatcher(["/cms(.*)"]);
-
-// // Main middleware function
-// export default clerkMiddleware(async (auth, req) => {
-//   // Check if the route is protected and enforce authentication if it is
-//   if (isProtectedRoute(req)) auth().protect();
-
-//   const url = req.nextUrl;
-//   const pathname = url.pathname;
-
-//   // Get hostname (e.g., 'mike.com', 'test.mike.com')
-//   const hostname = req.headers.get("host");
-
-//   console.log("Hostname:", hostname);
-
-//   let currentHost;
-//   if (process.env.NODE_ENV === "production") {
-//     // Production logic remains the same
-//     const baseDomain = process.env.BASE_DOMAIN;
-//     currentHost = hostname?.replace(`.${baseDomain}`, "");
-//   } else {
-//     // Updated development logic
-//     currentHost = hostname?.split(":")[0].replace(".localhost", "");
-//   }
-//   // If there's no currentHost, likely accessing the root domain, handle accordingly
-//   if (!currentHost) {
-//     // Continue to the next middleware or serve the root content
-//     return NextResponse.next();
-//   }
-
-//   // Fetch tenant-specific data based on the hostname
-//   const response = await readSiteDomain(currentHost);
-
-//   // Handle the case where no domain data is found
-//   if (!response || !response.length) {
-//     // Continue to the next middleware or serve the root content
-//     return NextResponse.next();
-//   }
-
-//   const site_id = response[0]?.site_id;
-//   const tenantSubdomain = response[0]?.site_subdomain;
-// //   const mainDomain = response[0]?.site_custom_domain;
-
-//   // Determine which domain to use for rewriting
-//   const rewriteDomain = tenantSubdomain // || mainDomain;
-
-//   console.log("Hostname:", hostname);
-//   console.log("Current Host:", currentHost);
-//   console.log("Rewrite Domain:", rewriteDomain);
-
-//   if (rewriteDomain) {
-//     // Rewrite the URL to the tenant-specific path, using the site_id
-//     return NextResponse.rewrite(new URL(`/${site_id}${pathname}`, req.url));
-//   }
-
-//   // If no rewrite domain is found, continue to the next middleware
-//   return NextResponse.next();
-// });
-
-// // Define which paths the middleware should run for
-// export const config = {
-//   matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
-// };
-
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-
-// Define the domain response type
-interface SiteDomainResponse {
-  site_id: string;
-  site_subdomain: string;
-  site_custom_domain?: string;
-}
-
-// Type guard to check if response is valid
-function isSiteDomainResponse(response: unknown): response is SiteDomainResponse[] {
-  if (!Array.isArray(response)) return false;
-  return response.every((item) => typeof item === "object" && item !== null && "site_id" in item && "site_subdomain" in item);
-}
-
-// Declare the return type for readSiteDomain
-declare function readSiteDomain(hostname: string): Promise<SiteDomainResponse[]>;
+import { readSiteDomain } from "./utils/actions/sites/read-site-domain";
 
 // Define the routes that require authentication
 const isProtectedRoute = createRouteMatcher(["/cms(.*)"]);
@@ -100,43 +15,43 @@ export default clerkMiddleware(async (auth, req) => {
 
   // Get hostname (e.g., 'mike.com', 'test.mike.com')
   const hostname = req.headers.get("host");
+
   console.log("Hostname:", hostname);
 
-  if (!hostname) {
-    return NextResponse.next();
-  }
-
-  let currentHost: string;
-
+  let currentHost;
   if (process.env.NODE_ENV === "production") {
     // Production logic remains the same
     const baseDomain = process.env.BASE_DOMAIN;
-    if (!baseDomain) throw new Error("BASE_DOMAIN environment variable is not set");
-    currentHost = hostname.replace(`.${baseDomain}`, "");
+    currentHost = hostname?.replace(`.${baseDomain}`, "");
   } else {
     // Updated development logic
-    currentHost = hostname.split(":")[0].replace(".localhost", "");
+    currentHost = hostname?.split(":")[0].replace(".localhost", "");
   }
-
   // If there's no currentHost, likely accessing the root domain, handle accordingly
   if (!currentHost) {
+    // Continue to the next middleware or serve the root content
     return NextResponse.next();
   }
 
   // Fetch tenant-specific data based on the hostname
   const response = await readSiteDomain(currentHost);
 
-  // Handle the case where no domain data is found
-  if (!response || !isSiteDomainResponse(response) || response.length === 0) {
+  if (!Array.isArray(response) || response.length === 0) {
     return NextResponse.next();
   }
 
-  const site_id = response[0].site_id;
-  const tenantSubdomain = response[0].site_subdomain;
-  // const mainDomain = response[0].site_custom_domain;
+  // Handle the case where no domain data is found
+  if (!response || !response.length) {
+    // Continue to the next middleware or serve the root content
+    return NextResponse.next();
+  }
+
+  const site_id = response[0]?.site_id;
+  const tenantSubdomain = response[0]?.site_subdomain;
+//   const mainDomain = response[0]?.site_custom_domain;
 
   // Determine which domain to use for rewriting
-  const rewriteDomain = tenantSubdomain; // || mainDomain;
+  const rewriteDomain = tenantSubdomain // || mainDomain;
 
   console.log("Hostname:", hostname);
   console.log("Current Host:", currentHost);
