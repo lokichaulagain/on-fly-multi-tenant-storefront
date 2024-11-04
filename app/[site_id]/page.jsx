@@ -12,9 +12,9 @@ export default async function Page({ params }) {
       <hr />
       {result && (
         <div>
-          {result?.[0]?.site_name}
+          {result?.[0]?.name}
           <hr />
-          {result?.[0]?.site_description}
+          {result?.[0]?.description}
         </div>
       )}
     </div>

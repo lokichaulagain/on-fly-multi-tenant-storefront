@@ -47,7 +47,7 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   const site_id = response[0]?.id;
-  const tenantSubdomain = response[0]?.site_subdomain;
+  const tenantSubdomain = response[0]?.subdomain;
 //   const mainDomain = response[0]?.site_custom_domain;
 
   // Determine which domain to use for rewriting

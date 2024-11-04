@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { auth } from "@clerk/nextjs/server";
 
-export const readSiteName = async (site_name: string) => {
+export const readSiteName = async (name: string) => {
   const { userId } = auth();
 
   if (!userId) {
@@ -13,7 +13,7 @@ export const readSiteName = async (site_name: string) => {
       .from("sites")
       .select()
       .eq("user_id", userId)
-      .eq("site_name", site_name);
+      .eq("name", name);
 
     if (error?.code) return error;
 

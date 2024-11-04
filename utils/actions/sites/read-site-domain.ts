@@ -6,7 +6,7 @@ export const readSiteDomain = async (domain: string) => {
 
   // middleware
   try {
-    const { data, error } = await supabase.from("sites").select().eq("site_subdomain", domain);
+    const { data, error } = await supabase.from("Tenant").select().eq("subdomain", domain);
     if (error?.code) return error;
 
     return data || []; 

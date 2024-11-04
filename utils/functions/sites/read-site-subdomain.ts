@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { auth } from "@clerk/nextjs/server";
 
-export const readSiteSubdmain = async (site_subdomain: string) => {
+export const readSiteSubdmain = async (subdomain: string) => {
   const { userId } = auth();
 
   if (!userId) {
@@ -14,7 +14,7 @@ export const readSiteSubdmain = async (site_subdomain: string) => {
       .from("sites")
       .select()
       .eq("user_id", userId)
-      .eq("site_subdomain", site_subdomain);
+      .eq("subdomain", subdomain);
 
     if (error?.code) return error;
 
