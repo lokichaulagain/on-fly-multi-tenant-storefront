@@ -18,6 +18,8 @@ export default clerkMiddleware(async (auth, req) => {
 
   console.log("Hostname:", hostname);
 
+
+  
   let currentHost;
   if (process.env.NODE_ENV === "production") {
     // Production logic remains the same
@@ -48,10 +50,10 @@ export default clerkMiddleware(async (auth, req) => {
 
   const site_id = response[0]?.id;
   const tenantSubdomain = response[0]?.subdomain;
-//   const mainDomain = response[0]?.site_custom_domain;
+  //   const mainDomain = response[0]?.site_custom_domain;
 
   // Determine which domain to use for rewriting
-  const rewriteDomain = tenantSubdomain // || mainDomain;
+  const rewriteDomain = tenantSubdomain; // || mainDomain;
 
   console.log("Hostname:", hostname);
   console.log("Current Host:", currentHost);
