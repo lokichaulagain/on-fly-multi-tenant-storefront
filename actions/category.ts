@@ -16,3 +16,42 @@ export const categoriesFetch = async (fields: string[]) => {
   const { data, status, error } = await supabase.from("Category").select(fields.join(",")).eq("tenant", orgId).order("created_at", { ascending: false });
   return { data, status, error };
 };
+
+
+
+// export const tenantFetch = async (subdomain:string,fields: string[]) => {
+//   const supabase = await createClient();
+
+//   if (!orgId) {
+//     return {
+//       data: null,
+//       status: 403,
+//       error: { message: "You are not authorized." },
+//     };
+//   }
+
+//   const { data, status, error } = await supabase.from("Tenant").select(fields.join(",")).eq("subdomain", subdomain).single();
+//   return { data, status, error };
+// };
+
+
+export const tenantFetch = async (subdomain: string, fields: string[]) => {
+  const supabase = await createClient();
+
+  // Assuming you meant to check subdomain, remove or replace `orgId` with `subdomain`
+  if (!subdomain) {
+    return {
+      data: null,
+      status: 403,
+      error: { message: "You are not authorized." },
+    };
+  }
+
+  const { data, status, error } = await supabase
+    .from("Tenant")
+    .select(fields.join(",") as "*")
+    .eq("sub_domain", subdomain)
+    .single();
+
+  return { data, status, error };
+};
