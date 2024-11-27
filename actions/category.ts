@@ -10,14 +10,12 @@ export const categoryFetch = async (id: number) => {
   return { data, status, error };
 };
 
-export const categoriesFetch = async (fields: string[]) => {
+export const categoriesFetch = async (tenant:string, fields: string[]) => {
   const supabase = await createClient();
 
-  const { data, status, error } = await supabase.from("Category").select(fields.join(",")).eq("tenant", orgId).order("created_at", { ascending: false });
+  const { data, status, error } = await supabase.from("Category").select(fields.join(",")).eq("tenant", tenant).order("created_at", { ascending: false });
   return { data, status, error };
 };
-
-
 
 // export const tenantFetch = async (subdomain:string,fields: string[]) => {
 //   const supabase = await createClient();
@@ -33,7 +31,6 @@ export const categoriesFetch = async (fields: string[]) => {
 //   const { data, status, error } = await supabase.from("Tenant").select(fields.join(",")).eq("subdomain", subdomain).single();
 //   return { data, status, error };
 // };
-
 
 export const tenantFetch = async (subdomain: string, fields: string[]) => {
   const supabase = await createClient();
