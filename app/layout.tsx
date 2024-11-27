@@ -46,7 +46,7 @@ export async function generateMetadata() {
     return null;
   }
 
-  const getTenantMetaData = cache(() => tenantFetch(subdomain, ["name", "description", "logo"]));
+  const getTenantMetaData = cache(() => tenantFetch(subdomain, ["name", "description", "logo" ,"organization_id"]));
   const { data, status, error } = await getTenantMetaData();
   console.log(data,"data");
   console.log(status,"status");

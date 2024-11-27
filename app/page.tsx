@@ -1,12 +1,33 @@
 "use server";
 import { cache } from "react";
-import { categoriesFetch } from "@/actions/category";
+import { categoriesFetch, tenantFetch } from "@/actions/category";
+import { headers } from "next/headers";
 
 
 export default async function Page() {
-  const getCategories = cache(() => categoriesFetch(["id", "name", "is_active", "order", "created_at"]));
 
+
+  const headersList = await headers();
+  const domain = headersList.get("host");
+  const subdomain = domain?.split(".")[0];
+
+  if (!subdomain) {
+    return null;
+  }
+
+  const getTenantMetaData = cache(() => tenantFetch(subdomain, ["name", "description", "logo" ,"organization_id"]));
+  const { data:tenantData, status:tenantStatus, error:tenantError } = await getTenantMetaData();
+  console.log(tenantData,"tenantData")
+ 
+
+
+  const getCategories = cache(() => categoriesFetch(["id", "name", "is_active", "order", "created_at"]));
   const { data, error } = await getCategories();
+
+  // get organization 
+
+
+  
 
   return (
     <div className="p-4">
@@ -20,6 +41,7 @@ export default async function Page() {
           </li>
         ))}
       </ul>
+      
     </div>
   );
 }
