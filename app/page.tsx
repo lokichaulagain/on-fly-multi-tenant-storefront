@@ -2,6 +2,14 @@
 import { cache } from "react";
 import { categoriesFetch, tenantFetch } from "@/actions/category";
 import { headers } from "next/headers";
+import HeroSection from "@/components/sections/hero-section";
+import FeatureCategorySection from "@/components/sections/feature-category-section";
+import PopularProductsSection from "@/components/sections/popular-products-section";
+import FeatureSection from "@/components/sections/feature-products-section";
+import CategoryCarouselSection from "@/components/sections/category-carousel-section";
+import FeatureProductSection from "@/components/sections/feature-products-section";
+import NewArrrivalSection from "@/components/sections/new-arrival-section";
+import MiddleBannerSection from "@/components/sections/middle-banner-section";
 
 export default async function Page() {
   // const headersList = await headers();
@@ -26,9 +34,16 @@ export default async function Page() {
   // get organization
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Categories</h1>
-      <ul className="space-y-2">
+    <div className="w-full lg:w-9/12 mx-auto px-4 space-y-12">
+      <HeroSection/>
+      <CategoryCarouselSection/>
+      <FeatureProductSection/>
+      <MiddleBannerSection/>
+      <NewArrrivalSection/>
+
+      {/* <FeatureProductSection/> */}
+      {/* <h1 className="text-2xl font-bold mb-4">Categories</h1>
+      <ul className="space-y-2"> */}
         {/* {data?.map((category: any) => (
           <li
             key={category.id}
@@ -36,7 +51,7 @@ export default async function Page() {
             {category.name}
           </li>
         ))} */}
-      </ul>
+      {/* </ul> */}
     </div>
   );
 }

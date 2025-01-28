@@ -4,6 +4,9 @@ import "./globals.css";
 import { headers } from "next/headers";
 import { cache } from "react";
 import { tenantFetch } from "@/actions/category";
+import Footer from "@/components/sections/footer";
+import Navbar from "@/components/sections/navbar";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -30,7 +33,7 @@ const geistMono = localFont({
 //   };
 // }
 
-interface IMetaDataResponse{
+interface IMetaDataResponse {
   name: string;
   description: string;
   image: string;
@@ -46,11 +49,11 @@ export async function generateMetadata() {
     return null;
   }
 
-  const getTenantMetaData = cache(() => tenantFetch(subdomain, ["name", "description", "logo" ,"organization_id"]));
+  const getTenantMetaData = cache(() => tenantFetch(subdomain, ["name", "description", "logo", "organization_id"]));
   const { data, status, error } = await getTenantMetaData();
-  console.log(data,"data");
-  console.log(status,"status");
-  console.log(error,"error");
+  console.log(data, "data");
+  console.log(status, "status");
+  console.log(error, "error");
 
   if (!data || status !== 200 || error) {
     return null;
@@ -58,7 +61,7 @@ export async function generateMetadata() {
 
   const { name, description, logo } = data as IMetaDataResponse;
 
-  return{
+  return {
     title: name,
     description,
     openGraph: {
@@ -75,17 +78,7 @@ export async function generateMetadata() {
     },
     icons: [logo],
     metadataBase: new URL(`https://${domain}`),
-  }
-
-
-
-
-
-
-  
-
-
-
+  };
 
   // const {
   //   name: title,
@@ -138,7 +131,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <div>
+          <div className=" fixed w-full z-50">
+            <Navbar />
+          </div>
+          <div className=" pt-16">{children}</div>
+          <Footer />
+        </div>
+      </body>
     </html>
   );
 }
