@@ -33,8 +33,8 @@ export async function generateMetadata({ params }: { params: { domain: string } 
   //     return null;
   //   }
 
-  // const domain = decodeURIComponent(params.domain);
-  const domain = decodeURIComponent("https://sss.fenzora.com/");
+  const domain = decodeURIComponent(params.domain);
+  // const domain = decodeURIComponent("https://sss.fenzora.com/");
   // const domain = "https://sss.fenzora.com/";
   // const data = await getSiteData(domain);
 
