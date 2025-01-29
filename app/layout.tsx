@@ -100,8 +100,16 @@ export async function generateMetadata({ params }: { params: { domain: string } 
 // };
 
 export default async function RootLayout({ params, children }: Readonly<{ params: { domain: string }; children: React.ReactNode }>) {
-  // const domain = decodeURIComponent(params.domain);
+  const domain = decodeURIComponent(params.domain);
   // const data = await getSiteData(domain);
+  const subdomain = domain.replace(/^https?:\/\//, "").split(".")[0];
+
+  const response = await getStoreBySubdomain(subdomain);
+  console.log("response from here ", response);
+
+  if (!response) {
+    return null;
+  }
 
   // if (!data) {
   //   notFound();
@@ -112,6 +120,8 @@ export default async function RootLayout({ params, children }: Readonly<{ params
   //   return redirect(`https://${data.customDomain}`);
   // }
 
+  
+
   return (
     <html lang="en">
       <body>
@@ -119,6 +129,10 @@ export default async function RootLayout({ params, children }: Readonly<{ params
           <div className=" fixed w-full z-50">
             <Navbar />
           </div>
+          <p>{ response.data?.store_name}</p>
+          <p>{ response.data?.custom_domain}</p>
+          <p>{ response.data?.store_phone_number}</p>
+          
           <div className=" pt-16">{children}</div>
           <Footer />
         </div>
