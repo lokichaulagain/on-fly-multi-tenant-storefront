@@ -40,8 +40,12 @@ export async function generateMetadata({ params }: { params: { domain: string } 
 
   const headersList = await headers();
   // const domain = headersList.get("host");
-  const subdomain = domain?.split(".")[0];
+  // const subdomain = domain?.split(".")[0];
+ 
+  const subdomain = domain.replace(/^https?:\/\//, "").split(".")[0];
   console.log("subdomainhaita", subdomain);
+
+
   const response = await getStoreBySubdomain(subdomain);
 
   if (!response) {
@@ -96,7 +100,7 @@ export async function generateMetadata({ params }: { params: { domain: string } 
 // };
 
 export default async function RootLayout({ params, children }: Readonly<{ params: { domain: string }; children: React.ReactNode }>) {
-  const domain = decodeURIComponent(params.domain);
+  // const domain = decodeURIComponent(params.domain);
   // const data = await getSiteData(domain);
 
   // if (!data) {
