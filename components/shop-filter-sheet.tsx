@@ -10,7 +10,7 @@ export default function ShopFilterSheet({}: Props) {
 
   return (
     <Sheet>
-      <SheetTrigger asChild>
+      <SheetTrigger  asChild>
         <Button
           variant="outline"
           className=" flex items-center gap-1 ">

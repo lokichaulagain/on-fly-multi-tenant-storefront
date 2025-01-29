@@ -1,13 +1,11 @@
 
-import Image from "next/image";
-// import logo from "../../public/logo/logo.png";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="footerbg py-12 mt-16 md:mt-28 bg-primary text-primary-100">
-      <div className=" w-full md:w-9/12 mx-auto space-y-10 px-4">
+    <footer className="footerbg py-12 mt-16 md:mt-28 bg-primary text-white/90 ">
+      <div className=" w-full container mx-auto space-y-10 ">
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3 gap-y-8 md:gap-8 py-10 max-w-sm mx-auto sm:max-w-3xl lg:max-w-full ">
           <div className="col-span-full mb-10 lg:col-span-2 lg:mb-0">
           <p className=" text-3xl tracking-wide font-serif text-center md:text-start   ">Miniture</p>
@@ -15,26 +13,26 @@ export default function Footer() {
           </div>
           
           <div className="lg:mx-auto text-left ">
-            <h4 className="text-lg text-primary-50 font-medium mb-5 ">Quick Links</h4>
+            <h4 className="text-lg  font-medium mb-5 ">Quick Links</h4>
             <ul className="text-sm  transition-all duration-500">
               <li className="mb-4">
                 <Link
                   href={"/"}
-                  className=" hover:text-primary-50 flex items-center ">
+                  className=" flex items-center ">
                   Home <ChevronRight size={16} className="" />
                 </Link>
               </li>
               <li className="mb-4">
                 <Link
                   href={"/about"}
-                  className="  hover:text-primary-50 flex items-center ">
+                  className="  flex items-center ">
                   About <ChevronRight size={16} className="" />
                 </Link>
               </li>
               <li>
                 <Link
                   href={"/contact"}
-                  className="  hover:text-primary-50 flex items-center ">
+                  className="  flex items-center ">
                   Contact <ChevronRight size={16} className="" />
                 </Link>
               </li>
@@ -42,26 +40,26 @@ export default function Footer() {
           </div>
 
           <div className="lg:mx-auto text-left ">
-            <h4 className="text-lg text-primary-100 font-medium mb-5">Quick Links</h4>
+            <h4 className="text-lg  font-medium mb-5">Quick Links</h4>
             <ul className="text-sm  transition-all duration-500">
               <li className="mb-4">
                 <Link
                   href={"/faq"}
-                  className=" hover:text-primary-50 flex items-center ">
+                  className=" flex items-center ">
                   FAQs <ChevronRight size={16} className="" />
                 </Link>
               </li>
               <li className="mb-4">
                 <Link
                   href={"/privacy-policy"}
-                  className="  hover:text-primary-50 flex items-center ">
+                  className="  flex items-center ">
                   Privacy Policy <ChevronRight size={16} className="" />
                 </Link>
               </li>
               <li>
                 <Link
                   href={"/shop"}
-                  className="  hover:text-primary-50 flex items-center ">
+                  className="  flex items-center ">
                   Shop <ChevronRight size={16} className="" />
                 </Link>
               </li>
@@ -71,7 +69,7 @@ export default function Footer() {
           
 
           <div className="lg:mx-auto text-left ">
-            <h4 className="text-lg text-primary-100 font-medium mb-5">Our Socials</h4>
+            <h4 className="text-lg  font-medium mb-5">Our Socials</h4>
             <p className="text-sm  leading-6 mb-4"> We are on different social medias , follow us there. </p>
             <div className=" flex  gap-4">
               <Link
@@ -149,7 +147,7 @@ export default function Footer() {
 
         </div>
 
-        <div className="text-[12px] tracking-wide flex flex-col lg:flex-row gap-4 items-center lg:gap-1 justify-center text-primary-50  ">
+        <div className="text-[12px] tracking-wide flex flex-col lg:flex-row gap-4 items-center lg:gap-1 justify-center   ">
           <div className=" flex items-center gap-1">
             <span> ©delianepal</span>
             <span>2024, All rights reserved.</span>

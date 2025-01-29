@@ -23,7 +23,7 @@ export default function Navbar({}: Props) {
 
   return (
     <nav className="bg-white border-b shadow-sm w-full md:static md:text-sm md:border-none h-16 flex items-center justify-center   ">
-      <div className="items-center px-4 w-full lg:w-9/12    mx-auto md:flex">
+      <div className="items-center w-full container    mx-auto md:flex">
         <div className="flex items-center justify-between    md:block">
           <Link href="/" className=" flex items-center gap-1 text-primary">
           <Package />

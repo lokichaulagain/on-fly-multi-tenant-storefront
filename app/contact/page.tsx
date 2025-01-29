@@ -98,7 +98,7 @@ export default function Page() {
               </div>
               <Button
                 disabled={isCreating}
-                className="w-full px-4 py-2 text-primary-50 font-medium bg-primary-400 hover:bg-primary-500 active:bg-primary-400 rounded-lg duration-150 flex items-center gap-1">
+                className="w-full px-4 py-2  font-medium bg-primary-400 hover:bg-primary-500 active:bg-primary-400 rounded-lg duration-150 flex items-center gap-1">
                 {isCreating ? (
                   <Loader
                     className=" animate-spin"

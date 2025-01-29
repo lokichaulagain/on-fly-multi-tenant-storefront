@@ -1,16 +1,16 @@
 "use server";
-import { createClient } from "@/utils/supabase/server";
+// import { createClient } from "@/utils/supabase/server";
 
 export const readSiteById = async (site_id: string) => {
-  const supabase = await createClient();
+  // const supabase = await createClient();
 
-  try {
-    const { data, error } = await supabase.from("Tenant").select().eq("id", site_id);
+  // try {
+  //   const { data, error } = await supabase.from("Tenant").select().eq("id", site_id);
 
-    if (error?.code) return error;
+  //   if (error?.code) return error;
 
-    return data;
-  } catch (error) {
-    return error;
-  }
+  //   return data;
+  // } catch (error) {
+  //   return error;
+  // }
 };
