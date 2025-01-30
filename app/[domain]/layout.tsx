@@ -11,6 +11,7 @@ import { getStoreBySubdomain } from "@/actions/store";
 
 // export default async function SiteLayout({ params, children }: { params: { domain: string }; children: ReactNode }) {
 export default async function SiteLayout({ children, params }: { children: ReactNode; params: Promise<{ domain: string }> }) {
+
   const { domain } = await params;
 //   const domain = "https://sss.fenzora.com";
   console.log(domain, "This is domain");
@@ -57,7 +58,26 @@ export default async function SiteLayout({ children, params }: { children: React
     // </div>
 
     <div>
-      <div className="mt-20">{children}</div>
+      <div className="mt-20">
+
+
+       {response && <div>
+      
+            <p>{response.data?.id}</p>
+            <p>{response.data?.store_name}</p>
+            <p>{response.data?.store_phone_number}</p>
+            <p>{response.data?.store_subdomain}</p>
+            <p>{response.data?.user_id}</p>
+            <p>{response.data?.store_status}</p>
+            
+        </div>}
+        
+        
+        
+        
+        
+        
+        {children}</div>
     </div>
   );
 }
