@@ -12,8 +12,10 @@ import { getStoreBySubdomain } from "@/actions/store";
 // export default async function SiteLayout({ params, children }: { params: { domain: string }; children: ReactNode }) {
 export default async function SiteLayout({ children, params }: { children: ReactNode; params: Promise<{ domain: string }> }) {
   const { domain } = await params;
-  const decodedDomain = decodeURIComponent(domain);
-  console.log(decodedDomain, "This is domain");
+//   const decodedDomain = decodeURIComponent(domain);
+const subdomain = domain.replace(/^https?:\/\//, "").split(".")[0];
+
+  console.log(subdomain, "This is domain");
     const response = await getStoreBySubdomain(domain);
     console.log(response, "This is response");
 
