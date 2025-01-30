@@ -12,16 +12,19 @@ import { getStoreBySubdomain } from "@/actions/store";
 // export default async function SiteLayout({ params, children }: { params: { domain: string }; children: ReactNode }) {
 export default async function SiteLayout({ children, params }: { children: ReactNode; params: Promise<{ domain: string }> }) {
   const { domain } = await params;
-//   const decodedDomain = decodeURIComponent(domain);
-const subdomain = domain.replace(/^https?:\/\//, "").split(".")[0];
+//   const domain = "https://sss.fenzora.com";
+  console.log(domain, "This is domain");
+  //   //   const decodedDomain = decodeURIComponent(domain);
+    const subdomain = domain.replace(/^https?:\/\//, "").split(".")[0];
+    console.log(subdomain, "This is subdomain");
 
-  console.log(subdomain, "This is domain");
-    const response = await getStoreBySubdomain(domain);
-    console.log(response, "This is response");
+  //   console.log(subdomain, "This is domain");
+  const response = await getStoreBySubdomain(subdomain);
+  console.log(response, "This is response");
 
-    if (!response) {
-      notFound();
-    }
+  if (!response) {
+    notFound();
+  }
 
   //   // Optional: Redirect to custom domain if it exists
   //   if (domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) && data.customDomain && process.env.REDIRECT_TO_CUSTOM_DOMAIN_IF_EXISTS === "true") {
