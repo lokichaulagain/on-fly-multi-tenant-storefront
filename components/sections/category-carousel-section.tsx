@@ -3,68 +3,82 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import Image from "next/image";
 import Link from "next/link";
 import SectionHeader from "../section-header";
+import { getCategoriesBySubdomain } from "@/actions/store";
 
-export default async function CategoryCarouselSection() {
-
-
-    const categories=[
-        {
-            id:1,
-            name:"Category 1",
-            thumbnail:"https://miniture.novaworks.net/wp-content/uploads/2023/10/m4_slide_03.jpg"
-        },
-
-        {
-            id:2,
-            name:"Category 2",
-            thumbnail:"https://miniture.novaworks.net/wp-content/uploads/2023/10/m4_slide_02.jpg"
-        },
-
-        {
-            id:3,
-            name:"Category 3",
-            thumbnail:"https://miniture.novaworks.net/wp-content/uploads/2023/10/m4_slide_01.jpg"
-        },
+export default async function CategoryCarouselSection({params}: any) {
+  const domain = decodeURIComponent(params.domain);
+  console.log(domain, "This is domain");
+  const subdomain = domain.replace(/^https?:\/\//, "").split(".")[0];
+  console.log(subdomain, "This is subdomain");
 
 
-        {
-            id:4,
-            name:"Category 4",
-            thumbnail:"https://miniture.novaworks.net/wp-content/uploads/2023/10/m4_slide_03.jpg"
-        },
+  const response =await getCategoriesBySubdomain(subdomain);
 
 
-        {
-            id:5,
-            name:"Category 5",
-            thumbnail:"https://miniture.novaworks.net/wp-content/uploads/2023/10/m4_slide_02.jpg"
-        },
+  if(response.error){
+    return <p>Failed</p>
+  }
+  const categories = response.data;
 
 
-        {
-            id:6,
-            name:"Category 6",
-            thumbnail:"https://miniture.novaworks.net/wp-content/uploads/2023/10/m4_slide_01.jpg"
-        },
+    // const categories=[
+    //     {
+    //         id:1,
+    //         name:"Category 1",
+    //         thumbnail:"https://miniture.novaworks.net/wp-content/uploads/2023/10/m4_slide_03.jpg"
+    //     },
+
+    //     {
+    //         id:2,
+    //         name:"Category 2",
+    //         thumbnail:"https://miniture.novaworks.net/wp-content/uploads/2023/10/m4_slide_02.jpg"
+    //     },
+
+    //     {
+    //         id:3,
+    //         name:"Category 3",
+    //         thumbnail:"https://miniture.novaworks.net/wp-content/uploads/2023/10/m4_slide_01.jpg"
+    //     },
 
 
-        {
-            id:7,
-            name:"Category 7",
-            thumbnail:"https://miniture.novaworks.net/wp-content/uploads/2023/10/m4_slide_03.jpg"
-        },
-    ]
+    //     {
+    //         id:4,
+    //         name:"Category 4",
+    //         thumbnail:"https://miniture.novaworks.net/wp-content/uploads/2023/10/m4_slide_03.jpg"
+    //     },
+
+
+    //     {
+    //         id:5,
+    //         name:"Category 5",
+    //         thumbnail:"https://miniture.novaworks.net/wp-content/uploads/2023/10/m4_slide_02.jpg"
+    //     },
+
+
+    //     {
+    //         id:6,
+    //         name:"Category 6",
+    //         thumbnail:"https://miniture.novaworks.net/wp-content/uploads/2023/10/m4_slide_01.jpg"
+    //     },
+
+
+    //     {
+    //         id:7,
+    //         name:"Category 7",
+    //         thumbnail:"https://miniture.novaworks.net/wp-content/uploads/2023/10/m4_slide_03.jpg"
+    //     },
+    // ]
   return (
     <section>
       <SectionHeader title="Explore Categories" />
-      <Carousel
+    {categories &&  <Carousel
         opts={{
           align: "start",
         }}
         className="">
         <CarouselContent>
           { 
-            categories.map((category: any) => (
+            categories?.map((category: any) => (
               <CarouselItem
                 key={category.id}
                 className="md:basis-1/2 lg:basis-1/4 group shadow-sm">
@@ -90,7 +104,7 @@ export default async function CategoryCarouselSection() {
         </CarouselContent>
         <CarouselPrevious className=" absolute z-20 left-0 ml-2" />
         <CarouselNext className=" absolute z-20 right-0 mr-2" />
-      </Carousel>
+      </Carousel>}
     </section>
   );
 }
