@@ -150,7 +150,7 @@ import { getStoreBySubdomain } from "@/actions/store";
   const response = await getStoreBySubdomain(subdomain);
   console.log(response, "This is response");
 
-  if (!response.error) {
+  if (response.error) {
     notFound();
   }
 
