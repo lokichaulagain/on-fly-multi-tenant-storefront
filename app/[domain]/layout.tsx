@@ -11,13 +11,13 @@ import { getStoreBySubdomain } from "@/actions/store";
 
 // export default async function SiteLayout({ params, children }: { params: { domain: string }; children: ReactNode }) {
 export default async function SiteLayout({ children, params }: { children: ReactNode; params: Promise<{ domain: string }> }) {
-
   const { domain } = await params;
-//   const domain = "https://sss.fenzora.com";
+  //   const domain = "https://sss.fenzora.com";
+
   console.log(domain, "This is domain");
   //   //   const decodedDomain = decodeURIComponent(domain);
-    const subdomain = domain.replace(/^https?:\/\//, "").split(".")[0];
-    console.log(subdomain, "This is subdomain");
+  const subdomain = domain.replace(/^https?:\/\//, "").split(".")[0];
+  console.log(subdomain, "This is subdomain");
 
   //   console.log(subdomain, "This is domain");
   const response = await getStoreBySubdomain(subdomain);
@@ -59,25 +59,19 @@ export default async function SiteLayout({ children, params }: { children: React
 
     <div>
       <div className="mt-20">
-
-
-       {response && <div>
-      
+        {response && (
+          <div>
             <p>{response.data?.id}</p>
             <p>{response.data?.store_name}</p>
             <p>{response.data?.store_phone_number}</p>
             <p>{response.data?.store_subdomain}</p>
             <p>{response.data?.user_id}</p>
             <p>{response.data?.store_status}</p>
-            
-        </div>}
-        
-        
-        
-        
-        
-        
-        {children}</div>
+          </div>
+        )}
+
+        {children}
+      </div>
     </div>
   );
 }
