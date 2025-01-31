@@ -187,7 +187,7 @@ export default async function SiteLayout({ params, children }: any) {
     // </div>
 
     <div>
-      {response && (
+      {/* {response && (
           <div>
             <p>{response.data?.id}</p>
             <p>{response.data?.store_name}</p>
@@ -196,7 +196,7 @@ export default async function SiteLayout({ params, children }: any) {
             <p>{response.data?.user_id}</p>
             <p>{response.data?.store_status}</p>
           </div>
-        )}
+        )} */}
 
       {/* {children} */}
 
