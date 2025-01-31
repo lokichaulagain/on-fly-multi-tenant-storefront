@@ -92,6 +92,7 @@ import { getStoreBySubdomain } from "@/actions/store";
   const subdomain = decodeURIComponent(params.domain);
   // const data = await getSiteData(domain);
   const response = await getStoreBySubdomain(subdomain);
+  console.log(response, "This is response");
   if (response.error) {
     return null;
   }
@@ -139,7 +140,9 @@ import { getStoreBySubdomain } from "@/actions/store";
 // export default async function SiteLayout({ params, children }: { params: { domain: string }; children: ReactNode }) {
   export default async function SiteLayout({ params, children }: any) {
   const subdomain = decodeURIComponent(params.domain);
+
   const response = await getStoreBySubdomain(subdomain);
+  console.log(response, "This is response");
 
   if (!response.error) {
     notFound();
