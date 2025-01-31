@@ -86,9 +86,11 @@ import { notFound, redirect } from "next/navigation";
 // import { fontMapper } from "@/styles/fonts";
 import { Metadata } from "next";
 import { getStoreBySubdomain } from "@/actions/store";
+import Navbar from "@/components/sections/navbar";
+import Footer from "@/components/sections/footer";
 
 // export async function generateMetadata({ params }: { params: Promise<{ domain: string }> }): Promise<Metadata | null> {
-  export async function generateMetadata({ params }: any): Promise<Metadata | null> {
+export async function generateMetadata({ params }: any): Promise<Metadata | null> {
   const domain = decodeURIComponent(params.domain);
   console.log(domain, "This is domain");
   const subdomain = domain.replace(/^https?:\/\//, "").split(".")[0];
@@ -141,7 +143,7 @@ import { getStoreBySubdomain } from "@/actions/store";
 }
 
 // export default async function SiteLayout({ params, children }: { params: { domain: string }; children: ReactNode }) {
-  export default async function SiteLayout({ params, children }: any) {
+export default async function SiteLayout({ params, children }: any) {
   const domain = decodeURIComponent(params.domain);
   console.log(domain, "This is domain");
   const subdomain = domain.replace(/^https?:\/\//, "").split(".")[0];
@@ -185,8 +187,7 @@ import { getStoreBySubdomain } from "@/actions/store";
     // </div>
 
     <div>
-      <div className="mt-20">
-        {response && (
+      {response && (
           <div>
             <p>{response.data?.id}</p>
             <p>{response.data?.store_name}</p>
@@ -197,7 +198,14 @@ import { getStoreBySubdomain } from "@/actions/store";
           </div>
         )}
 
-        {children}
+      {/* {children} */}
+
+      <div>
+        <div className=" fixed w-full z-50">
+          <Navbar />
+        </div>
+        <div className=" pt-16">{children}</div>
+        <Footer />
       </div>
     </div>
   );
