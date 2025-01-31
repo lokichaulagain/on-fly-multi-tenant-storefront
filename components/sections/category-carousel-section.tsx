@@ -18,7 +18,7 @@ export default async function CategoryCarouselSection({params}: any) {
   if(response.error){
     return <p>Failed</p>
   }
-  const categories = response.data;
+  const categories = Array.isArray(response.data) ? response.data : [response.data];
 
 
     // const categories=[
