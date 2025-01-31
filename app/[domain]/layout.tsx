@@ -89,7 +89,9 @@ import { getStoreBySubdomain } from "@/actions/store";
 
 // export async function generateMetadata({ params }: { params: Promise<{ domain: string }> }): Promise<Metadata | null> {
   export async function generateMetadata({ params }: any): Promise<Metadata | null> {
-  const subdomain = decodeURIComponent(params.domain);
+  const domain = decodeURIComponent(params.domain);
+  console.log(domain, "This is domain");
+  const subdomain = domain.replace(/^https?:\/\//, "").split(".")[0];
   // const data = await getSiteData(domain);
   console.log(subdomain, "This is subdomain");
   const response = await getStoreBySubdomain(subdomain);
@@ -140,7 +142,9 @@ import { getStoreBySubdomain } from "@/actions/store";
 
 // export default async function SiteLayout({ params, children }: { params: { domain: string }; children: ReactNode }) {
   export default async function SiteLayout({ params, children }: any) {
-  const subdomain = decodeURIComponent(params.domain);
+  const domain = decodeURIComponent(params.domain);
+  console.log(domain, "This is domain");
+  const subdomain = domain.replace(/^https?:\/\//, "").split(".")[0];
   console.log(subdomain, "This is subdomain");
 
   const response = await getStoreBySubdomain(subdomain);
