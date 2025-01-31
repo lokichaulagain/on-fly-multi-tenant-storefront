@@ -87,7 +87,8 @@ import { notFound, redirect } from "next/navigation";
 import { Metadata } from "next";
 import { getStoreBySubdomain } from "@/actions/store";
 
-export async function generateMetadata({ params }: { params: { domain: string } }): Promise<Metadata | null> {
+// export async function generateMetadata({ params }: { params: Promise<{ domain: string }> }): Promise<Metadata | null> {
+  export async function generateMetadata({ params }: any): Promise<Metadata | null> {
   const subdomain = decodeURIComponent(params.domain);
   // const data = await getSiteData(domain);
   const response = await getStoreBySubdomain(subdomain);
@@ -109,17 +110,17 @@ export async function generateMetadata({ params }: { params: { domain: string } 
   // const { store_name, store_subdomain, store_phone_number } = response.data;
 
   return {
-    title:response.data?.store_name,
-    description:response.data?.store_name,
+    title: response.data?.store_name,
+    description: response.data?.store_name,
     openGraph: {
-      title:response.data?.store_name,
-      description:response.data?.store_name,
+      title: response.data?.store_name,
+      description: response.data?.store_name,
       // images: [response.data?.store_logo],
     },
     twitter: {
       card: "summary_large_image",
-      title:response.data?.store_name,
-      description:response.data?.store_name,
+      title: response.data?.store_name,
+      description: response.data?.store_name,
       // images: [response.data?.store_logo],
       creator: "@fenzora",
     },
@@ -135,7 +136,8 @@ export async function generateMetadata({ params }: { params: { domain: string } 
   };
 }
 
-export default async function SiteLayout({ params, children }: { params: { domain: string }; children: ReactNode }) {
+// export default async function SiteLayout({ params, children }: { params: { domain: string }; children: ReactNode }) {
+  export default async function SiteLayout({ params, children }: any) {
   const subdomain = decodeURIComponent(params.domain);
   const response = await getStoreBySubdomain(subdomain);
 
@@ -173,22 +175,21 @@ export default async function SiteLayout({ params, children }: { params: { domai
     //   {domain == `demo.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}` || domain == `platformize.co` ? <CTA /> : <ReportAbuse />}
     // </div>
 
-
     <div>
-       <div className="mt-20">
-         {response && (
-           <div>
-             <p>{response.data?.id}</p>
-             <p>{response.data?.store_name}</p>
-             <p>{response.data?.store_phone_number}</p>
-             <p>{response.data?.store_subdomain}</p>
-             <p>{response.data?.user_id}</p>
-             <p>{response.data?.store_status}</p>
-           </div>
-         )}
-    
-         {children}
-       </div>
-     </div>
+      <div className="mt-20">
+        {response && (
+          <div>
+            <p>{response.data?.id}</p>
+            <p>{response.data?.store_name}</p>
+            <p>{response.data?.store_phone_number}</p>
+            <p>{response.data?.store_subdomain}</p>
+            <p>{response.data?.user_id}</p>
+            <p>{response.data?.store_status}</p>
+          </div>
+        )}
+
+        {children}
+      </div>
+    </div>
   );
 }
