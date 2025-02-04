@@ -2,7 +2,7 @@ import { headers } from 'next/headers';
 import { getStoreBySubdomain } from '@/actions/store';
 
 export async function getDomainInfo() {
-  const headersList = headers();
+  const headersList = await headers();
   const host = headersList.get('host') || '';
   const subdomain = host.split('.')[0];
   
