@@ -7,11 +7,13 @@ import { Button } from "../ui/button";
 import { usePathname } from "next/navigation";
 import { Package } from "lucide-react";
 import MobileSheet from "../mobile-sheet";
+import { useDomain } from '@/contexts/DomainContext';
 
 export default function Navbar({}: Props) {
   const [state, setState] = useState(false);
   const pathname=usePathname()
   console.log(pathname)
+  const { subdomain, domain, storeName } = useDomain();
 
   // Replace / paths with your paths
   const navigation = [
@@ -65,6 +67,13 @@ export default function Navbar({}: Props) {
               </div>
             </div>
           </div>
+        </div>
+        <div>
+          Current Store: {storeName}
+          <br />
+          Subdomain: {subdomain}
+          <br />
+          Domain: {domain}
         </div>
       </div>
     </nav>
