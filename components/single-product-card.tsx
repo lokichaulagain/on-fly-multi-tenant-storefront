@@ -13,7 +13,7 @@ export default function SingleProductCard({ product }: Props) {
       className="space-y-1 group">
       <div className="lg:h-96 rounded-sm overflow-hidden">
         <Image
-          src={product.thumbnail}
+          src={product.image_url}
           alt="product-img"
           height={800}
           width={800}

@@ -1,5 +1,6 @@
 import { DEFAULT_STORE_LOGO } from "@/constants";
 import { ENUM_STORE_CATEGORY, ENUM_SUBSCRIPTION_PLAN, ENUM_SUBSCRIPTION_STATUS, ENUM_STORE_STATUS, ENUM_PRODUCT_STATUS } from "@/enums";
+import { sql } from "drizzle-orm";
 // import { ENUM_PRODUCT_STATUS, ENUM_STORE_CATEGORY, ENUM_STORE_STATUS, ENUM_SUBSCRIPTION_PLAN, ENUM_SUBSCRIPTION_STATUS } from "@/enums";
 import { pgTable, serial, decimal, varchar, text, date, timestamp, integer, jsonb, index, unique, boolean, uuid, uniqueIndex, pgEnum } from "drizzle-orm/pg-core";
 
@@ -119,7 +120,7 @@ export const productsTable = pgTable(
     // 🛒 Required fields
     name: varchar("name", { length: 100 }).notNull(),
     slug: varchar("slug", { length: 100 }).notNull().unique(),
-    thumbnail: varchar("thumbnail", { length: 255 }).notNull(),
+    // thumbnail: varchar("thumbnail", { length: 255 }).notNull(),
     user_id: varchar("user_id", { length: 255 }).notNull(),
     store_id: varchar("store_id")
       .notNull()
@@ -134,14 +135,16 @@ export const productsTable = pgTable(
     sku: varchar("sku", { length: 50 }),
     barcode: varchar("barcode", { length: 50 }),
 
-    category_id: uuid("category_id").references(() => categoriesTable.id),
+    category_id: uuid("category_id").references(() => categoriesTable.id, { onDelete: 'set null' }).default(sql`NULL`),
+
+
     continue_selling_even_out_of_stock: boolean("continue_selling_even_out_of_stock").default(false),
 
-    meta_title: varchar("meta_title", { length: 255 }),
-    meta_description: varchar("meta_description", { length: 255 }),
 
-    images: jsonb("images").default([]),
+    // images: jsonb("images").default([]),
     has_variants: boolean("has_variants").default(false),
+    image_urls: jsonb("image_urls").default([]),
+    
 
     status: varchar("status", {
       length: 10,

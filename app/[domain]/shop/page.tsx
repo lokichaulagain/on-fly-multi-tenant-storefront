@@ -10,6 +10,8 @@ export default async function Page({ searchParams }: any) {
   const selectedCollection = searchParams;
   const selectedCollectionId = selectedCollection?.collection;
 
+  console.log(selectedCollectionId, "selectedCollectionId");
+
   return (
     <div className=" ">
       <PageBanner

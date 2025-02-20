@@ -9,27 +9,28 @@ import { db } from "@/lib/db/drizzle";
 import { Categories, categoriesTable, Products, productsTable, Stores, storesTable } from "@/lib/db/schema";
 import { handleDbError } from "@/utils/db-error";
 import { ActionResponse } from ".";
+import { ICategoryPreview } from "@/interfaces/category";
 
 
-export async function getStoreBySubdomain(subdomain:string): Promise<ActionResponse<Stores>> {
-    try {
+export async function getStoreBySubdomain(subdomain: string): Promise<ActionResponse<Stores>> {
+  try {
     //   // Ensure the user is authenticated and has an organization
     //   const { orgId, userId } = await auth();
     //   if (!orgId || !userId) {
     //     return { data: null, status: 401, error: "You are not authorized" };
     //   }
-  
-      const [store] = await db.select().from(storesTable).where(eq(storesTable.store_subdomain, subdomain));
-      if (!store) {
-        return { data: null, error: "Store not found" };
-      }
-  
-      return { data: store, status: 200, msg: "Store fetched successfully", error: null };
-    } catch (error: unknown) {
-      console.log("Error fetching store:", error);
-      return { data: null, status: 500, error: handleDbError(error) };
+
+    const [store] = await db.select().from(storesTable).where(eq(storesTable.store_subdomain, subdomain));
+    if (!store) {
+      return { data: null, error: "Store not found" };
     }
+
+    return { data: store, status: 200, msg: "Store fetched successfully", error: null };
+  } catch (error: unknown) {
+    console.log("Error fetching store:", error);
+    return { data: null, status: 500, error: handleDbError(error) };
   }
+}
 
 
 export async function getCategoriesBySubdomain(subdomain: string): Promise<ActionResponse<Categories[]>> {
@@ -41,10 +42,34 @@ export async function getCategoriesBySubdomain(subdomain: string): Promise<Actio
 
     // Remove array destructuring to fetch all categories
     const categories = await db.select().from(categoriesTable).where(eq(categoriesTable.store_id, store.id));
-    
+
     if (!categories.length) {
       return { data: null, error: "Categories not found", status: 404 };
     }
+
+    return { data: categories, status: 200, msg: "Categories fetched successfully", error: null };
+
+  } catch (error: unknown) {
+    console.log("Error fetching store:", error);
+    return { data: null, status: 500, error: handleDbError(error) };
+  }
+}
+
+
+
+
+export async function getCategoriesByStoreId(store_id: string): Promise<ActionResponse<ICategoryPreview[]>> {
+  try {
+
+    const categories = await db
+      .select({
+        id: categoriesTable.id,
+        name: categoriesTable.name,
+        slug: categoriesTable.slug,
+        thumbnail: categoriesTable.thumbnail,
+      })
+      .from(categoriesTable)
+      .where(eq(categoriesTable.store_id, store_id));
 
     return { data: categories, status: 200, msg: "Categories fetched successfully", error: null };
 

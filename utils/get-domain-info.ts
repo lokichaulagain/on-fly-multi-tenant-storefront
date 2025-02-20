@@ -4,7 +4,8 @@ import { getStoreBySubdomain } from '@/actions/store';
 export async function getDomainInfo() {
   const headersList = await headers();
   const host = headersList.get('host') || '';
-  const subdomain = host.split('.')[0];
+  // const subdomain = host.split('.')[0];
+  const subdomain = "loki";
   
   const response = await getStoreBySubdomain(subdomain);
   
