@@ -67,3 +67,33 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* It prevent input field zoom issue in ios */
+@layer base {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+.cl-internal-1jb7j6z {
+  width: 100% !important;
+}
+
+.cl-internal-1jb7j6z {
+  width: 100% !important;
+}
+
+.cl-internal-1jb7j6z { 
+  width: 100%  !important;
+}
+

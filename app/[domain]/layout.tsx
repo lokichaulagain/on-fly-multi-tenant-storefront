@@ -10,6 +10,7 @@ import { getStoreBySubdomain } from "@/actions/store";
 import Navbar from "@/components/sections/navbar";
 import Footer from "@/components/sections/footer";
 import { DomainProvider } from '@/contexts/DomainContext';
+import { CartProvider } from "@/contexts/cart-provider";
 
 // export async function generateMetadata({ params }: { params: Promise<{ domain: string }> }): Promise<Metadata | null> {
 export async function generateMetadata({ params }: any): Promise<Metadata | null> {
@@ -81,7 +82,7 @@ export default async function SiteLayout({ params, children }: any) {
       subdomain={subdomain}
       domain={domain}
       storeName={response.data?.store_name || null}
-    >
+    > <CartProvider>
       <div>
         <div className="fixed w-full z-50">
           <Navbar />
@@ -89,6 +90,7 @@ export default async function SiteLayout({ params, children }: any) {
         <div className="pt-16">{children}</div>
         <Footer />
       </div>
+    </CartProvider>
     </DomainProvider>
   );
 }

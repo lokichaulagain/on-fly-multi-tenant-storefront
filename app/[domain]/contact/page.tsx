@@ -61,7 +61,7 @@ export default function Page() {
                   required
                   placeholder="Loki Chaulagain"
                   {...register("fullName", { required: true })}
-                  className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-primary-400 shadow-sm rounded-lg"
+                  className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-primary-400 shadow-sm rounded-md"
                 />
                 {errors.fullName && <span className=" text-xs text-destructive">This field is required</span>}
               </div>
@@ -72,7 +72,7 @@ export default function Page() {
                   required
                   placeholder="example@gmail.com"
                   {...register("email", { required: true })}
-                  className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-primary-400 shadow-sm rounded-lg"
+                  className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-primary-400 shadow-sm rounded-md"
                 />
                 {errors.email && <span className=" text-xs text-destructive">This field is required </span>}
               </div>
@@ -83,7 +83,7 @@ export default function Page() {
                   required
                   placeholder="98648463522"
                   {...register("phone", { required: true, minLength: 10, maxLength: 10 })}
-                  className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-primary-400 shadow-sm rounded-lg"
+                  className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-primary-400 shadow-sm rounded-md"
                 />
                 {errors.phone && <span className=" text-xs text-destructive">This field is required (Phone should be 10 character long).</span>}
               </div>
@@ -93,12 +93,12 @@ export default function Page() {
                   placeholder="Message..."
                   required
                   {...register("message", { required: true })}
-                  className="w-full mt-2 h-36 px-3 py-2 resize-none appearance-none bg-transparent outline-none border focus:border-primary-400 shadow-sm rounded-lg"></textarea>
+                  className="w-full mt-2 h-36 px-3 py-2 resize-none appearance-none bg-transparent outline-none border focus:border-primary-400 shadow-sm rounded-md"></textarea>
                 {errors.message && <span className=" text-xs text-destructive">This field is required</span>}
               </div>
               <Button
                 disabled={isCreating}
-                className="w-full px-4 py-2  font-medium bg-primary-400 hover:bg-primary-500 active:bg-primary-400 rounded-lg duration-150 flex items-center gap-1">
+                className="w-full px-4 py-2  font-medium bg-primary-400 hover:bg-primary-500 active:bg-primary-400 rounded-md duration-150 flex items-center gap-1">
                 {isCreating ? (
                   <Loader
                     className=" animate-spin"
