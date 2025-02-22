@@ -7,9 +7,12 @@ import { Package, ShoppingCart } from "lucide-react";
 import MobileSheet from "@/components/mobile-sheet";
 import { useDomain } from "@/contexts/DomainContext";
 import { useCart } from "@/contexts/cart-provider";
+import {  SignedIn, SignedOut, SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
+import Image from "next/image";
 
 export default function Navbar() {
   const { cart } = useCart();
+  const { isSignedIn, user } = useUser();
 
   const pathname = usePathname();
   const { subdomain, domain, storeName } = useDomain();
@@ -60,16 +63,32 @@ export default function Navbar() {
                 </div>
               </Link>
 
-              <Link href="/sign-in">
-                <Button
-                  variant={"link"}
-                  size={"sm"}>
-                  Sign In
-                </Button>
-              </Link>
-              <Link href={"/sign-up"}>
-                <Button size={"sm"}>Sign Up</Button>
-              </Link>
+                <SignedIn>
+                  <Link href="/profile">
+                    <Button variant={"link"}>
+                      <Image
+                        src={user?.imageUrl || "/placeholder.svg"}
+                        alt="user"
+                        height={100}
+                        width={100}
+                        className="w-8 h-8 rounded-full hover:opacity-80 transition-opacity duration-300  border-2 border-gray-200"
+                      />
+                    </Button>
+                  </Link>
+                </SignedIn>
+
+              <SignedOut>
+                <SignInButton
+                  mode="modal"
+                  forceRedirectUrl={"/checkout"}>
+                  <Button variant={"link"}>Sign In</Button>
+                </SignInButton>
+                <SignUpButton
+                  mode="modal"
+                  forceRedirectUrl={"/checkout"}>
+                  <Button>Sign Up</Button>
+                </SignUpButton>
+              </SignedOut>
             </div>
           </div>
         </div>
