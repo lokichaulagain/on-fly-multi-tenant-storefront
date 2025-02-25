@@ -173,6 +173,8 @@ export const productsTable = pgTable(
 );
 export type Products = typeof productsTable.$inferSelect;
 
+
+
 // ✅ Orders Table
 export const ordersTable = pgTable(
   "orders",
@@ -184,30 +186,75 @@ export const ordersTable = pgTable(
     user_id: varchar("user_id", { length: 255 }).notNull(), // assign user_id from clerk
     store_id: varchar("store_id")
       .notNull()
-      .references(() => storesTable.id),
+      .references(() => storesTable.id), // assign store_id from clerk organization
 
     // 🛒 Payment information
-    payment_id: varchar("payment_id", { length: 255 }),
-    payment_status: varchar("payment_status", { length: 50 }),
-    payment_method: varchar("payment_method", { length: 50 }),
-    payment_amount: integer("payment_amount"),
+    // payment_id: varchar("payment_id", { length: 255 }),
+    // payment_status: varchar("payment_status", { length: 50 }),
+    // payment_method: varchar("payment_method", { length: 50 }),
+    // payment_amount: integer("payment_amount"),
 
     // 🛒 Address information
-    shipping_address: jsonb("shipping_address"),
-    billing_address: jsonb("billing_address"),
+    // shipping_address: jsonb("shipping_address"),
+    // shipping_address: jsonb("shipping_address").default({
+    //   address: null,
+    //   city: null,
+    //   state: null,
+    //   country: null,
+    //   postal_code: null,
+    // }),
+
+    shipping_address: jsonb("shipping_address")
+      .default({
+        full_name: null,
+        email_address: null,
+        phone_number: null,
+        province: null,
+        district: null,
+        city: null,
+        landmark: null,
+        postal_code: null,
+      })
+      .default(null),
+
+    billing_address: jsonb("billing_address")
+      .default({
+        full_name: null,
+        email_address: null,
+        phone_number: null,
+        province: null,
+        district: null,
+        city: null,
+        landmark: null,
+        postal_code: null,
+      })
+      .default(null),
 
     // 🛒 Order details
-    order_items: jsonb("order_items"),
-    subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
-    tax_amount: decimal("tax_amount", { precision: 10, scale: 2 }).notNull(),
-    tax_rate: decimal("tax_rate", { precision: 5, scale: 2 }).notNull(),
-    discount_amount: decimal("discount_amount", { precision: 10, scale: 2 }),
+    order_items: jsonb("order_items")
+      .default([
+        {
+          product_id: null,
+          product_name: null,
+          product_image: null,
+          product_price: null,
+          product_quantity: null,
+          user_id: null, // assign user_id from clerk
+          store_id: null, // assign store_id from clerk organization
+        },
+      ])
+      .default([]),
+    // subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
+    // tax_amount: decimal("tax_amount", { precision: 10, scale: 2 }).notNull(),
+    // tax_rate: decimal("tax_rate", { precision: 5, scale: 2 }).notNull(),
+    // discount_amount: decimal("discount_amount", { precision: 10, scale: 2 }),
 
     // 🛒 Shipping
-    shipping_method: varchar("shipping_method", { length: 50 }),
-    shipping_cost: decimal("shipping_cost", { precision: 10, scale: 2 }),
-    total_amount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
+    // shipping_method: varchar("shipping_method", { length: 50 }),
+    shipping_cost: integer("shipping_cost"),
+    // total_amount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
 
+    promo_code: varchar("promo_code", { length: 50 }),
     // 🛒 Order status
     // order_status: pgEnum("order_status", ["pending", "processing", "completed", "cancelled", "refunded", "failed"]),
 
@@ -216,19 +263,6 @@ export const ordersTable = pgTable(
     updated_at: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
     deleted_at: timestamp("deleted_at", { mode: "date" }),
   },
-  (table) => [
-    // Index for order_number only
-    index("orders_order_number_idx").on(table.order_number),
-
-    // Fast queries filtering by id
-    index("orders_id_idx").on(table.id),
-
-    // Fast queries filtering by store_id
-    index("orders_store_id_idx").on(table.store_id),
-
-    // Fast queries filtering by user_id
-    index("orders_user_id_idx").on(table.user_id),
-    
-  ]
+  
 );
 export type Orders = typeof ordersTable.$inferSelect;

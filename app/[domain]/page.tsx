@@ -22,7 +22,7 @@ export default async function Page() {
   console.log(products, "products");
 
   return (
-    <div className="w-full lg:w-9/12 mx-auto px-4 space-y-12">
+    <div className="w-full container px-4 md:px-24 mx-auto space-y-12">
       <HeroSection />
       <CategoryCarouselSection categories={categories as ICategoryPreview[]} />
       <FeatureProductSection products={products as IProductPreview[]} />

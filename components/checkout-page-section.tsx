@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { ChevronLeft, Wallet, Building2, Plus, Minus, Truck } from "lucide-react";
@@ -12,42 +12,101 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useRouter } from "next/navigation";
 import { ICartItem, useCart } from "@/contexts/cart-provider";
 import { SignInButton, useUser } from "@clerk/nextjs";
+import { createOrder } from "@/actions/order";
+import { toast } from "sonner";
+import { getDomainInfo } from "@/utils/get-domain-info";
+import { OrderFormValues, orderFormSchema } from "@/form-schemas/order";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-type FormData = {
-  fullName: string;
-  address: string;
-  city: string;
-  postalCode: string;
-  phone: string;
-  shippingMethod: string;
-  promoCode: string;
-  paymentMethod: string;
-};
-
-export default function CheckoutPageSection() {
+export default function CheckoutPageSection({ store_id }: { store_id: string }) {
   const { isLoaded, isSignedIn, user } = useUser();
+  console.log(user, "its a user");
 
   const router = useRouter();
-  const { cart, isCartOpen, setIsCartOpen, removeFromCart, increaseQuantity, decreaseQuantity } = useCart();
+  const { cart, isCartOpen, setIsCartOpen, removeFromCart, increaseQuantity, decreaseQuantity, clearCart } = useCart();
   const totalPrice = cart.reduce((total, item) => total + (item.price || 0) * item.quantity, 0);
   const [activeSection, setActiveSection] = useState<string>("");
 
-  const form = useForm<FormData>({
+  const form = useForm<z.infer<typeof orderFormSchema>>({
+    resolver: zodResolver(orderFormSchema),
     defaultValues: {
-      fullName: "",
-      address: "",
+      full_name: "",
+      email_address: "",
+      phone_number: "",
+      province: "",
+      district: "",
       city: "",
-      postalCode: "",
-      phone: "",
-      shippingMethod: "standard",
-      promoCode: "",
-      paymentMethod: "cod",
+      landmark: "",
+      postal_code: "",
+      payment_method: "cod",
+      promo_code: "",
+      shipping_cost: 0,
     },
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
-    // Handle payment processing here
+  const [isPending, startTransition] = useTransition();
+  const onSubmit = async (values: z.infer<typeof orderFormSchema>) => {
+    console.log(values, "its a values");
+
+    startTransition(async () => {
+      if (!user?.id) {
+        toast.error("Please sign in to place an order");
+        return;
+      }
+
+      const orderPayload = {
+        user_id: user.id,
+        store_id,
+        shipping_address: {
+          full_name: values.full_name,
+          email_address: values.email_address,
+          phone_number: values.phone_number,
+          province: values.province,
+          district: values.district,
+          city: values.city,
+          landmark: values.landmark,
+          postal_code: values.postal_code,
+        },
+        billing_address: null,
+        order_items: cart.map((item: ICartItem) => ({
+          product_id: item.id,
+          product_name: item.name,
+          product_image: item.image || "",
+          product_price: item.price || 0,
+          product_quantity: item.quantity,
+          user_id: user.id,
+          store_id: store_id,
+        })),
+        shipping_cost: values.shipping_cost || 0,
+      };
+      console.log(orderPayload, "its a order payload");
+
+      const response = await createOrder(orderPayload);
+      if (response.error) {
+        toast("Order Failed!", {
+          description: response.error || "Failed to create order, please try again",
+          action: {
+            label: "Undo",
+            onClick: () => console.log("Undo"),
+          },
+        });
+        return;
+      }
+
+      if (response.data) {
+        toast("Order Placed!", {
+          description: "Your order has been placed successfully",
+          action: {
+            label: "Undo",
+            onClick: () => console.log("Undo"),
+          },
+        });
+        form.reset();
+        clearCart();
+        setIsCartOpen(false);
+      }
+    });
   };
 
   return (
@@ -141,7 +200,7 @@ export default function CheckoutPageSection() {
                 <AccordionContent className="space-y-4 p-2 pb-8">
                   <FormField
                     control={form.control}
-                    name="fullName"
+                    name="full_name"
                     rules={{ required: "Full name is required" }}
                     render={({ field }) => (
                       <FormItem>
@@ -159,14 +218,14 @@ export default function CheckoutPageSection() {
 
                   <FormField
                     control={form.control}
-                    name="address"
-                    rules={{ required: "Address is required" }}
+                    name="email_address"
+                    rules={{ required: "Email address is required" }}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Address</FormLabel>
+                        <FormLabel>Email Address</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Enter your address"
+                            placeholder="Enter your email   address"
                             {...field}
                           />
                         </FormControl>
@@ -175,47 +234,9 @@ export default function CheckoutPageSection() {
                     )}
                   />
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="city"
-                      rules={{ required: "City is required" }}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>City</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="City"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="postalCode"
-                      rules={{ required: "Postal code is required" }}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Postal Code</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Postal code"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
                   <FormField
                     control={form.control}
-                    name="phone"
+                    name="phone_number"
                     rules={{ required: "Phone number is required" }}
                     render={({ field }) => (
                       <FormItem>
@@ -230,22 +251,112 @@ export default function CheckoutPageSection() {
                       </FormItem>
                     )}
                   />
+
+                  <FormField
+                    control={form.control}
+                    name="province"
+                    rules={{ required: "Province is required" }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Province</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter your province"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="district"
+                    rules={{ required: "District is required" }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>District</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter your district"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="city"
+                    rules={{ required: "City is required" }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>City</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter your city"
+                            {...field}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="landmark"
+                    rules={{ required: "Landmark is required" }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Landmark</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter your landmark"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="postal_code"
+                    rules={{ required: "Postal code is required" }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Postal Code</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter your postal code"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </AccordionContent>
               </AccordionItem>
 
               {/* Voucher */}
-              <AccordionItem value="voucher">
+              {/* <AccordionItem value="voucher">
                 <AccordionTrigger className="hover:no-underline">
                   <span className="font-medium">Voucher and Promo</span>
                 </AccordionTrigger>
                 <AccordionContent className="flex items-center gap-2 justify-between p-2 pb-8">
                   <FormField
                     control={form.control}
-                    name="promoCode"
+                    name="promo_code"
                     render={({ field }) => (
                       <FormItem className="w-full">
                         <FormControl>
                           <Input
+                            type="text"
                             placeholder="Enter promo code"
                             {...field}
                           />
@@ -257,7 +368,7 @@ export default function CheckoutPageSection() {
 
                   <Button variant="secondary">Apply</Button>
                 </AccordionContent>
-              </AccordionItem>
+              </AccordionItem> */}
 
               {/* Payment Method */}
               <AccordionItem value="payment">
@@ -267,7 +378,7 @@ export default function CheckoutPageSection() {
                 <AccordionContent className="p-2 pb-8">
                   <FormField
                     control={form.control}
-                    name="paymentMethod"
+                    name="payment_method"
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
@@ -343,7 +454,7 @@ export default function CheckoutPageSection() {
               <Button
                 type="submit"
                 className="w-full bg-primary hover:bg-primary/80 text-white">
-                Order Now
+                {isPending ? "Placing Order..." : "Order Now"}
               </Button>
             ) : (
               <SignInButton

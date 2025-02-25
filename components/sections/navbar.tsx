@@ -7,7 +7,7 @@ import { Package, ShoppingCart } from "lucide-react";
 import MobileSheet from "@/components/mobile-sheet";
 import { useDomain } from "@/contexts/DomainContext";
 import { useCart } from "@/contexts/cart-provider";
-import {  SignedIn, SignedOut, SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, SignUpButton, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 
 export default function Navbar() {
@@ -27,7 +27,7 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white border-b shadow-sm w-full md:static md:text-sm md:border-none h-16 flex items-center justify-center   ">
-      <div className="items-center w-full container    mx-auto md:flex">
+      <div className="items-center w-full container px-4 md:px-24 mx-auto md:flex">
         <div className="flex items-center justify-between    md:block">
           <Link
             href="/"
@@ -63,19 +63,19 @@ export default function Navbar() {
                 </div>
               </Link>
 
-                <SignedIn>
-                  <Link href="/profile">
-                    <Button variant={"link"}>
-                      <Image
-                        src={user?.imageUrl || "/placeholder.svg"}
-                        alt="user"
-                        height={100}
-                        width={100}
-                        className="w-8 h-8 rounded-full hover:opacity-80 transition-opacity duration-300  border-2 border-gray-200"
-                      />
-                    </Button>
-                  </Link>
-                </SignedIn>
+              <SignedIn>
+                <Link href="/profile">
+                  <Button variant={"link"}>
+                    <Image
+                      src={user?.imageUrl || "/placeholder.svg"}
+                      alt="user"
+                      height={100}
+                      width={100}
+                      className="w-8 h-8 rounded-full hover:opacity-80 transition-opacity duration-300  border-2 border-gray-200"
+                    />
+                  </Button>
+                </Link>
+              </SignedIn>
 
               <SignedOut>
                 <SignInButton
