@@ -6,6 +6,7 @@ import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { ActionResponse } from "@/actions/index";
 import { IOrderCreate } from "@/interfaces/order";
+import { createOrderNumber } from "@/lib/create-order-number";
 
 export async function createOrder(order: IOrderCreate): Promise<ActionResponse<Orders>> {
   try {
@@ -13,18 +14,20 @@ export async function createOrder(order: IOrderCreate): Promise<ActionResponse<O
     // 1. Only authenticated users can create orders
     const { userId } = await auth();
     if (!userId) {
-      return { data: null, status: 401, error: "You are not authorized" };
+      return { data: null, status: 401, error: "Please sign in before creating an order" };
     }
 
     // Create a random order number
-    const orderNumber = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
+    const order_number = createOrderNumber();
 
     // 2. Create a new order
-    const [newOrder] = await db.insert(ordersTable).values({
-      ...order,
-      order_number: orderNumber,
-    }).returning();
+    const [newOrder] = await db
+      .insert(ordersTable)
+      .values({
+        ...order,
+        order_number: order_number,
+      })
+      .returning();
 
     // 3. Revalidate the checkout page
     revalidatePath("/checkout");

@@ -1,6 +1,6 @@
 import React from "react";
-import SectionHeader from "../ui/section-header";
-import ProductCard from "../ui/product-card";
+import ProductCard from "@/components/product-card";
+import SectionHeader from "@/components/section-header";
 
 export default function PopularProductsSection() {
   return (

@@ -1,105 +1,122 @@
 "use server";
-import { revalidatePath } from "next/cache";
-// import { ssss } from "@clerk/express";
-import { auth, Organization } from "@clerk/nextjs/server";
-// import { StoreFormValues } from "@/form-schemas/store";
-// import { handleDbError } from "@/utils/db-error";
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 import { db } from "@/lib/db/drizzle";
-import { Categories, categoriesTable, Products, productsTable, Stores, storesTable } from "@/lib/db/schema";
+import { Stores, storesTable } from "@/lib/db/schema";
 import { handleDbError } from "@/utils/db-error";
 import { ActionResponse } from ".";
-import { ICategoryPreview } from "@/interfaces/category";
+import { headers } from "next/headers";
+import { ActiveDomainInfo } from "@/interfaces/store";
 
-
+/*
+  Get store by subdomain action
+  1. Get store by subdomain
+*/
 export async function getStoreBySubdomain(subdomain: string): Promise<ActionResponse<Stores>> {
   try {
-    //   // Ensure the user is authenticated and has an organization
-    //   const { orgId, userId } = await auth();
-    //   if (!orgId || !userId) {
-    //     return { data: null, status: 401, error: "You are not authorized" };
-    //   }
-
+    // 1. Get store by subdomain
     const [store] = await db.select().from(storesTable).where(eq(storesTable.store_subdomain, subdomain));
     if (!store) {
-      return { data: null, error: "Store not found" };
+      return { data: null, error: "Store not found", status: 404 };
     }
 
+    // 2. Return store
     return { data: store, status: 200, msg: "Store fetched successfully", error: null };
   } catch (error: unknown) {
-    console.log("Error fetching store:", error);
+    console.log("Error fetching store by subdomain :", error);
     return { data: null, status: 500, error: handleDbError(error) };
   }
 }
 
-
-export async function getCategoriesBySubdomain(subdomain: string): Promise<ActionResponse<Categories[]>> {
+/*
+  Get store ID by store_subdomain action
+  1. Get store ID by store_subdomain
+*/
+export async function getStoreIdBySubdomain(store_subdomain: string): Promise<ActionResponse<string>> {
   try {
-    const [store] = await db.select().from(storesTable).where(eq(storesTable.store_subdomain, subdomain));
-    if (!store) {
-      return { data: null, error: "Store not found", status: 404 };
-    }
-
-    // Remove array destructuring to fetch all categories
-    const categories = await db.select().from(categoriesTable).where(eq(categoriesTable.store_id, store.id));
-
-    if (!categories.length) {
-      return { data: null, error: "Categories not found", status: 404 };
-    }
-
-    return { data: categories, status: 200, msg: "Categories fetched successfully", error: null };
-
-  } catch (error: unknown) {
-    console.log("Error fetching store:", error);
-    return { data: null, status: 500, error: handleDbError(error) };
-  }
-}
-
-
-
-
-export async function getCategoriesByStoreId(store_id: string): Promise<ActionResponse<ICategoryPreview[]>> {
-  try {
-
-    const categories = await db
+    const [store] = await db
       .select({
-        id: categoriesTable.id,
-        name: categoriesTable.name,
-        slug: categoriesTable.slug,
-        thumbnail: categoriesTable.thumbnail,
+        id: storesTable.id,
       })
-      .from(categoriesTable)
-      .where(eq(categoriesTable.store_id, store_id));
+      .from(storesTable)
+      .where(eq(storesTable.store_subdomain, store_subdomain));
 
-    return { data: categories, status: 200, msg: "Categories fetched successfully", error: null };
-
-  } catch (error: unknown) {
-    console.log("Error fetching store:", error);
-    return { data: null, status: 500, error: handleDbError(error) };
-  }
-}
-
-
-// get products by subdomain
-export async function getProductsBySubdomain(subdomain: string): Promise<ActionResponse<Products[]>> {
-  try {
-    const [store] = await db.select().from(storesTable).where(eq(storesTable.store_subdomain, subdomain));
     if (!store) {
       return { data: null, error: "Store not found", status: 404 };
     }
 
-    const products = await db.select().from(productsTable).where(eq(productsTable.store_id, store.id));
-    if (!products.length) {
-      return { data: null, error: "Products not found", status: 404 };
-    }
-    console.log(products, "products")
-
-    return { data: products, status: 200, msg: "Products fetched successfully", error: null };
-
+    return { data: store.id, status: 200, msg: "Store ID fetched successfully", error: null };
   } catch (error: unknown) {
-    console.log("Error fetching products:", error);
+    console.log("Error fetching store ID by store_subdomain :", error);
     return { data: null, status: 500, error: handleDbError(error) };
   }
 }
 
+/*
+  Get active domain info action
+  1. Get subdomain from headers
+  2. Get domain info by subdomain from store table
+  3. Return domain info
+*/
 
+export async function getActiveDomainInfo(): Promise<ActionResponse<ActiveDomainInfo>> {
+  try {
+    // 1. Get subdomain from headers
+    const headersList = await headers();
+    const host = headersList.get("host") || "";
+    const store_subdomain = host.split(".")[0];
+
+    // 2. Get domain info by subdomain from store table
+    const [store] = await db
+      .select({
+        id: storesTable.id,
+        store_name: storesTable.store_name,
+        store_subdomain: storesTable.store_subdomain,
+        custom_domain: storesTable.custom_domain,
+      })
+      .from(storesTable)
+      .where(eq(storesTable.store_subdomain, store_subdomain));
+
+    // 3. Return domain info
+    if (!store) {
+      return { data: null, error: "Store not found", status: 404 };
+    }
+
+    // 4. Return domain info
+    return { data: store, status: 200, msg: "Active domain info fetched successfully", error: null };
+  } catch (error) {
+    console.log("Error fetching active domain info :", error);
+    return { data: null, status: 500, error: handleDbError(error) };
+  }
+}
+
+/*
+  Check store exists action
+  1. Check store exists by subdomain or custom domain
+  2. Return true if store exists, false otherwise
+*/
+export const checkStoreExists = async (): Promise<ActionResponse<boolean>> => {
+  try {
+    // 1. Get subdomain from headers
+    const headersList = await headers();
+    const host = headersList.get("host") || "";
+    const storeSubdomain = host.split(".")[0];
+
+    // 2. Check store exists by subdomain or custom domain
+    const storeExists = await db
+      .select({ id: storesTable.id })
+      .from(storesTable)
+      .where(or(eq(storesTable.store_subdomain, storeSubdomain), eq(storesTable.custom_domain, host)))
+      .limit(1)
+      .then((result) => result.length > 0);
+
+    // 3. Return response based on store existence
+    if (!storeExists) {
+      return { data: false, error: "Store not found", status: 404 };
+    }
+
+    return { data: true, status: 200, msg: "Store exists", error: null };
+  } catch (error) {
+    console.error("Error checking store existence:", error);
+    return { data: false, status: 500, error: handleDbError(error) };
+  }
+};

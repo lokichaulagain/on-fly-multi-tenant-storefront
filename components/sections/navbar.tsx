@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { Package, ShoppingCart } from "lucide-react";
 import MobileSheet from "@/components/mobile-sheet";
-import { useDomain } from "@/contexts/DomainContext";
+// import { useDomain } from "@/contexts/DomainContext";
 import { useCart } from "@/contexts/cart-provider";
 import { SignedIn, SignedOut, SignInButton, SignUpButton, useUser } from "@clerk/nextjs";
 import Image from "next/image";
@@ -15,7 +15,7 @@ export default function Navbar() {
   const { isSignedIn, user } = useUser();
 
   const pathname = usePathname();
-  const { subdomain, domain, storeName } = useDomain();
+  // const { subdomain, domain, storeName } = useDomain();
 
   // Replace / paths with your paths
   const navigation = [

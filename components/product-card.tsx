@@ -2,7 +2,7 @@ import { Heart, Share, RotateCcw, Plus, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import demoproduct from "@/public/products/1.jpg";
 import Image from "next/image";
-import { Badge } from "./badge";
+import { Badge } from "./ui/badge";
 
 export default function ProductCard() {
   return (

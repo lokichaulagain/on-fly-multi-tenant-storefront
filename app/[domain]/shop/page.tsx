@@ -2,18 +2,14 @@ import PageBanner from "@/components/page-banner";
 import ShopFilterSheet from "@/components/shop-filter-sheet";
 import ShopLeftSideBar from "@/components/shop-left-sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { getDomainInfo } from "@/utils/get-domain-info";
-import { getProductsByStoreId } from "@/actions/product";
+import { getActiveStoreProductsWithPreviewData } from "@/actions/product";
 import { IProductPreview } from "@/interfaces/product";
 import SingleProductCard from "@/components/single-product-card";
 
 const banner1 = "https://miniture.novaworks.net/wp-content/uploads/2023/10/m4_slide_03.jpg";
 
 export default async function Page() {
-  const { subdomain, storeData } = await getDomainInfo();
-
-  const response = await getProductsByStoreId(storeData?.id || "");
-
+  const response = await getActiveStoreProductsWithPreviewData();
   if (response.error || !response.data) {
     return <div>No products found</div>;
   }

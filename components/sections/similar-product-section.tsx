@@ -2,13 +2,11 @@ import * as React from "react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import SectionHeader from "../section-header";
 import SingleProductCard from "../single-product-card";
-import { getProductsByStoreId } from "@/actions/product";
-import { getDomainInfo } from "@/utils/get-domain-info";
+import { getActiveStoreProductsWithPreviewData } from "@/actions/product";
 import { IProductPreview } from "@/interfaces/product";
 
 export default async function SimilarProductSection() {
-  const { storeData } = await getDomainInfo();
-  const response = await getProductsByStoreId(storeData?.id || "");
+  const response = await getActiveStoreProductsWithPreviewData();
 
   if (response.error || !response.data) {
     return <div>No products found</div>;

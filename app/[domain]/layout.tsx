@@ -1,60 +1,41 @@
-
-import Image from "next/image";
-import Link from "next/link";
 import { ReactNode } from "react";
-
-import { notFound, redirect } from "next/navigation";
-
+import { redirect } from "next/navigation";
 import { Metadata } from "next";
-import { getStoreBySubdomain } from "@/actions/store";
+import { checkStoreExists, getStoreBySubdomain } from "@/actions/store";
 import Navbar from "@/components/sections/navbar";
 import Footer from "@/components/sections/footer";
-import { DomainProvider } from '@/contexts/DomainContext';
 import { CartProvider } from "@/contexts/cart-provider";
 
-// export async function generateMetadata({ params }: { params: Promise<{ domain: string }> }): Promise<Metadata | null> {
-export async function generateMetadata({ params }: any): Promise<Metadata | null> {
+export async function generateMetadata({ params }: { params: { domain: string } }): Promise<Metadata | null> {
   const domain = decodeURIComponent(params.domain);
-  console.log(domain, "This is domain");
-  const subdomain = domain.replace(/^https?:\/\//, "").split(".")[0];
-  // const data = await getSiteData(domain);
-  console.log(subdomain, "This is subdomain");
-  const response = await getStoreBySubdomain(subdomain);
-  console.log(response, "This is response");
+  const store_subdomain = domain.replace(/^https?:\/\//, "").split(".")[0];
+  console.log(store_subdomain, "This is store_subdomain from generateMetadata");
+
+  // Get store by subdomain
+  const response = await getStoreBySubdomain(store_subdomain);
+  const store = response.data;
+  console.log(store, "This is store from generateMetadata");
   if (response.error) {
     return null;
   }
-  // const {
-  //   name: title,
-  //   description,
-  //   image,
-  //   logo,
-  // } = data as {
-  //   name: string;
-  //   description: string;
-  //   image: string;
-  //   logo: string;
-  // };
-
-  // const { store_name, store_subdomain, store_phone_number } = response.data;
 
   return {
-    title: response.data?.store_name,
-    description: response.data?.store_name,
+    title: store?.store_name,
+    description: store?.store_name,
     openGraph: {
-      title: response.data?.store_name,
-      description: response.data?.store_name,
-      // images: [response.data?.store_logo],
+      title: store?.store_name,
+      description: store?.store_name,
+      images: [store?.store_logo || ""],
     },
     twitter: {
       card: "summary_large_image",
-      title: response.data?.store_name,
-      description: response.data?.store_name,
-      // images: [response.data?.store_logo],
+      title: store?.store_name,
+      description: store?.store_name,
+      images: [store?.store_logo || ""],
       creator: "@fenzora",
     },
-    // icons: [response.data?.store_logo],
-    metadataBase: new URL(`https://${subdomain}`),
+    icons: [store?.store_logo || ""],
+    metadataBase: new URL(`https://${store_subdomain}`),
     // Optional: Set canonical URL to custom domain if it exists
     // ...(params.domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) &&
     //   data.customDomain && {
@@ -65,24 +46,18 @@ export async function generateMetadata({ params }: any): Promise<Metadata | null
   };
 }
 
-// export default async function SiteLayout({ params, children }: { params: { domain: string }; children: ReactNode }) {
-export default async function SiteLayout({ params, children }: any) {
-  const domain = decodeURIComponent(params.domain);
-  // const subdomain = domain.replace(/^https?:\/\//, "").split(".")[0];
-  const subdomain = "loki";
+  export default async function SiteLayout({ children }: { children: ReactNode }) {
+  // Get active domain info
+  const response = await checkStoreExists();
+  if (response.error || response.data !== true) {
+    console.log("Domain info not found in SiteLayout");
 
-  const response = await getStoreBySubdomain(subdomain);
-
-  if (response.error) {
-    notFound();
+    //TODO: Redirect to create store page if store not found
+    redirect("https://fenzora.com");
   }
 
   return (
-    <DomainProvider
-      subdomain={subdomain}
-      domain={domain}
-      storeName={response.data?.store_name || null}
-    > <CartProvider>
+    <CartProvider>
       <div>
         <div className="fixed w-full z-50">
           <Navbar />
@@ -91,6 +66,5 @@ export default async function SiteLayout({ params, children }: any) {
         <Footer />
       </div>
     </CartProvider>
-    </DomainProvider>
   );
 }

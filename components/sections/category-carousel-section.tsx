@@ -3,7 +3,7 @@ import * as React from "react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import Image from "next/image";
 import Link from "next/link";
-import SectionHeader from "../section-header";
+import SectionHeader from "@/components/section-header"; 
 import { ICategoryPreview } from "@/interfaces/category";
 
 export default function CategoryCarouselSection({ categories }: { categories: ICategoryPreview[] }) {
@@ -30,10 +30,7 @@ export default function CategoryCarouselSection({ categories }: { categories: IC
                     />
                   </Link>
                 )}
-                <div className=" absolute top-4  left-4 group-hover:text-orange-500 duration-300 ">
-                  <p className=" font-medium">{category.name}</p>
-                  <p className=" text-sm">32 Items</p>
-                </div>
+                <p className=" font-medium absolute top-4  left-4 group-hover:text-orange-500 duration-300 ">{category.name}</p>
               </div>
             </CarouselItem>
           ))}

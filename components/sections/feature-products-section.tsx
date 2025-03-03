@@ -1,6 +1,6 @@
 import React from "react";
-import SectionHeader from "../section-header";
-import SingleProductCard from "../single-product-card";
+import SectionHeader from "@/components/section-header";  
+import SingleProductCard from "@/components/single-product-card";
 import { IProductPreview } from "@/interfaces/product";
 
 export default function FeatureProductSection({ products }: { products: IProductPreview[] }) {
