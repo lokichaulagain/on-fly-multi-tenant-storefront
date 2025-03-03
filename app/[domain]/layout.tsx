@@ -14,8 +14,9 @@ export async function generateMetadata({ params }: { params: { domain: string } 
   // Get store by subdomain
   const response = await getStoreBySubdomain(store_subdomain);
   const store = response.data;
+
   console.log(store, "This is store from generateMetadata");
-  if (response.error) {
+  if (response.error || !store) {
     return null;
   }
 
@@ -23,19 +24,20 @@ export async function generateMetadata({ params }: { params: { domain: string } 
     title: store?.store_name,
     description: store?.store_name,
     openGraph: {
-      title: store?.store_name,
-      description: store?.store_name,
-      images: [store?.store_logo || ""],
+      title: store.store_meta_title || store.store_name,
+      description: store.store_meta_description || store.store_name,
+      images: [store.store_meta_image || store.store_logo || ""], 
+      
     },
     twitter: {
       card: "summary_large_image",
-      title: store?.store_name,
-      description: store?.store_name,
-      images: [store?.store_logo || ""],
+      title: store.store_meta_title || store.store_name,
+      description: store.store_meta_description || store.store_name,
+      images: [store.store_meta_image || store.store_logo || ""],
       creator: "@fenzora",
     },
-    icons: [store?.store_logo || ""],
-    metadataBase: new URL(`https://${store_subdomain}`),
+    icons: [store.store_meta_image || store.store_logo || ""],
+    metadataBase: new URL(`https://${store_subdomain}`), 
     // Optional: Set canonical URL to custom domain if it exists
     // ...(params.domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) &&
     //   data.customDomain && {
