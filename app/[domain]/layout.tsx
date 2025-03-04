@@ -48,7 +48,8 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
     console.log("Domain info not found in SiteLayout");
 
     //TODO: Redirect to create store page if store not found
-    redirect("https://fenzora.com");
+    // redirect("https://fenzora.com");
+    redirect("/store-not-found");
   }
 
   const metadataResponse = await getActiveStoreMetadata();

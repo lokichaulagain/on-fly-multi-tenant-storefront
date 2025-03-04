@@ -3,7 +3,7 @@ import Link from "next/link";
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
-import { Package, ShoppingCart } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import MobileSheet from "@/components/mobile-sheet";
 import { useCart } from "@/contexts/cart-provider";
 import { SignedIn, SignedOut, SignInButton, SignUpButton, useUser } from "@clerk/nextjs";
@@ -32,7 +32,12 @@ export default function Navbar({ metadata }: { metadata: any }) {
             prefetch={true}
             href="/"
             className=" flex items-center gap-1 text-primary">
-            <Image src={metadata?.store_logo} alt="logo" width={32} height={32} />
+            <Image
+              src={metadata?.store_logo}
+              alt="logo"
+              width={32}
+              height={32}
+            />
             <p className=" text-2xl tracking-wide font-serif ">{metadata?.store_name}</p>
           </Link>
           <div className="md:hidden">
@@ -83,25 +88,31 @@ export default function Navbar({ metadata }: { metadata: any }) {
               <SignedOut>
                 <SignInButton
                   mode="modal"
-                  forceRedirectUrl={"/checkout"}>
+                  forceRedirectUrl={"/checkout"}
+                  appearance={{
+                    variables: {
+                      colorPrimary: "#2563eb",
+                      borderRadius: "0.2rem",
+                    },
+                  }}>
                   <Button variant={"link"}>Sign In</Button>
                 </SignInButton>
+
                 <SignUpButton
                   mode="modal"
-                  forceRedirectUrl={"/checkout"}>
+                  forceRedirectUrl={"/checkout"}
+                  appearance={{
+                    variables: {
+                      colorPrimary: "#2563eb",
+                      borderRadius: "0.2rem",
+                    },
+                  }}>
                   <Button>Sign Up</Button>
                 </SignUpButton>
               </SignedOut>
             </div>
           </div>
         </div>
-        {/* <div>
-          Current Store: {storeName}
-          <br />
-          Subdomain: {subdomain}
-          <br />
-          Domain: {domain}
-        </div> */}
       </div>
     </nav>
   );

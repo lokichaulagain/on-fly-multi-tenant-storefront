@@ -3,6 +3,7 @@ import React from "react";
 import { SignOutButton, UserProfile } from "@clerk/nextjs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { LoaderCircle } from "lucide-react";
 
 export default function ProfileSection() {
   return (
@@ -38,13 +39,19 @@ export default function ProfileSection() {
         </TabsContent>
         <TabsContent value="profile">
           <UserProfile
+            routing="hash"
+            fallback={
+              <LoaderCircle
+                size={16}
+                className="animate-spin"
+              />
+            }
             appearance={{
               variables: {
-                borderRadius: "4px",
-                colorBackground: "#ffffff",
+                colorPrimary: "#2563eb",
+                borderRadius: "0.2rem",
               },
             }}
-            routing="hash"
           />
         </TabsContent>
       </Tabs>
