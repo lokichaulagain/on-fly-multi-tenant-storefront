@@ -33,13 +33,8 @@ export async function getStoreBySubdomain(subdomain: string): Promise<ActionResp
   1. Get store metadata
 */
 
-export async function getActiveStoreMetadata(): Promise<ActionResponse<StoreMetadata>> {
+export async function getActiveStoreMetadata(store_subdomain: string): Promise<ActionResponse<StoreMetadata>> {
   try {
-    // 1. Get subdomain from headers
-    const headersList = await headers();
-    const host = headersList.get("host") || "";
-    const store_subdomain = host.split(".")[0];
-
     // 2. Get store metadata from store table
     const [store] = await db
       .select({

@@ -6,9 +6,20 @@ import Navbar from "@/components/sections/navbar";
 import Footer from "@/components/sections/footer";
 import { CartProvider } from "@/contexts/cart-provider";
 
-export async function generateMetadata(): Promise<Metadata | null> {
-  const response = await getActiveStoreMetadata();
+export async function generateMetadata({ params }: { params: { domain: string } }): Promise<Metadata | null> {
+
+  const domain = decodeURIComponent(params.domain);
+  const store_subdomain = domain.replace(/^https?:\/\//, "").split(".")[0];
+  console.log(store_subdomain, "This is store_subdomain from generateMetadata");
+
+  // // Get store by subdomain
+  // const response = await getStoreBySubdomain(store_subdomain);
+  // const store = response.data;
+
+  const response = await getActiveStoreMetadata(store_subdomain);
   const metadata = response.data;
+
+
   console.log(metadata, "This is metadata from generateMetadata");
   if (response.error || !metadata) {
     return null;
@@ -20,7 +31,8 @@ export async function generateMetadata(): Promise<Metadata | null> {
     openGraph: {
       title: metadata.store_meta_title || metadata.store_name,
       description: metadata.store_meta_description || metadata.store_name,
-      images: [metadata.store_meta_image || metadata.store_logo || ""],
+      images: [metadata.store_meta_image || metadata.store_logo || ""], 
+      
     },
     twitter: {
       card: "summary_large_image",
@@ -30,7 +42,7 @@ export async function generateMetadata(): Promise<Metadata | null> {
       creator: "@fenzora",
     },
     icons: [metadata.store_meta_image || metadata.store_logo || ""],
-    metadataBase: new URL(`https://${metadata.custom_domain}`),
+    metadataBase: new URL(`https://${metadata.custom_domain}`), 
     // Optional: Set canonical URL to custom domain if it exists
     // ...(params.domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) &&
     //   data.customDomain && {
@@ -41,11 +53,12 @@ export async function generateMetadata(): Promise<Metadata | null> {
   };
 }
 
-export default async function SiteLayout({ children }: { children: ReactNode }) {
-  // Check if store exists in database
+  export default async function SiteLayout({ children }: { children: ReactNode }) {
+  // Get active domain info
   const response = await checkStoreExists();
   if (response.error || response.data !== true) {
     console.log("Domain info not found in SiteLayout");
+
     //TODO: Redirect to create store page if store not found
     redirect("https://fenzora.com");
   }
