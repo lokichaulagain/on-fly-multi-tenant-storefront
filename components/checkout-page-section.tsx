@@ -14,14 +14,13 @@ import { ICartItem, useCart } from "@/contexts/cart-provider";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { createOrder } from "@/actions/order";
 import { toast } from "sonner";
-import { getDomainInfo } from "@/utils/get-domain-info";
-import { OrderFormValues, orderFormSchema } from "@/form-schemas/order";
+import { orderFormSchema } from "@/form-schemas/order";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function CheckoutPageSection({ store_id }: { store_id: string }) {
-  const { isLoaded, isSignedIn, user } = useUser();
-  console.log(user, "its a user");
+    const { isLoaded, isSignedIn, user } = useUser();
+    console.log(user, "its a user");
 
   const router = useRouter();
   const { cart, isCartOpen, setIsCartOpen, removeFromCart, increaseQuantity, decreaseQuantity, clearCart } = useCart();

@@ -1,13 +1,19 @@
+import { getActiveDomainInfo } from "@/actions/store";
 import CheckoutPageSection from "@/components/checkout-page-section";
-import { getDomainInfo } from "@/utils/get-domain-info";
 
 export default async function Page() {
-  const { subdomain, storeData } = await getDomainInfo();
-  const store_id = storeData?.id ;
+  const response = await getActiveDomainInfo();
+  const store_id = response.data?.id;
+  
+
+  if (response.error || !store_id) {
+    return <div>No store found</div>;
+  }
+ 
 
   return (
     <div>
-      <CheckoutPageSection store_id={store_id as string} />
+      <CheckoutPageSection store_id={store_id } />
     </div>
   );
 }

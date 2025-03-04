@@ -33,6 +33,7 @@ export async function getActiveStoreMetadata(): Promise<ActionResponse<StoreMeta
         store_meta_title: storesTable.store_meta_title,
         store_meta_description: storesTable.store_meta_description,
         store_meta_image: storesTable.store_meta_image,
+        store_description: storesTable.store_description,
       })
       .from(storesTable)
       .where(eq(storesTable.store_subdomain, store_subdomain))
