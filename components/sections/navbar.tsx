@@ -29,6 +29,7 @@ export default function Navbar({ metadata }: { metadata: any }) {
       <div className="items-center w-full container px-4 md:px-24 mx-auto md:flex">
         <div className="flex items-center justify-between    md:block">
           <Link
+            prefetch={true}
             href="/"
             className=" flex items-center gap-1 text-primary">
             <Image src={metadata?.store_logo} alt="logo" width={32} height={32} />
@@ -46,6 +47,7 @@ export default function Navbar({ metadata }: { metadata: any }) {
                   key={idx}
                   className=" hover:text-primary font-semibold">
                   <Link
+                    prefetch={true}
                     href={item.path}
                     className={`${pathname === item.path ? " text-primary" : ""}`}>
                     {item.title}
@@ -63,7 +65,9 @@ export default function Navbar({ metadata }: { metadata: any }) {
               </Link>
 
               <SignedIn>
-                <Link href="/profile">
+                <Link
+                  prefetch={true}
+                  href="/profile">
                   <Button variant={"link"}>
                     <Image
                       src={user?.imageUrl || "/placeholder.svg"}
