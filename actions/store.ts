@@ -8,19 +8,19 @@ import { headers } from "next/headers";
 import { ActiveDomainInfo, StoreMetadata } from "@/interfaces/store";
 import { unstable_cache } from "next/cache";
 
+// Cache configuration
+const CACHE_REVALIDATION_TIME = 60 * 60 * 24; // 24 hours
 
 /*
-  Get store metadata action
-  1. Get subdomain from headers
-  2. Get store metadata from store table
+  Get active store metadata action with cache
+  1. Get store subdomain from headers
+  2. Get store metadata from cache or database
   3. Return store metadata
 */
 export async function getActiveStoreMetadata(): Promise<ActionResponse<StoreMetadata>> {
   try {
-    // 1. Get subdomain from headers
-    const headersList = await headers();
-    const host = headersList.get("host") || "";
-    const store_subdomain = host.split(".")[0];
+    // 1. Get store subdomain from headers
+    const store_subdomain = await getStoreSubdomainFromHeaders();
 
     // 2. Get store metadata from store table
     const getStoreMetadata = unstable_cache(
@@ -49,18 +49,19 @@ export async function getActiveStoreMetadata(): Promise<ActionResponse<StoreMeta
         // Cache tags for invalidation
         tags: [`active-store-metadata-${store_subdomain}`],
         // Cache revalidation time
-        revalidate: 60 * 60 * 24, // 24 hours
+        revalidate: CACHE_REVALIDATION_TIME,
       }
     );
 
+    // 3. Get store metadata
     const store = await getStoreMetadata();
 
-    // 3. Check if store exists
+    // 4. Check if store exists
     if (!store) {
       return { data: null, error: "Store not found", status: 404 };
     }
 
-    // 4. Return the store metadata
+    // 5. Return the store metadata
     return {
       data: store,
       status: 200,
@@ -73,22 +74,43 @@ export async function getActiveStoreMetadata(): Promise<ActionResponse<StoreMeta
   }
 }
 /*
-  Get store ID by store_subdomain action
-  1. Get store ID by store_subdomain
+  Get store ID by store_subdomain action with cache
+  1. Get store ID by store_subdomain from cache or database
 */
 export async function getStoreIdBySubdomain(store_subdomain: string): Promise<ActionResponse<string>> {
   try {
-    const [store] = await db
-      .select({
-        id: storesTable.id,
-      })
-      .from(storesTable)
-      .where(eq(storesTable.store_subdomain, store_subdomain));
+    // 1. Get store ID by store_subdomain from cache or database
+    const getStoreId = unstable_cache(
+      async () => {
+        const [store] = await db
+          .select({
+            id: storesTable.id,
+          })
+          .from(storesTable)
+          .where(eq(storesTable.store_subdomain, store_subdomain))
+          .limit(1);
 
+        return store;
+      },
+      // Cache key unique identifier for the store
+      [`store-id-${store_subdomain}`],
+      {
+        // Cache tags for invalidation
+        tags: [`store-id-${store_subdomain}`],
+        // Cache revalidation time
+        revalidate: CACHE_REVALIDATION_TIME,
+      }
+    );
+
+    // 2. Get store ID
+    const store = await getStoreId();
+
+    // 3. Check if store exists
     if (!store) {
       return { data: null, error: "Store not found", status: 404 };
     }
 
+    // 4. Return store ID
     return { data: store.id, status: 200, msg: "Store ID fetched successfully", error: null };
   } catch (error: unknown) {
     console.log("Error fetching store ID by store_subdomain :", error);
@@ -97,36 +119,51 @@ export async function getStoreIdBySubdomain(store_subdomain: string): Promise<Ac
 }
 
 /*
-  Get active domain info action
+  Get active domain info action with cache
   1. Get subdomain from headers
-  2. Get domain info by subdomain from store table
+  2. Get domain info by subdomain from cache or database
   3. Return domain info
 */
 
 export async function getActiveDomainInfo(): Promise<ActionResponse<ActiveDomainInfo>> {
   try {
-    // 1. Get subdomain from headers
-    const headersList = await headers();
-    const host = headersList.get("host") || "";
-    const store_subdomain = host.split(".")[0];
+    // 1. Get store subdomain from headers
+    const store_subdomain = await getStoreSubdomainFromHeaders();
 
-    // 2. Get domain info by subdomain from store table
-    const [store] = await db
-      .select({
-        id: storesTable.id,
-        store_name: storesTable.store_name,
-        store_subdomain: storesTable.store_subdomain,
-        custom_domain: storesTable.custom_domain,
-      })
-      .from(storesTable)
-      .where(eq(storesTable.store_subdomain, store_subdomain));
+    // 2. Get domain info by subdomain from cache or database
+    const getDomainInfo = unstable_cache(
+      async () => {
+        const [store] = await db
+          .select({
+            id: storesTable.id,
+            store_name: storesTable.store_name,
+            store_subdomain: storesTable.store_subdomain,
+            custom_domain: storesTable.custom_domain,
+          })
+          .from(storesTable)
+          .where(eq(storesTable.store_subdomain, store_subdomain));
 
-    // 3. Return domain info
+        return store;
+      },
+      // Cache key unique identifier for the store
+      [`active-domain-info-${store_subdomain}`],
+      {
+        // Cache tags for invalidation
+        tags: [`active-domain-info-${store_subdomain}`],
+        // Cache revalidation time
+        revalidate: CACHE_REVALIDATION_TIME,
+      }
+    );
+
+    // 3. Get domain info
+    const store = await getDomainInfo();
+
+    // 4. Check if store exists
     if (!store) {
       return { data: null, error: "Store not found", status: 404 };
     }
 
-    // 4. Return domain info
+    // 5. Return domain info
     return { data: store, status: 200, msg: "Active domain info fetched successfully", error: null };
   } catch (error) {
     console.log("Error fetching active domain info :", error);
@@ -135,26 +172,22 @@ export async function getActiveDomainInfo(): Promise<ActionResponse<ActiveDomain
 }
 
 /*
-  Check store exists action
-  1. Check store exists by subdomain or custom domain
-  2. Return true if store exists, false otherwise
+  Check store exists action with cache
+  1. Get store subdomain from headers
+  2. Check store exists by subdomain or custom domain from cache or database
+  3. Return true if store exists, false otherwise
 */
 export const checkStoreExists = async (): Promise<ActionResponse<boolean>> => {
   try {
-    // 1. Get subdomain from headers
-    const headersList = await headers();
-    const host = headersList.get("host") || "";
-    const store_subdomain = host.split(".")[0];
+    // 1. Get store subdomain from headers
+    const store_subdomain = await getStoreSubdomainFromHeaders();
 
-    // 2. Check store exists by subdomain or custom domain
+    // 2. Check store exists by subdomain or custom domain from cache or database
     const checkStoreExists = unstable_cache(
       async () => {
-        return await db
-          .select({ id: storesTable.id })
-          .from(storesTable)
-          .where(or(eq(storesTable.store_subdomain, store_subdomain), eq(storesTable.custom_domain, host)))
-          .limit(1)
-          .then((result) => result.length > 0);
+        const [store] = await db.select({ id: storesTable.id }).from(storesTable).where(eq(storesTable.store_subdomain, store_subdomain)).limit(1);
+
+        return store;
       },
       // Cache key unique identifier for the store
       [`check-store-exists-${store_subdomain}`],
@@ -163,20 +196,33 @@ export const checkStoreExists = async (): Promise<ActionResponse<boolean>> => {
         // Cache tags for invalidation
         tags: [`check-store-exists-${store_subdomain}`],
         // Cache revalidation time
-        revalidate: 60 * 60 * 24, // 24 hours
+        revalidate: CACHE_REVALIDATION_TIME,
       }
     );
 
+    // 3. Get store exists
     const storeExists = await checkStoreExists();
 
-    // 3. Return response based on store existence
+    // 4. Check if store exists
     if (!storeExists) {
       return { data: false, error: "Store not found", status: 404 };
     }
 
+    // 5. Return true if store exists, false otherwise
     return { data: true, status: 200, msg: "Store exists", error: null };
   } catch (error) {
     console.error("Error checking store existence:", error);
     return { data: false, status: 500, error: handleDbError(error) };
   }
 };
+
+/*
+  Get store subdomain from headers
+  1. Get host from headers
+  2. Return store subdomain
+*/
+export async function getStoreSubdomainFromHeaders(): Promise<string> {
+  const headersList = await headers();
+  const host = headersList.get("host") || "";
+  return host.split(".")[0];
+}

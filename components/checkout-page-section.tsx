@@ -19,8 +19,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function CheckoutPageSection({ store_id }: { store_id: string }) {
-    const { isLoaded, isSignedIn, user } = useUser();
-    console.log(user, "its a user");
+  const { isLoaded, isSignedIn, user } = useUser();
+  console.log(user, "its a user");
 
   const router = useRouter();
   const { cart, isCartOpen, setIsCartOpen, removeFromCart, increaseQuantity, decreaseQuantity, clearCart } = useCart();
@@ -55,8 +55,6 @@ export default function CheckoutPageSection({ store_id }: { store_id: string }) 
       }
 
       const orderPayload = {
-        user_id: user.id,
-        store_id,
         shipping_address: {
           full_name: values.full_name,
           email_address: values.email_address,
@@ -74,8 +72,6 @@ export default function CheckoutPageSection({ store_id }: { store_id: string }) 
           product_image: item.image || "",
           product_price: item.price || 0,
           product_quantity: item.quantity,
-          user_id: user.id,
-          store_id: store_id,
         })),
         shipping_cost: values.shipping_cost || 0,
       };

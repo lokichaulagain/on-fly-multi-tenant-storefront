@@ -1,24 +1,27 @@
 "use server";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { db } from "@/lib/db/drizzle";
-import { productsTable, storesTable } from "@/lib/db/schema";
+import { productsTable } from "@/lib/db/schema";
 import { handleDbError } from "@/utils/db-error";
 import { ActionResponse } from ".";
 import { IProductPreview } from "@/interfaces/product";
-import { headers } from "next/headers";
 import { ENUM_PRODUCT_STATUS } from "@/enums";
 import { unstable_cache } from "next/cache";
-import { getStoreIdBySubdomain } from "./store";
+import { getStoreIdBySubdomain, getStoreSubdomainFromHeaders } from "./store";
+
+// Cache configuration
+const CACHE_REVALIDATION_TIME = 60 * 60 * 24; // 24 hours
+
 /*
-  Get Active store products action with preview data
-  1. Get active store products with preview data , which status is active and sort by created_at desc
+  Get Active store products action with preview data with cache
+  1. Get store subdomain from headers
+  2. Get store id by subdomain
+  3. Get active store products with preview data sort by created_at desc
 */
 export async function getActiveStoreProductsWithPreviewData(): Promise<ActionResponse<IProductPreview[]>> {
   try {
-    // 1. Get subdomain from headers
-    const headersList = await headers();
-    const host = headersList.get("host") || "";
-    const store_subdomain = host.split(".")[0];
+    // 1. Get store subdomain from headers
+    const store_subdomain = await getStoreSubdomainFromHeaders();
 
     // 2. Get store id by subdomain
     const response = await getStoreIdBySubdomain(store_subdomain);
@@ -28,7 +31,7 @@ export async function getActiveStoreProductsWithPreviewData(): Promise<ActionRes
       return { data: null, status: 404, msg: "Store not found", error: "Store not found" };
     }
 
-    // 2. Get active store products with preview data sort by created_at desc
+    // 3. Get active store products with preview data sort by created_at desc
     const getProducts = unstable_cache(
       async () => {
         return await db
@@ -49,14 +52,14 @@ export async function getActiveStoreProductsWithPreviewData(): Promise<ActionRes
         // Cache tags for invalidation
         tags: [`active-store-products-${store_subdomain}`],
         // Cache revalidation time
-        revalidate: 60 * 60 * 24, // 24 hours
+        revalidate: CACHE_REVALIDATION_TIME,
       }
     );
 
-    // 3. Get products
-    const products = await getProducts(); 
+    // 4. Get products
+    const products = await getProducts();
 
-    // 2. Return products
+    // 5. Return products with preview data
     return { data: products, status: 200, msg: "Products fetched successfully", error: null };
   } catch (error: unknown) {
     console.error("Error fetching active store products:", error);
@@ -64,11 +67,20 @@ export async function getActiveStoreProductsWithPreviewData(): Promise<ActionRes
   }
 }
 
+/*
+  Get product by slug action with cache
+  1. Get product by slug from cache or database
+  2. Return product
+*/
 export async function getProductBySlug(slug: string): Promise<ActionResponse<any>> {
   try {
-    const products = await db.select().from(productsTable).where(eq(productsTable.slug, slug));
-    return { data: products[0], status: 200, msg: "Product fetched successfully", error: null };
+    // 1. Get product by slug from cache or database
+    const [product] = await db.select().from(productsTable).where(eq(productsTable.slug, slug)).limit(1);
+
+    // 2. Return product
+    return { data: product, status: 200, msg: "Product fetched successfully", error: null };
   } catch (error: unknown) {
+    console.error("Error fetching product by slug:", error);
     return { data: null, status: 500, error: handleDbError(error) };
   }
 }
