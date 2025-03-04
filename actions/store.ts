@@ -5,7 +5,8 @@ import { Stores, storesTable } from "@/lib/db/schema";
 import { handleDbError } from "@/utils/db-error";
 import { ActionResponse } from ".";
 import { headers } from "next/headers";
-import { ActiveDomainInfo } from "@/interfaces/store";
+import { ActiveDomainInfo, StoreMetadata } from "@/interfaces/store";
+import { Metadata } from "next";
 
 /*
   Get store by subdomain action
@@ -27,6 +28,51 @@ export async function getStoreBySubdomain(subdomain: string): Promise<ActionResp
   }
 }
 
+/*
+  Get store metadata action
+  1. Get store metadata
+*/
+
+export async function getActiveStoreMetadata(): Promise<ActionResponse<StoreMetadata>> {
+  try {
+    // 1. Get subdomain from headers
+    const headersList = await headers();
+    const host = headersList.get("host") || "";
+    const store_subdomain = host.split(".")[0];
+
+    // 2. Get store metadata from store table
+    const [store] = await db
+      .select({
+        id: storesTable.id,
+        store_name: storesTable.store_name,
+        store_subdomain: storesTable.store_subdomain,
+        custom_domain: storesTable.custom_domain,
+        store_logo: storesTable.store_logo,
+        store_meta_title: storesTable.store_meta_title,
+        store_meta_description: storesTable.store_meta_description,
+        store_meta_image: storesTable.store_meta_image,
+      })
+      .from(storesTable)
+      .where(eq(storesTable.store_subdomain, store_subdomain))
+      .limit(1);
+
+    // 3. Check if store exists
+    if (store) {
+      return { data: null, error: "Store not found", status: 404 };
+    }
+
+    // 4. Return the store metadata
+    return {
+      data: store,
+      status: 200,
+      msg: "Store metadata fetched successfully",
+      error: null,
+    };
+  } catch (error) {
+    console.log("Error fetching store metadata :", error);
+    return { data: null, status: 500, error: handleDbError(error) };
+  }
+}
 /*
   Get store ID by store_subdomain action
   1. Get store ID by store_subdomain
