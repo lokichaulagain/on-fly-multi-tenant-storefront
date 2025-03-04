@@ -2,8 +2,16 @@ import React from "react";
 import SectionHeader from "@/components/section-header";
 import SingleProductCard from "@/components/single-product-card";
 import { IProductPreview } from "@/interfaces/product";
+import { getActiveStoreProductsWithPreviewData } from "@/actions/product";
 
-export default function FeatureProductSection({ products }: { products: IProductPreview[] }) {
+export default async function FeatureProductSection() {
+  const response = await getActiveStoreProductsWithPreviewData();
+  const products = response?.data;
+
+  if (response.error || !products) {
+    return <p>No products found</p>;
+  }
+  
   return (
     <div>
       <SectionHeader title="Feature Products" />

@@ -1,27 +1,59 @@
-import MiddleBannerSection from "@/components/sections/middle-banner-section";
-import FeatureProductSection from "@/components/sections/feature-products-section";
-import NewArrrivalSection from "@/components/sections/new-arrival-section";
-import React from "react";
-import CategoryCarouselSection from "@/components/sections/category-carousel-section";
-import HeroSection from "@/components/sections/hero-section";
-import { getActiveStoreProductsWithPreviewData } from "@/actions/product";
-import { getActiveStoreCategoriesWithPreviewData } from "@/actions/category";
+import { LoaderCircle } from "lucide-react";
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
+
+/*
+1.Code Splitting is the technique of splitting the code into smaller chunks that means load the components when they are needed , it reduces the initial load time of the page.
+
+*/
+const HeroSection = dynamic(() => import("@/components/sections/hero-section"), {
+  loading: () => {
+    return <div>Loading...</div>;
+  },
+});
+const CategoryCarouselSection = dynamic(() => import("@/components/sections/category-carousel-section"), {
+  loading: () => {
+    return <div>Loading...</div>;
+  },
+});
+const FeatureProductSection = dynamic(() => import("@/components/sections/feature-products-section"), {
+  loading: () => {
+    return <div>Loading...</div>;
+  },
+});
+const MiddleBannerSection = dynamic(() => import("@/components/sections/middle-banner-section"), {
+  loading: () => {
+    return <div>Loading...</div>;
+  },
+});
+const NewArrrivalSection = dynamic(() => import("@/components/sections/new-arrival-section"), {
+  loading: () => {
+    return <div>Loading...</div>;
+  },
+});
 
 export default async function Page() {
-  const categoriesResponse = await getActiveStoreCategoriesWithPreviewData();
-  const productsResponse = await getActiveStoreProductsWithPreviewData();
-
-  const categories = categoriesResponse?.data || [];
-  const products = productsResponse?.data || [];
-  console.log(products, "products");
-
   return (
     <div className="w-full container px-4 md:px-24 mx-auto space-y-12">
+      <Suspense fallback={<LoaderCircle size={16} className="animate-spin" />}>
       <HeroSection />
-      <CategoryCarouselSection categories={categories || []} />
-      <FeatureProductSection products={products || []} />
-      <MiddleBannerSection />
-      <NewArrrivalSection products={products || []} />
+      </Suspense>
+
+      <Suspense fallback={<LoaderCircle size={16} className="animate-spin" />}>
+        <CategoryCarouselSection />
+      </Suspense>
+
+      <Suspense fallback={<LoaderCircle size={16} className="animate-spin" />}>
+        <FeatureProductSection />
+      </Suspense>
+
+      <Suspense fallback={<LoaderCircle size={16} className="animate-spin" />}>
+        <MiddleBannerSection />
+      </Suspense>
+
+      <Suspense fallback={<LoaderCircle size={16} className="animate-spin" />}>
+      <NewArrrivalSection />
+      </Suspense>
     </div>
   );
 }
