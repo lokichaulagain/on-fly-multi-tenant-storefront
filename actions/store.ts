@@ -1,36 +1,17 @@
 "use server";
 import { eq, or } from "drizzle-orm";
 import { db } from "@/lib/db/drizzle";
-import { Stores, storesTable } from "@/lib/db/schema";
+import { storesTable } from "@/lib/db/schema";
 import { handleDbError } from "@/utils/db-error";
 import { ActionResponse } from ".";
 import { headers } from "next/headers";
 import { ActiveDomainInfo, StoreMetadata } from "@/interfaces/store";
-import { Metadata } from "next";
-
-/*
-  Get store by subdomain action
-  1. Get store by subdomain
-*/
-export async function getStoreBySubdomain(subdomain: string): Promise<ActionResponse<Stores>> {
-  try {
-    // 1. Get store by subdomain
-    const [store] = await db.select().from(storesTable).where(eq(storesTable.store_subdomain, subdomain));
-    if (!store) {
-      return { data: null, error: "Store not found", status: 404 };
-    }
-
-    // 2. Return store
-    return { data: store, status: 200, msg: "Store fetched successfully", error: null };
-  } catch (error: unknown) {
-    console.log("Error fetching store by subdomain :", error);
-    return { data: null, status: 500, error: handleDbError(error) };
-  }
-}
 
 /*
   Get store metadata action
-  1. Get store metadata
+  1. Get subdomain from headers
+  2. Get store metadata from store table
+  3. Return store metadata
 */
 
 export async function getActiveStoreMetadata(): Promise<ActionResponse<StoreMetadata>> {

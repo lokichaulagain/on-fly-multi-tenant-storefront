@@ -5,12 +5,11 @@ import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { Package, ShoppingCart } from "lucide-react";
 import MobileSheet from "@/components/mobile-sheet";
-// import { useDomain } from "@/contexts/DomainContext";
 import { useCart } from "@/contexts/cart-provider";
 import { SignedIn, SignedOut, SignInButton, SignUpButton, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 
-export default function Navbar() {
+export default function Navbar({ metadata }: { metadata: any }) {
   const { cart } = useCart();
   const { isSignedIn, user } = useUser();
 
@@ -32,8 +31,8 @@ export default function Navbar() {
           <Link
             href="/"
             className=" flex items-center gap-1 text-primary">
-            <Package />
-            <p className=" text-2xl tracking-wide font-serif ">Miniture</p>
+            <Image src={metadata?.store_logo} alt="logo" width={32} height={32} />
+            <p className=" text-2xl tracking-wide font-serif ">{metadata?.store_name}</p>
           </Link>
           <div className="md:hidden">
             <MobileSheet navigation={navigation} />

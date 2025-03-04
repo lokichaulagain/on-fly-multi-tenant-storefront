@@ -1,15 +1,16 @@
 
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-
-export default function Footer() {
+import Image from "next/image";
+export default function Footer({ metadata }: { metadata: any }) {
   return (
-    <footer className="footerbg py-12  bg-primary text-white/90 ">
+    <footer className="footerbg py-12  bg-primary text-white/90 mt-16 ">
       <div className=" w-full container mx-auto space-y-10 ">
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3 gap-y-8 md:gap-8 py-10 max-w-sm mx-auto sm:max-w-3xl lg:max-w-full ">
           <div className="col-span-full mb-10 lg:col-span-2 lg:mb-0">
-          <p className=" text-3xl tracking-wide font-serif text-center md:text-start   ">Miniture</p>
-            <p className="pt-5 text-sm  lg:max-w-md text-center lg:text-left tracking-wide leading-relaxed">Your exclusive distributor of top-tier cosmetics in Nepal, bringing you unparalleled beauty and quality. Embrace excellence with our premium skincare solutions, now available nationwide.</p>
+            <Image src={metadata?.store_logo} alt="logo" width={32} height={32} />
+          <p className=" text-3xl tracking-wide font-serif text-center md:text-start   ">{metadata?.store_name}</p>
+            <p className="pt-5 text-sm  lg:max-w-md text-center lg:text-left tracking-wide leading-relaxed">{metadata?.store_description}</p>
           </div>
           
           <div className="lg:mx-auto text-left ">

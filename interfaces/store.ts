@@ -5,8 +5,6 @@ export interface ActiveDomainInfo {
   custom_domain: string | null;
 }
 
-
-
 export interface StoreMetadata {
   id: string;
   store_name: string;
@@ -16,4 +14,5 @@ export interface StoreMetadata {
   store_meta_title: string | null;
   store_meta_description: string | null;
   store_meta_image: string | null;
+  store_description: string | null;
 }

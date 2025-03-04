@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { Metadata } from "next";
-import { checkStoreExists, getActiveStoreMetadata, getStoreBySubdomain } from "@/actions/store";
+import { checkStoreExists, getActiveStoreMetadata } from "@/actions/store";
 import Navbar from "@/components/sections/navbar";
 import Footer from "@/components/sections/footer";
 import { CartProvider } from "@/contexts/cart-provider";
@@ -9,9 +9,9 @@ import { CartProvider } from "@/contexts/cart-provider";
 export async function generateMetadata(): Promise<Metadata | null> {
   const response = await getActiveStoreMetadata();
   const metadata = response.data;
-
   if (response.error || !metadata) {
-    return null; // or return a fallback Metadata object
+    // TODO: Redirect to create store page if store not found or return a fallback Metadata object
+    return null;
   }
 
   return {
@@ -51,14 +51,17 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
     redirect("https://fenzora.com");
   }
 
+  const metadataResponse = await getActiveStoreMetadata();
+  console.log(metadataResponse, "This is metadata from SiteLayout");
+
   return (
     <CartProvider>
       <div>
         <div className="fixed w-full z-50">
-          <Navbar />
+          <Navbar metadata={metadataResponse.data} />
         </div>
         <div className="pt-16">{children}</div>
-        <Footer />
+        <Footer metadata={metadataResponse.data} />
       </div>
     </CartProvider>
   );

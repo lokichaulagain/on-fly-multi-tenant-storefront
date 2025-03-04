@@ -23,6 +23,7 @@ export const storesTable = pgTable(
     store_phone_number: varchar("store_phone_number", { length: 10 }).notNull(),
     store_address: varchar("store_address", { length: 100 }).notNull(),
     user_id: varchar("user_id", { length: 255 }).notNull(),
+    store_description: varchar("store_description", { length: 2000 }),
 
     // 🛒 Optional fields
     store_logo: varchar("store_logo", { length: 255 }).default(DEFAULT_STORE_LOGO),

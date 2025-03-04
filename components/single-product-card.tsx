@@ -18,8 +18,8 @@ export default function SingleProductCard({ product }: { product: IProductPrevie
         />
       </div>
       <p className="transition-colors duration-300 group-hover:text-orange-500">{product.name}</p>
-      <p className="text-sm transition-colors duration-300 group-hover:text-orange-500">{product.selling_price}</p>
-      <p className="text-sm transition-colors duration-300 group-hover:text-orange-500">{product.crossed_price}</p>
+      {/* <p className="text-sm transition-colors duration-300 group-hover:text-orange-500">{product.selling_price}</p>
+      <p className="text-sm transition-colors duration-300 group-hover:text-orange-500">{product.crossed_price}</p> */}
     </Link>
   );
 }

@@ -5,8 +5,8 @@ import { productsTable, storesTable } from "@/lib/db/schema";
 import { handleDbError } from "@/utils/db-error";
 import { ActionResponse } from ".";
 import { IProductPreview } from "@/interfaces/product";
-import { ENUM_PRODUCT_STATUS } from "@/enums";
 import { headers } from "next/headers";
+import { ENUM_PRODUCT_STATUS } from "@/enums";
 /*
   Get Active store products action with preview data
   1. Get active store products with preview data , which status is active and sort by created_at desc
@@ -45,7 +45,7 @@ export async function getActiveStoreProductsWithPreviewData(): Promise<ActionRes
         created_at: productsTable.created_at,
       })
       .from(productsTable)
-      .where(and(eq(productsTable.store_id, store.id), eq(productsTable.status, ENUM_PRODUCT_STATUS.ACTIVE)))
+      .where(and(eq(productsTable.store_id, store.id), eq(productsTable.status, ENUM_PRODUCT_STATUS.ACTIVE))) 
       .orderBy(desc(productsTable.created_at));
 
     // 2. Return products
