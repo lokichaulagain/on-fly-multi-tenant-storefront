@@ -9,9 +9,6 @@ import { IOrderCreate } from "@/interfaces/order";
 import { createOrderNumber } from "@/lib/create-order-number";
 import { getStoreIdBySubdomain, getStoreSubdomainFromHeaders } from "./store";
 
-// Cache configuration
-const CACHE_REVALIDATION_TIME = 60 * 60 * 24; // 24 hours
-
 /*
   Create order action
   1. Only authenticated users can create orders

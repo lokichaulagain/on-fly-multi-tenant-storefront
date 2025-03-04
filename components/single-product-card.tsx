@@ -13,6 +13,7 @@ const SingleProductCard = memo(({ product }: { product: IProductPreview }) => {
   return (
     <Link
       href={`/shop/${product.slug}`}
+      prefetch={true}
       className="space-y-1 group">
       <div className="lg:h-96 rounded-sm overflow-hidden">
         <Image

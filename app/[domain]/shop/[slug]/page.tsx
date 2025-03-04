@@ -8,6 +8,7 @@ import SimilarProductSection from "@/components/sections/similar-product-section
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const response = await getProductBySlug(slug);
+  console.log("prefetch data here", response);
   
   if (response.error || !response.data) {
     return <div>Product not found</div>;

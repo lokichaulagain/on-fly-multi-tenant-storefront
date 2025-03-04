@@ -74,6 +74,7 @@ export async function getActiveStoreProductsWithPreviewData(): Promise<ActionRes
 */
 export async function getProductBySlug(slug: string): Promise<ActionResponse<any>> {
   try {
+    console.log("hereeeeee")
     // 1. Get product by slug from cache or database
     const [product] = await db.select().from(productsTable).where(eq(productsTable.slug, slug)).limit(1);
 
