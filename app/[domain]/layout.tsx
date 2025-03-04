@@ -1,48 +1,43 @@
 import { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { Metadata } from "next";
-import { checkStoreExists, getActiveStoreMetadata, getStoreBySubdomain } from "@/actions/store";
+import { checkStoreExists, getStoreBySubdomain } from "@/actions/store";
 import Navbar from "@/components/sections/navbar";
 import Footer from "@/components/sections/footer";
 import { CartProvider } from "@/contexts/cart-provider";
 
 export async function generateMetadata({ params }: { params: { domain: string } }): Promise<Metadata | null> {
-
   const domain = decodeURIComponent(params.domain);
   const store_subdomain = domain.replace(/^https?:\/\//, "").split(".")[0];
   console.log(store_subdomain, "This is store_subdomain from generateMetadata");
 
-  // // Get store by subdomain
-  // const response = await getStoreBySubdomain(store_subdomain);
-  // const store = response.data;
+  // Get store by subdomain
+  const response = await getStoreBySubdomain(store_subdomain);
+  const store = response.data;
 
-  const response = await getActiveStoreMetadata(store_subdomain);
-  const metadata = response.data;
-
-
-  console.log(metadata, "This is metadata from generateMetadata");
-  if (response.error || !metadata) {
+  console.log(store, "This is store from generateMetadata");
+  if (response.error || !store) {
     return null;
   }
 
   return {
-    title: metadata?.store_name,
-    description: metadata?.store_name,
+    title: store?.store_name,
+    description: store?.store_name,
     openGraph: {
-      title: metadata.store_meta_title || metadata.store_name,
-      description: metadata.store_meta_description || metadata.store_name,
-      images: [metadata.store_meta_image || metadata.store_logo || ""], 
+      title: store.store_meta_title || store.store_name,
+      description: store.store_meta_description || store.store_name,
+      images: [store.store_meta_image || store.store_logo || ""], 
       
     },
     twitter: {
       card: "summary_large_image",
-      title: metadata.store_meta_title || metadata.store_name,
-      description: metadata.store_meta_description || metadata.store_name,
-      images: [metadata.store_meta_image || metadata.store_logo || ""],
+      title: store.store_meta_title || store.store_name,
+      description: store.store_meta_description || store.store_name,
+      images: [store.store_meta_image || store.store_logo || ""],
       creator: "@fenzora",
     },
-    icons: [metadata.store_meta_image || metadata.store_logo || ""],
-    metadataBase: new URL(`https://${metadata.custom_domain}`), 
+    icons: [store.store_meta_image || store.store_logo || ""],
+    metadataBase: new URL(`https://${store_subdomain}`), 
     // Optional: Set canonical URL to custom domain if it exists
     // ...(params.domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) &&
     //   data.customDomain && {
