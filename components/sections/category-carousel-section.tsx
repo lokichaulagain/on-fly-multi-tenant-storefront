@@ -19,7 +19,7 @@ export default async function CategoryCarouselSection() {
         <CarouselContent>
           {categories?.map((category: ICategoryPreview) => (
             <CarouselItem
-              key={category.id}
+              key={category.slug}
               className="md:basis-1/2 lg:basis-1/4 group shadow-sm">
               <SingleCategoryCard category={category} />
             </CarouselItem>

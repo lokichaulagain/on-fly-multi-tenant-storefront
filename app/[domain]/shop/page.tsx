@@ -5,6 +5,7 @@ import { getActiveStoreProductsWithPreviewData } from "@/actions/product";
 import { IProductPreview } from "@/interfaces/product";
 import SingleProductCard from "@/components/single-product-card";
 import { getActiveStoreCategoriesWithPreviewData } from "@/actions/category";
+import { ICategoryPreview } from "@/interfaces/category";
 
 const banner1 = "https://miniture.novaworks.net/wp-content/uploads/2023/10/m4_slide_03.jpg";
 
@@ -39,8 +40,8 @@ export default async function Page() {
         <ScrollArea className=" w-3/12 hidden lg:block">
           <>
             <div className=" flex flex-col gap-2">
-              {categories.map((category) => (
-                <p key={category.id}>{category.name}</p>
+              {categories.map((category: ICategoryPreview) => (
+                <p key={category.slug}>{category.name}</p>
               ))}
             </div>
           </>
@@ -49,7 +50,7 @@ export default async function Page() {
         <div className="w-9/12 grid grid-cols-2  md:grid-cols-3 lg:grid-cols-2  2xl:grid-cols-3 gap-4">
           {response.data.map((product: IProductPreview) => (
             <SingleProductCard
-              key={product.id}
+              key={product.slug}
               product={product}
             />
           ))}

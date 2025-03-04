@@ -1,13 +1,9 @@
 export interface IProductPreview {
-  id: string;
   name: string;
   slug: string;
   selling_price: number | null;
   crossed_price: number | null;
   image_url: string;
-  store_id: string;
-  status: string;
-  created_at: Date;
 }
 
 export interface IProduct {

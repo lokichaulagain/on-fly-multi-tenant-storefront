@@ -7,6 +7,8 @@ import { ActionResponse } from ".";
 import { IProductPreview } from "@/interfaces/product";
 import { headers } from "next/headers";
 import { ENUM_PRODUCT_STATUS } from "@/enums";
+import { unstable_cache } from "next/cache";
+import { getStoreIdBySubdomain } from "./store";
 /*
   Get Active store products action with preview data
   1. Get active store products with preview data , which status is active and sort by created_at desc
@@ -19,37 +21,42 @@ export async function getActiveStoreProductsWithPreviewData(): Promise<ActionRes
     const store_subdomain = host.split(".")[0];
 
     // 2. Get store id by subdomain
-    const [store] = await db
-      .select({
-        id: storesTable.id,
-      })
-      .from(storesTable)
-      .where(eq(storesTable.store_subdomain, store_subdomain))
-      .limit(1);
+    const response = await getStoreIdBySubdomain(store_subdomain);
+    const store_id = response.data;
 
-    if (!store) {
+    if (!store_id) {
       return { data: null, status: 404, msg: "Store not found", error: "Store not found" };
     }
 
     // 2. Get active store products with preview data sort by created_at desc
-    const products = await db
-      .select({
-        id: productsTable.id,
-        name: productsTable.name,
-        slug: productsTable.slug,
-        selling_price: productsTable.selling_price,
-        crossed_price: productsTable.crossed_price,
-        image_url: sql<string>`${productsTable.image_urls}->0`,
-        store_id: productsTable.store_id,
-        status: productsTable.status,
-        created_at: productsTable.created_at,
-      })
-      .from(productsTable)
-      .where(and(eq(productsTable.store_id, store.id), eq(productsTable.status, ENUM_PRODUCT_STATUS.ACTIVE))) 
-      .orderBy(desc(productsTable.created_at));
+    const getProducts = unstable_cache(
+      async () => {
+        return await db
+          .select({
+            name: productsTable.name,
+            slug: productsTable.slug,
+            selling_price: productsTable.selling_price,
+            crossed_price: productsTable.crossed_price,
+            image_url: sql<string>`${productsTable.image_urls}->0`,
+          })
+          .from(productsTable)
+          .where(and(eq(productsTable.store_id, store_id), eq(productsTable.status, ENUM_PRODUCT_STATUS.ACTIVE)))
+          .orderBy(desc(productsTable.created_at));
+      },
+      // Cache key unique identifier for the store
+      [`active-store-products-${store_subdomain}`],
+      {
+        // Cache tags for invalidation
+        tags: [`active-store-products-${store_subdomain}`],
+        // Cache revalidation time
+        revalidate: 60 * 60 * 24, // 24 hours
+      }
+    );
+
+    // 3. Get products
+    const products = await getProducts(); 
 
     // 2. Return products
-    console.log(products, "productshere");
     return { data: products, status: 200, msg: "Products fetched successfully", error: null };
   } catch (error: unknown) {
     console.error("Error fetching active store products:", error);

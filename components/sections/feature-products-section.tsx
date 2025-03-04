@@ -18,7 +18,7 @@ export default async function FeatureProductSection() {
       <div className=" grid grid-cols-2 md:grid-cols-3 lg:grid-cols-2  xl:grid-cols-3 2xl:grid-cols-4  gap-4">
         {products?.map((product: IProductPreview) => (
           <SingleProductCard
-            key={product.id}
+            key={product.slug}
             product={product}
           />
         ))}

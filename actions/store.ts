@@ -6,6 +6,8 @@ import { handleDbError } from "@/utils/db-error";
 import { ActionResponse } from ".";
 import { headers } from "next/headers";
 import { ActiveDomainInfo, StoreMetadata } from "@/interfaces/store";
+import { unstable_cache } from "next/cache";
+
 
 /*
   Get store metadata action
@@ -13,31 +15,45 @@ import { ActiveDomainInfo, StoreMetadata } from "@/interfaces/store";
   2. Get store metadata from store table
   3. Return store metadata
 */
-
 export async function getActiveStoreMetadata(): Promise<ActionResponse<StoreMetadata>> {
   try {
     // 1. Get subdomain from headers
     const headersList = await headers();
     const host = headersList.get("host") || "";
     const store_subdomain = host.split(".")[0];
-    console.log(store_subdomain, "This is store_subdomain from getActiveStoreMetadata");
 
     // 2. Get store metadata from store table
-    const [store] = await db
-      .select({
-        id: storesTable.id,
-        store_name: storesTable.store_name,
-        store_subdomain: storesTable.store_subdomain,
-        custom_domain: storesTable.custom_domain,
-        store_logo: storesTable.store_logo,
-        store_meta_title: storesTable.store_meta_title,
-        store_meta_description: storesTable.store_meta_description,
-        store_meta_image: storesTable.store_meta_image,
-        store_description: storesTable.store_description,
-      })
-      .from(storesTable)
-      .where(eq(storesTable.store_subdomain, store_subdomain))
-      .limit(1);
+    const getStoreMetadata = unstable_cache(
+      async () => {
+        const [store] = await db
+          .select({
+            id: storesTable.id,
+            store_name: storesTable.store_name,
+            store_subdomain: storesTable.store_subdomain,
+            custom_domain: storesTable.custom_domain,
+            store_logo: storesTable.store_logo,
+            store_meta_title: storesTable.store_meta_title,
+            store_meta_description: storesTable.store_meta_description,
+            store_meta_image: storesTable.store_meta_image,
+            store_description: storesTable.store_description,
+          })
+          .from(storesTable)
+          .where(eq(storesTable.store_subdomain, store_subdomain))
+          .limit(1);
+
+        return store;
+      },
+      // Cache key unique identifier for the store
+      [`active-store-metadata-${store_subdomain}`],
+      {
+        // Cache tags for invalidation
+        tags: [`active-store-metadata-${store_subdomain}`],
+        // Cache revalidation time
+        revalidate: 60 * 60 * 24, // 24 hours
+      }
+    );
+
+    const store = await getStoreMetadata();
 
     // 3. Check if store exists
     if (!store) {
@@ -128,15 +144,30 @@ export const checkStoreExists = async (): Promise<ActionResponse<boolean>> => {
     // 1. Get subdomain from headers
     const headersList = await headers();
     const host = headersList.get("host") || "";
-    const storeSubdomain = host.split(".")[0];
+    const store_subdomain = host.split(".")[0];
 
     // 2. Check store exists by subdomain or custom domain
-    const storeExists = await db
-      .select({ id: storesTable.id })
-      .from(storesTable)
-      .where(or(eq(storesTable.store_subdomain, storeSubdomain), eq(storesTable.custom_domain, host)))
-      .limit(1)
-      .then((result) => result.length > 0);
+    const checkStoreExists = unstable_cache(
+      async () => {
+        return await db
+          .select({ id: storesTable.id })
+          .from(storesTable)
+          .where(or(eq(storesTable.store_subdomain, store_subdomain), eq(storesTable.custom_domain, host)))
+          .limit(1)
+          .then((result) => result.length > 0);
+      },
+      // Cache key unique identifier for the store
+      [`check-store-exists-${store_subdomain}`],
+
+      {
+        // Cache tags for invalidation
+        tags: [`check-store-exists-${store_subdomain}`],
+        // Cache revalidation time
+        revalidate: 60 * 60 * 24, // 24 hours
+      }
+    );
+
+    const storeExists = await checkStoreExists();
 
     // 3. Return response based on store existence
     if (!storeExists) {
