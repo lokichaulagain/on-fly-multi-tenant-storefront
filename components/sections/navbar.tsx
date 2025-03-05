@@ -25,7 +25,7 @@ export default function Navbar({ metadata }: { metadata: any }) {
   ];
 
   return (
-    <nav className="bg-white border-b shadow-sm w-full md:static md:text-sm md:border-none h-16 flex items-center justify-center   ">
+    <nav className="bg-[var(--primary)] border-b shadow-sm w-full md:static md:text-sm md:border-none h-16 flex items-center justify-center   ">
       <div className="items-center w-full container px-4 md:px-24 mx-auto md:flex">
         <div className="flex items-center justify-between    md:block">
           <Link

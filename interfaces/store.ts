@@ -16,3 +16,16 @@ export interface StoreMetadata {
   store_meta_image: string | null;
   store_description: string | null;
 }
+
+
+export interface StoreAppearance {
+  primary_color: string | null;
+  secondary_color: string | null;
+  font_family: string | null;
+  button_style: string | null;
+  footer_layout: string | null;
+  border_radius: string | null;
+  navbar_layout: string | null;
+  product_card_style: string | null;
+  product_aspect_ratio: string | null;
+}
