@@ -45,9 +45,9 @@ export async function getActiveStoreCategoriesWithPreviewData(): Promise<ActionR
           .orderBy(desc(categoriesTable.created_at)),
 
       // Cache key unique identifier for the store
-      [`active-store-categories-${store_subdomain}`],
+      [`active-store-categories-${store_id}`],
       // Cache tags for invalidation
-      { tags: [`active-store-categories-${store_subdomain}`], revalidate: CACHE_REVALIDATION_TIME }
+      { tags: [`active-store-categories-${store_id}`], revalidate: CACHE_REVALIDATION_TIME }
     );
 
     // 4. Get categories
