@@ -5,7 +5,7 @@ import { storesTable } from "@/lib/db/schema";
 import { handleDbError } from "@/utils/db-error";
 import { ActionResponse } from ".";
 import { headers } from "next/headers";
-import { ActiveDomainInfo, StoreAppearance, StoreMetadata } from "@/interfaces/store";
+import { ActiveDomainInfo, IStoreAppearance, StoreAppearance, StoreMetadata } from "@/interfaces/store";
 import { unstable_cache } from "next/cache";
 
 // Cache configuration
@@ -80,46 +80,78 @@ export async function getActiveStoreMetadata(): Promise<ActionResponse<StoreMeta
   2. Get store appearance from cache or database
   3. Return store appearance
 */
-export async function getActiveStoreAppearance(): Promise<ActionResponse<StoreAppearance | unknown>> {
+// export async function getActiveStoreAppearance(): Promise<ActionResponse<StoreAppearance | unknown>> {
+//   try {
+//     // 1. Get store subdomain from headers
+//     const store_subdomain = await getStoreSubdomainFromHeaders();
+
+//     // 2. Get store appearance from cache or database
+//     const getStoreAppearance = unstable_cache(
+//       async () => {
+//         const [storeAppearance] = await db
+//           .select({
+//             store_appearance: storesTable.store_appearance,
+//           })
+//           .from(storesTable)
+//           .where(eq(storesTable.store_subdomain, store_subdomain))
+//           .limit(1);
+
+//         return storeAppearance;
+//       },
+//       // Cache key unique identifier for the store
+//       [`active-store-appearance-${store_subdomain}`],
+//       {
+//         // Cache tags for invalidation
+//         tags: [`active-store-appearance-${store_subdomain}`],
+//         // Cache revalidation time
+//         revalidate: CACHE_REVALIDATION_TIME,
+//       }
+//     );
+
+//     // 3. Get store appearance
+//     const storeAppearance = await getStoreAppearance();
+
+//     // 4. Check if store appearance exists
+//     if (!storeAppearance) {
+//       return { data: null, error: "Store appearance not found", status: 404 };
+//     }
+
+//     // 5. Return store appearance
+//     return { data: storeAppearance, status: 200, msg: "Store appearance fetched successfully", error: null };
+//   } catch (error) {
+//     console.log("Error fetching store appearance :", error);
+//     return { data: null, status: 500, error: handleDbError(error) };
+//   }
+// }
+
+export async function getActiveStoreAppearance(): Promise<ActionResponse<IStoreAppearance>> {
   try {
     // 1. Get store subdomain from headers
     const store_subdomain = await getStoreSubdomainFromHeaders();
 
-    // 2. Get store appearance from cache or database
-    const getStoreAppearance = unstable_cache(
-      async () => {
-        const [storeAppearance] = await db
-          .select({
-            store_appearance: storesTable.store_appearance,
-          })
-          .from(storesTable)
-          .where(eq(storesTable.store_subdomain, store_subdomain))
-          .limit(1);
+    // 2. Directly query the database for store appearance
+    const [store] = await db
+      .select({
+        store_appearance: storesTable.store_appearance,
+      })
+      .from(storesTable)
+      .where(eq(storesTable.store_subdomain, store_subdomain))
+      .limit(1);
 
-        return storeAppearance;
-      },
-      // Cache key unique identifier for the store
-      [`store-appearance-${store_subdomain}`],
-      {
-        // Cache tags for invalidation
-        tags: [`store-appearance-${store_subdomain}`],
-        // Cache revalidation time
-        revalidate: CACHE_REVALIDATION_TIME,
-      }
-    );
-
-    // 3. Get store appearance
-    const storeAppearance = await getStoreAppearance();
-
-    // 4. Check if store appearance exists
-    if (!storeAppearance) {
+    // 3. Check if store appearance exists
+    if (!store) {
       return { data: null, error: "Store appearance not found", status: 404 };
     }
 
-    // 5. Return store appearance
-    return { data: storeAppearance, status: 200, msg: "Store appearance fetched successfully", error: null };
+    // 4. Return store appearance
+    return { 
+      data: store.store_appearance, 
+      status: 200, 
+      msg: "Store appearance fetched successfully", 
+      error: null 
+    };
   } catch (error) {
-    console.log("Error fetching store appearance :", error);
+    console.log("Error fetching store appearance:", error);
     return { data: null, status: 500, error: handleDbError(error) };
   }
 }

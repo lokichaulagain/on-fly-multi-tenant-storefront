@@ -6,16 +6,16 @@ import { ActionResponse } from "@/actions";
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const response = (await getActiveStoreAppearance()) as ActionResponse<any>;
-  const storeAppearance = response?.data?.store_appearance || {};
+  const store_appearance = response?.data || {};
 
-  if (response.error || !storeAppearance) {
+  if (response.error || !store_appearance) {
     return <div>Error fetching store appearance</div>;
   }
 
-  // console.log(response?.data?.store_appearance, "This is the store appearance from the layout");
+  console.log(response?.data?.store_appearance, "This is the store appearance from the layout");
 
   return (
-    // <ThemeProvider store_appearance={storeAppearance}>
+    // <ThemeProvider store_appearance={store_appearance}>
     <ClerkProvider dynamic>
       <html
         lang="en"
@@ -24,10 +24,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <style>
             {`
               :root {
-                --font-family: ${storeAppearance.font_family};
-                --primary: ${storeAppearance.primary_color};
-                --secondary: ${storeAppearance.secondary_color};
-                --radius: ${20}px;
+                --font-family: ${store_appearance.font_family};
+                --primary: ${store_appearance.primary_color};
+                --secondary: ${store_appearance.secondary_color};
+                --radius: ${store_appearance.border_radius}px;
+                --ring: ${store_appearance.primary_color}
+
+                
                 
               }
             `}

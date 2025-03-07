@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { Metadata } from "next";
-import { checkStoreExists, getActiveStoreMetadata } from "@/actions/store";
+import { checkStoreExists, getActiveStoreAppearance, getActiveStoreMetadata } from "@/actions/store";
 import Navbar from "@/components/sections/navbar";
 import Footer from "@/components/sections/footer";
 import { CartProvider } from "@/contexts/cart-provider";
@@ -55,11 +55,19 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
   const metadataResponse = await getActiveStoreMetadata();
   console.log(metadataResponse, "This is metadata from SiteLayout");
 
+
+  const res=await getActiveStoreAppearance()
+  console.log(res,"ressss")
+  if(res.error){
+    return <div>Error fetching store appearance</div>;
+  }
+  
+
   return (
     <CartProvider>
       <div>
         <div className="fixed w-full z-50">
-          <Navbar metadata={metadataResponse.data} />
+          <Navbar metadata={metadataResponse.data} store_appearance={res.data} />
         </div>
         <div className="pt-16">{children}</div>
         <Footer metadata={metadataResponse.data} />

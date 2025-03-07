@@ -97,3 +97,10 @@
   width: 100%  !important;
 }
 
+
+.bg-primary-50 {
+  background-color: var(--primary) !important;
+  opacity: 0.5 !important;
+}
+
+

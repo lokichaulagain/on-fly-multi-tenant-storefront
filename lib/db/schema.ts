@@ -1,5 +1,6 @@
-import { DEFAULT_STORE_LOGO } from "@/constants";
+import { border_radius, button_style, DEFAULT_STORE_LOGO, favicon, font_family, primary_color, product_aspect_ratio, secondary_color } from "@/constants";
 import { ENUM_CATEGORY_STATUS, ENUM_PAYMENT_STATUS, ENUM_PRODUCT_STATUS, ENUM_SHIPPING_STATUS, ENUM_STORE_STATUS, ENUM_SUBSCRIPTION_PLAN, ENUM_SUBSCRIPTION_STATUS, ENUM_STORE_CATEGORY } from "@/enums";
+import { IStoreAppearance, IStoreSocialLinks } from "@/interfaces/store";
 import { sql } from "drizzle-orm";
 import { pgTable, decimal, varchar, text, timestamp, integer, jsonb, index, boolean, uuid, AnyPgColumn, primaryKey } from "drizzle-orm/pg-core";
 
@@ -23,23 +24,22 @@ export const storesTable = pgTable(
     store_phone_number: varchar("store_phone_number", { length: 10 }).notNull(),
     store_address: varchar("store_address", { length: 100 }).notNull(),
     user_id: varchar("user_id", { length: 255 }).notNull(),
-    store_description: varchar("store_description", { length: 2000 }),
 
     // 🛒 Optional fields
-    store_logo: varchar("store_logo", { length: 255 }).default(DEFAULT_STORE_LOGO),
+    store_logo: varchar("store_logo", { length: 255 }).default(DEFAULT_STORE_LOGO).notNull(),
+    store_description: varchar("store_description", { length: 2000 }),
     theme_settings: jsonb("theme_settings").default({}),
     custom_domain: varchar("custom_domain", { length: 50 }).unique(),
-    social_links: jsonb("social_links")
-      .default({
-        facebook_url: null,
-        instagram_url: null,
-        tiktok_url: null,
-        youtube_url: null,
-        primary_whatsapp_number: null,
-        secondary_whatsapp_number: null,
-        google_map_url: null,
-      })
-      .default(null),
+    // social_links: jsonb("social_links")
+    social_links: jsonb("social_links").$type<IStoreSocialLinks>().default({
+      facebook_url: "",
+      instagram_url: "",
+      tiktok_url: "",
+      youtube_url: "",
+      primary_whatsapp_number: "",
+      secondary_whatsapp_number: "",
+      google_map_url: "",
+    }),
     store_meta_title: varchar("store_meta_title", { length: 70 }),
     store_meta_description: varchar("store_meta_description", { length: 255 }),
     store_meta_image: varchar("store_meta_image", { length: 255 }).default(DEFAULT_STORE_LOGO),
@@ -73,19 +73,17 @@ export const storesTable = pgTable(
     updated_at: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
     deleted_at: timestamp("deleted_at", { mode: "date" }),
 
-    store_appearance: jsonb("store_appearance")
-      .default({
-        primary_color: null,
-        secondary_color: null,
-        font_family: null,
-        button_style: null,
-        footer_layout: null,
-        border_radius: null,
-        navbar_layout: null,
-        product_card_style: null,
-        product_aspect_ratio: null,
-      })
-      .default(null),
+    store_appearance: jsonb("store_appearance").$type<IStoreAppearance>().default({
+      font_family: font_family,
+      primary_color: primary_color,
+      secondary_color: secondary_color,
+      button_style: button_style,
+      border_radius: border_radius,
+      product_aspect_ratio: product_aspect_ratio,
+      favicon: favicon,
+      desktop_banners: [],
+      mobile_banners: [],
+    }),
   },
   (table) => [
     // Fast queries filtering by id

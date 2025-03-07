@@ -8,10 +8,19 @@ import MobileSheet from "@/components/mobile-sheet";
 import { useCart } from "@/contexts/cart-provider";
 import { SignedIn, SignedOut, SignInButton, SignUpButton, useUser } from "@clerk/nextjs";
 import Image from "next/image";
+import { IStoreAppearance } from "@/interfaces/store";
 
-export default function Navbar({ metadata }: { metadata: any }) {
+export default function Navbar({ metadata, store_appearance }: { metadata: any; store_appearance: IStoreAppearance }) {
+  console.log(store_appearance.primary_color, "This is store appearance from Navbar");
+  const primary_color = store_appearance.primary_color;
+  const secondary_color = store_appearance.secondary_color;
+  const border_radius = `${store_appearance.border_radius / 16}rem`;
+  const font_family = store_appearance.font_family;
+
   const { cart } = useCart();
   const { isSignedIn, user } = useUser();
+
+  console.log(metadata, "This is metadata from Navbar");
 
   const pathname = usePathname();
   // const { subdomain, domain, storeName } = useDomain();
@@ -25,13 +34,13 @@ export default function Navbar({ metadata }: { metadata: any }) {
   ];
 
   return (
-    <nav className="bg-[var(--primary)] border-b shadow-sm w-full md:static md:text-sm md:border-none h-16 flex items-center justify-center   ">
+    <nav className="bg-[var(--primary)]  border-b shadow-sm w-full md:static md:text-sm md:border-none h-16 flex items-center justify-center   ">
       <div className="items-center w-full container px-4 md:px-24 mx-auto md:flex">
         <div className="flex items-center justify-between    md:block">
           <Link
             prefetch={true}
             href="/"
-            className=" flex items-center gap-1 text-primary">
+            className=" flex items-center gap-1  text-white">
             <Image
               src={metadata?.store_logo}
               alt="logo"
@@ -45,26 +54,27 @@ export default function Navbar({ metadata }: { metadata: any }) {
           </div>
         </div>
         <div className="flex-1  pb-3 mt-8  md:pb-0 md:mt-0  hidden md:block">
-          <div className="justify-end items-center space-y-6 md:flex md:space-x-6 md:space-y-0">
+          <div className="justify-end items-center space-y-6 md:flex md:space-x-6 md:space-y-0 text-white">
             {navigation.map((item, idx) => {
               return (
-                <div
-                  key={idx}
-                  className=" hover:text-primary font-semibold">
+                <div key={idx}>
                   <Link
                     prefetch={true}
                     href={item.path}
-                    className={`${pathname === item.path ? " text-primary" : ""}`}>
+                    className={`${pathname === item.path ? " text-[var(--secondary)] " : "hover:text-[var(--secondary)] duration-300"} font-semibold `}>
                     {item.title}
                   </Link>
                 </div>
               );
             })}
-            <span className="hidden w-px h-6 bg-gray-300 md:block"></span>
+            <span className="hidden w-px h-6 bg-white opacity-50 md:block"></span>
             <div className="flex items-center gap-x-2">
               <Link href={"/checkout"}>
                 <div className="relative">
-                  <ShoppingCart />
+                  <ShoppingCart
+                    size={20}
+                    className="hover:text-[var(--secondary)] duration-300"
+                  />
                   {cart.length > 0 && <span className="absolute -top-2 -right-2 bg-primary text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">{cart.length}</span>}
                 </div>
               </Link>
@@ -91,11 +101,26 @@ export default function Navbar({ metadata }: { metadata: any }) {
                   forceRedirectUrl={"/checkout"}
                   appearance={{
                     variables: {
-                      colorPrimary: "#2563eb",
-                      borderRadius: "0.2rem",
+                      colorPrimary: primary_color,
+                      borderRadius: border_radius,
+                      fontFamily: font_family,
+                    },
+
+                    layout: {
+                      logoImageUrl: metadata?.store_logo,
+                      logoLinkUrl: `https://${metadata?.store_subdomain}.fenzora.com`,
+                      helpPageUrl: "/help",
+                      privacyPageUrl: "/privacy-policy",
+                      termsPageUrl: "/terms-of-service",
+                      logoPlacement: "inside",
+                      unsafe_disableDevelopmentModeWarnings: false,
                     },
                   }}>
-                  <Button variant={"link"}>Sign In</Button>
+                  <Button
+                    variant={"link"}
+                    className="hover:text-[var(--secondary)] duration-300">
+                    Sign In
+                  </Button>
                 </SignInButton>
 
                 <SignUpButton
@@ -103,11 +128,22 @@ export default function Navbar({ metadata }: { metadata: any }) {
                   forceRedirectUrl={"/checkout"}
                   appearance={{
                     variables: {
-                      colorPrimary: "#2563eb",
-                      borderRadius: "0.2rem",
+                      colorPrimary: primary_color,
+                      borderRadius: border_radius,
+                      fontFamily: font_family,
+                    },
+
+                    layout: {
+                      logoImageUrl: metadata?.store_logo,
+                      logoLinkUrl: `https://${metadata?.store_subdomain}.fenzora.com`,
+                      helpPageUrl: "/help",
+                      privacyPageUrl: "/privacy-policy",
+                      termsPageUrl: "/terms-of-service",
+                      logoPlacement: "inside",
+                      unsafe_disableDevelopmentModeWarnings: false,
                     },
                   }}>
-                  <Button>Sign Up</Button>
+                  <Button className="bg-[var(--secondary)] hover:bg-[var(--secondary)] duration-300">Sign Up</Button>
                 </SignUpButton>
               </SignedOut>
             </div>

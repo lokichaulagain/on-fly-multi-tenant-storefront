@@ -3,3 +3,12 @@ export const BLUR_DATA_URL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAzYA
 export const DEFAULT_STORE_LOGO="https://itmpwbjutsadjvzubrmf.supabase.co/storage/v1/object/public/fenzora/constants/default-store-logo.png"
 export const FENZORA_LOGO="https://itmpwbjutsadjvzubrmf.supabase.co/storage/v1/object/public/fenzora/logos/logo-horizontal.png"
 export const MARKETING_SITE="https://fenzora.com"
+
+
+export const font_family = "Inter";
+export const primary_color = "#FF5A5F";
+export const secondary_color = "#FF5A5F";
+export const button_style = "rounded";
+export const border_radius = 10;
+export const product_aspect_ratio = "1:1";
+export const favicon = "https://itmpwbjutsadjvzubrmf.supabase.co/storage/v1/object/public/fenzora/logos/logo-horizontal.png";
