@@ -98,8 +98,8 @@ const FaqsCard = (props: any) => {
             stroke="currentColor">
             <path
               stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
+              strokeLinejoin="round"
+              strokeWidth="2"
               d="M20 12H4"
             />
           </svg>

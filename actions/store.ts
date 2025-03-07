@@ -1,11 +1,11 @@
 "use server";
 import { eq, or } from "drizzle-orm";
 import { db } from "@/lib/db/drizzle";
-import { storesTable } from "@/lib/db/schema";
+import { Stores, storesTable } from "@/lib/db/schema";
 import { handleDbError } from "@/utils/db-error";
 import { ActionResponse } from ".";
 import { headers } from "next/headers";
-import { ActiveDomainInfo, IStoreAppearance, StoreAppearance, StoreMetadata } from "@/interfaces/store";
+import { ActiveDomainInfo, IStoreMetadata } from "@/interfaces/store";
 import { unstable_cache } from "next/cache";
 
 // Cache configuration
@@ -17,7 +17,7 @@ const CACHE_REVALIDATION_TIME = 60 * 60 * 24; // 24 hours
   2. Get store metadata from cache or database
   3. Return store metadata
 */
-export async function getActiveStoreMetadata(): Promise<ActionResponse<StoreMetadata>> {
+export async function getActiveStoreMetadata(): Promise<ActionResponse<IStoreMetadata>> {
   try {
     // 1. Get store subdomain from headers
     const store_subdomain = await getStoreSubdomainFromHeaders();
@@ -74,87 +74,106 @@ export async function getActiveStoreMetadata(): Promise<ActionResponse<StoreMeta
   }
 }
 
+
+
+export async function getActiveStore(): Promise<ActionResponse<Stores>> {
+  try {
+    // 1. Get store subdomain from headers
+    const store_subdomain = await getStoreSubdomainFromHeaders();
+
+    // 2. Get store metadata from store table
+    const getStoreMetadata = unstable_cache(
+      async () => {
+        const [store] = await db
+          .select()
+          .from(storesTable)
+          .where(eq(storesTable.store_subdomain, store_subdomain))
+          .limit(1);
+
+        return store;
+      },
+      // Cache key unique identifier for the store
+      [`active-store-${store_subdomain}`],
+      {
+        // Cache tags for invalidation
+        tags: [`active-store-${store_subdomain}`],
+        // Cache revalidation time
+        revalidate: CACHE_REVALIDATION_TIME,
+      }
+    );
+
+    // 3. Get store metadata
+    const store = await getStoreMetadata();
+
+    // 4. Check if store exists
+    if (!store) {
+      return { data: null, error: "Store not found", status: 404 };
+    }
+
+    // 5. Return the store metadata
+    return {
+      data: store,
+      status: 200,
+      msg: "Store metadata fetched successfully",
+      error: null,
+    };
+  } catch (error) {
+    console.log("Error fetching store metadata :", error);
+    return { data: null, status: 500, error: handleDbError(error) };
+  }
+}
+
 /*
   Get active store appearance action with cache
   1. Get store subdomain from headers
   2. Get store appearance from cache or database
   3. Return store appearance
 */
-// export async function getActiveStoreAppearance(): Promise<ActionResponse<StoreAppearance | unknown>> {
-//   try {
-//     // 1. Get store subdomain from headers
-//     const store_subdomain = await getStoreSubdomainFromHeaders();
-
-//     // 2. Get store appearance from cache or database
-//     const getStoreAppearance = unstable_cache(
-//       async () => {
-//         const [storeAppearance] = await db
-//           .select({
-//             store_appearance: storesTable.store_appearance,
-//           })
-//           .from(storesTable)
-//           .where(eq(storesTable.store_subdomain, store_subdomain))
-//           .limit(1);
-
-//         return storeAppearance;
-//       },
-//       // Cache key unique identifier for the store
-//       [`active-store-appearance-${store_subdomain}`],
-//       {
-//         // Cache tags for invalidation
-//         tags: [`active-store-appearance-${store_subdomain}`],
-//         // Cache revalidation time
-//         revalidate: CACHE_REVALIDATION_TIME,
-//       }
-//     );
-
-//     // 3. Get store appearance
-//     const storeAppearance = await getStoreAppearance();
-
-//     // 4. Check if store appearance exists
-//     if (!storeAppearance) {
-//       return { data: null, error: "Store appearance not found", status: 404 };
-//     }
-
-//     // 5. Return store appearance
-//     return { data: storeAppearance, status: 200, msg: "Store appearance fetched successfully", error: null };
-//   } catch (error) {
-//     console.log("Error fetching store appearance :", error);
-//     return { data: null, status: 500, error: handleDbError(error) };
-//   }
-// }
-
-export async function getActiveStoreAppearance(): Promise<ActionResponse<IStoreAppearance>> {
+export async function getActiveStoreAppearance(): Promise<ActionResponse<StoreAppearance | unknown>> {
   try {
     // 1. Get store subdomain from headers
     const store_subdomain = await getStoreSubdomainFromHeaders();
 
-    // 2. Directly query the database for store appearance
-    const [store] = await db
-      .select({
-        store_appearance: storesTable.store_appearance,
-      })
-      .from(storesTable)
-      .where(eq(storesTable.store_subdomain, store_subdomain))
-      .limit(1);
+    // 2. Get store appearance from cache or database
+    const getStoreAppearance = unstable_cache(
+      async () => {
+        const [store] = await db
+          .select({
+            store_appearance: storesTable.store_appearance,
+          })
+          .from(storesTable)
+          .where(eq(storesTable.store_subdomain, store_subdomain))
+          .limit(1);
 
-    // 3. Check if store appearance exists
+        return store;
+      },
+      // Cache key unique identifier for the store
+      [`active-store-appearance-${store_subdomain}`],
+      {
+        // Cache tags for invalidation
+        tags: [`active-store-appearance-${store_subdomain}`],
+        // Cache revalidation time
+        revalidate: CACHE_REVALIDATION_TIME,
+      }
+    );
+
+    // 3. Get store appearance
+    const store = await getStoreAppearance();
+
+    // 4. Check if store appearance exists
     if (!store) {
       return { data: null, error: "Store appearance not found", status: 404 };
     }
 
-    // 4. Return store appearance
-    return { 
-      data: store.store_appearance, 
-      status: 200, 
-      msg: "Store appearance fetched successfully", 
-      error: null 
-    };
+    // 5. Return store appearance
+    return { data: store.store_appearance, status: 200, msg: "Store appearance fetched successfully", error: null };
   } catch (error) {
-    console.log("Error fetching store appearance:", error);
+    console.log("Error fetching store appearance :", error);
     return { data: null, status: 500, error: handleDbError(error) };
   }
 }
+
+
 
 /*
   Get store ID by store_subdomain action with cache
@@ -309,3 +328,7 @@ export async function getStoreSubdomainFromHeaders(): Promise<string> {
   const host = headersList.get("host") || "";
   return host.split(".")[0];
 }
+
+
+
+

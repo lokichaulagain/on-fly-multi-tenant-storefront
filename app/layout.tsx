@@ -1,45 +1,38 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
-import { getActiveStoreAppearance } from "@/actions/store";
-import { ActionResponse } from "@/actions";
-// import { ThemeProvider } from "@/contexts/theme-provider";
+import { getActiveStore } from "@/actions/store";
+import { CurrentStoreProvider } from "@/contexts/current-store-provider";
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const response = (await getActiveStoreAppearance()) as ActionResponse<any>;
-  const store_appearance = response?.data || {};
+  const response = await getActiveStore();
+  const store_appearance = response?.data?.store_appearance;
 
-  if (response.error || !store_appearance) {
+  if (response.error || !response.data || !store_appearance) {
     return <div>Error fetching store appearance</div>;
   }
 
-  console.log(response?.data?.store_appearance, "This is the store appearance from the layout");
-
   return (
-    // <ThemeProvider store_appearance={store_appearance}>
     <ClerkProvider dynamic>
-      <html
-        lang="en"
-        suppressHydrationWarning>
-        <head>
-          <style>
-            {`
+      <CurrentStoreProvider store={response.data}>
+        <html
+          lang="en"
+          suppressHydrationWarning>
+          <head>
+            <style>
+              {`
               :root {
                 --font-family: ${store_appearance.font_family};
                 --primary: ${store_appearance.primary_color};
                 --secondary: ${store_appearance.secondary_color};
                 --radius: ${store_appearance.border_radius}px;
-                --ring: ${store_appearance.primary_color}
-
-                
-                
+                --ring: ${store_appearance.primary_color} 
               }
             `}
-          </style>
-        </head>
-
-        <body>{children}</body>
-      </html>
+            </style>
+          </head>
+          <body>{children}</body>
+        </html>
+      </CurrentStoreProvider>
     </ClerkProvider>
-    // </ThemeProvider>
   );
 }

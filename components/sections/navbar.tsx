@@ -10,22 +10,14 @@ import { SignedIn, SignedOut, SignInButton, SignUpButton, useUser } from "@clerk
 import Image from "next/image";
 import { IStoreAppearance } from "@/interfaces/store";
 
-export default function Navbar({ metadata, store_appearance }: { metadata: any; store_appearance: IStoreAppearance }) {
-  console.log(store_appearance.primary_color, "This is store appearance from Navbar");
+export default function Navbar({ store_name, store_logo, store_subdomain, store_appearance }: { store_name: string; store_logo: string; store_subdomain: string; store_appearance: IStoreAppearance }) {
   const primary_color = store_appearance.primary_color;
-  const secondary_color = store_appearance.secondary_color;
   const border_radius = `${store_appearance.border_radius / 16}rem`;
   const font_family = store_appearance.font_family;
 
   const { cart } = useCart();
-  const { isSignedIn, user } = useUser();
-
-  console.log(metadata, "This is metadata from Navbar");
-
+  const { user } = useUser();
   const pathname = usePathname();
-  // const { subdomain, domain, storeName } = useDomain();
-
-  // Replace / paths with your paths
   const navigation = [
     { title: "Home", path: "/" },
     { title: "Shop", path: "/shop" },
@@ -42,12 +34,12 @@ export default function Navbar({ metadata, store_appearance }: { metadata: any; 
             href="/"
             className=" flex items-center gap-1  text-white">
             <Image
-              src={metadata?.store_logo}
+              src={store_logo}
               alt="logo"
               width={32}
               height={32}
             />
-            <p className=" text-2xl tracking-wide font-serif ">{metadata?.store_name}</p>
+            <p className=" text-2xl tracking-wide font-serif ">{store_name}</p>
           </Link>
           <div className="md:hidden">
             <MobileSheet navigation={navigation} />
@@ -107,8 +99,8 @@ export default function Navbar({ metadata, store_appearance }: { metadata: any; 
                     },
 
                     layout: {
-                      logoImageUrl: metadata?.store_logo,
-                      logoLinkUrl: `https://${metadata?.store_subdomain}.fenzora.com`,
+                      logoImageUrl: store_logo,
+                      logoLinkUrl: `https://${store_subdomain}.fenzora.com`,
                       helpPageUrl: "/help",
                       privacyPageUrl: "/privacy-policy",
                       termsPageUrl: "/terms-of-service",
@@ -134,8 +126,8 @@ export default function Navbar({ metadata, store_appearance }: { metadata: any; 
                     },
 
                     layout: {
-                      logoImageUrl: metadata?.store_logo,
-                      logoLinkUrl: `https://${metadata?.store_subdomain}.fenzora.com`,
+                      logoImageUrl: store_logo,
+                      logoLinkUrl: `https://${store_subdomain}.fenzora.com`,
                       helpPageUrl: "/help",
                       privacyPageUrl: "/privacy-policy",
                       termsPageUrl: "/terms-of-service",

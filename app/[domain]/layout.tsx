@@ -1,7 +1,6 @@
 import { ReactNode } from "react";
-import { redirect } from "next/navigation";
 import { Metadata } from "next";
-import { checkStoreExists, getActiveStoreAppearance, getActiveStoreMetadata } from "@/actions/store";
+import { getActiveStore, getActiveStoreMetadata } from "@/actions/store";
 import Navbar from "@/components/sections/navbar";
 import Footer from "@/components/sections/footer";
 import { CartProvider } from "@/contexts/cart-provider";
@@ -9,8 +8,9 @@ import { CartProvider } from "@/contexts/cart-provider";
 export async function generateMetadata(): Promise<Metadata | null> {
   const response = await getActiveStoreMetadata();
   const metadata = response.data;
+  console.log(metadata, "This is metadata from generateMetadata");
+
   if (response.error || !metadata) {
-    // TODO: Redirect to create store page if store not found or return a fallback Metadata object
     return null;
   }
 
@@ -31,46 +31,30 @@ export async function generateMetadata(): Promise<Metadata | null> {
     },
     icons: [metadata.store_meta_image || metadata.store_logo || ""],
     metadataBase: new URL(`https://${metadata.custom_domain}`),
-    // Optional: Set canonical URL to custom domain if it exists
-    // ...(params.domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) &&
-    //   data.customDomain && {
-    //     alternates: {
-    //       canonical: `https://${data.customDomain}`,
-    //     },
-    //   }),
   };
 }
 
 export default async function SiteLayout({ children }: { children: ReactNode }) {
-  // Get active domain info
-  const response = await checkStoreExists();
-  if (response.error || response.data !== true) {
-    console.log("Domain info not found in SiteLayout");
+  const response = await getActiveStore();
+  const store_appearance = response?.data?.store_appearance;
 
-    //TODO: Redirect to create store page if store not found
-    // redirect("https://fenzora.com");
-    redirect("/store-not-found");
-  }
-
-  const metadataResponse = await getActiveStoreMetadata();
-  console.log(metadataResponse, "This is metadata from SiteLayout");
-
-
-  const res=await getActiveStoreAppearance()
-  console.log(res,"ressss")
-  if(res.error){
+  if (response.error || !response.data || !store_appearance) {
     return <div>Error fetching store appearance</div>;
   }
-  
 
   return (
     <CartProvider>
       <div>
         <div className="fixed w-full z-50">
-          <Navbar metadata={metadataResponse.data} store_appearance={res.data} />
+          <Navbar
+            store_name={response.data.store_name}
+            store_logo={response.data.store_logo}
+            store_subdomain={response.data.store_subdomain}
+            store_appearance={store_appearance}
+          />
         </div>
         <div className="pt-16">{children}</div>
-        <Footer metadata={metadataResponse.data} />
+        <Footer store={response.data} />
       </div>
     </CartProvider>
   );
