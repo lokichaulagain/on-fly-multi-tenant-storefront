@@ -1,10 +1,10 @@
 // providers/theme-provider.tsx
 "use client";
 
+import { IStoreAppearance } from "@/interfaces/store";
 import { useEffect } from "react";
-import { StoreAppearance } from "@/interfaces/store";
 
-export const ThemeProvider = ({ children, store_appearance }: { children: React.ReactNode; store_appearance: StoreAppearance }) => {
+export const ThemeProvider = ({ children, store_appearance }: { children: React.ReactNode; store_appearance: IStoreAppearance }) => {
   useEffect(() => {
     if (store_appearance) {
       const root = document.documentElement;

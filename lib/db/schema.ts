@@ -30,6 +30,7 @@ export const storesTable = pgTable(
     store_description: varchar("store_description", { length: 2000 }),
     theme_settings: jsonb("theme_settings").default({}),
     custom_domain: varchar("custom_domain", { length: 50 }).unique(),
+    // social_links: jsonb("social_links")
     social_links: jsonb("social_links").$type<IStoreSocialLinks>().default({
       facebook_url: "",
       instagram_url: "",

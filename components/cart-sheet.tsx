@@ -6,10 +6,21 @@ import { useCart } from "@/contexts/cart-provider";
 import { X, Plus, Minus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { SignedOut, SignUpButton } from "@clerk/nextjs";
+import { useCurrentStore } from "@/contexts/current-store-provider";
+import { formatCurrency } from "@/lib/format-currency";
 
 export function CartSheet() {
   const { cart, isCartOpen, setIsCartOpen, removeFromCart, increaseQuantity, decreaseQuantity } = useCart();
   const totalPrice = cart.reduce((total, item) => total + (item.price || 0) * item.quantity, 0);
+
+  const store = useCurrentStore();
+
+  const store_logo = store.store_logo;
+  const store_subdomain = store.store_subdomain;
+  const primary_color = store.store_appearance?.primary_color;
+  const border_radius = `${(store.store_appearance?.border_radius ?? 0) / 16}rem`;
+  const font_family = store.store_appearance?.font_family;
 
   return (
     <Sheet
@@ -36,11 +47,31 @@ export function CartSheet() {
             <p>
               Sign up to get <span className="font-semibold">10% off</span> on your first order.
             </p>
-            <Button
-              variant="outline"
-              size="sm">
-              Sign Up
-            </Button>
+
+            <SignedOut>
+              <SignUpButton
+                mode="modal"
+                forceRedirectUrl={"/checkout"}
+                appearance={{
+                  variables: {
+                    colorPrimary: primary_color,
+                    borderRadius: border_radius,
+                    fontFamily: font_family,
+                  },
+
+                  layout: {
+                    logoImageUrl: store_logo,
+                    logoLinkUrl: `https://${store_subdomain}.fenzora.com`,
+                    helpPageUrl: "/help",
+                    privacyPageUrl: "/privacy-policy",
+                    termsPageUrl: "/terms-of-service",
+                    logoPlacement: "inside",
+                    unsafe_disableDevelopmentModeWarnings: false,
+                  },
+                }}>
+                <Button className="bg-[var(--secondary)] hover:bg-[var(--secondary)] duration-300">Sign Up</Button>
+              </SignUpButton>
+            </SignedOut>
           </div>
 
           {/* Cart Items */}
@@ -86,7 +117,7 @@ export function CartSheet() {
                   </div>
 
                   <p className="text-xs font-medium">
-                    Rs. {(item.price || 0).toFixed(2)} x {item.quantity} = Rs. {(item.price || 0) * item.quantity}
+                    {formatCurrency(item.price || 0)} x {item.quantity} = {(item.price || 0) * item.quantity}
                   </p>
                 </div>
               </div>
@@ -98,7 +129,7 @@ export function CartSheet() {
         <div className=" mt-6">
           <div className="flex justify-between text-sm font-medium ">
             <p>Subtotal:</p>
-            <p>Rs. {totalPrice.toFixed(2)}</p>
+            <p>{formatCurrency(totalPrice)}</p>
           </div>
 
           <div className="flex justify-between text-sm font-medium ">
@@ -108,7 +139,7 @@ export function CartSheet() {
 
           <div className="flex justify-between text-base font-medium border-b border-gray-100 pb-2">
             <p>Total:</p>
-            <p>Rs. {totalPrice.toFixed(2)}</p>
+            <p>{formatCurrency(totalPrice)}</p>
           </div>
         </div>
 
@@ -116,12 +147,14 @@ export function CartSheet() {
           <div className=" flex items-center gap-4 mt-4 w-full px-4  py-2 bg-gray-50">
             <div className="flex gap-2 text-sm font-medium w-full cursor-text">
               <p>Total (Rs): </p>
-              <p>{totalPrice.toFixed(2)}</p>
+              <p>{formatCurrency(totalPrice)}</p>
             </div>
-            <Link href={"/checkout"} className="w-full">
+            <Link
+              href={"/checkout"}
+              className="w-full">
               <Button
                 type="button"
-                className="w-full bg-primary hover:bg-primary/80 text-white">
+                className="w-full bg-[var(--secondary)] hover:bg-[var(--secondary)] text-white">
                 Checkout
               </Button>
             </Link>

@@ -6,7 +6,7 @@ type Props = {
 
 export default function SectionHeader({ title }: Props) {
   return (
-    <div className=" flex justify-center text-3xl font-medium mt-20 mb-8">
+    <div className=" flex justify-center text-2xl md:text-3xl  font-medium  mb-8">
       <p>{title}</p>
     </div>
   );

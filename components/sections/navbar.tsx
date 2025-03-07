@@ -26,7 +26,7 @@ export default function Navbar({ store_name, store_logo, store_subdomain, store_
   ];
 
   return (
-    <nav className="bg-[var(--primary)]  border-b shadow-sm w-full md:static md:text-sm md:border-none h-16 flex items-center justify-center   ">
+    <nav className="bg-[var(--primary)]  shadow-sm w-full md:static md:text-sm  h-16 flex items-center justify-center   ">
       <div className="items-center w-full container px-4 md:px-24 mx-auto md:flex">
         <div className="flex items-center justify-between    md:block">
           <Link
@@ -42,7 +42,7 @@ export default function Navbar({ store_name, store_logo, store_subdomain, store_
             <p className=" text-2xl tracking-wide font-serif ">{store_name}</p>
           </Link>
           <div className="md:hidden">
-            <MobileSheet navigation={navigation} />
+            <MobileSheet />
           </div>
         </div>
         <div className="flex-1  pb-3 mt-8  md:pb-0 md:mt-0  hidden md:block">

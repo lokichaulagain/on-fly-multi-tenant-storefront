@@ -2,23 +2,33 @@ import React, { Suspense } from "react";
 import "@smastrom/react-rating/style.css";
 import { getProductBySlug } from "@/actions/product";
 import ProductDisplay from "@/components/product-display";
-import { IProduct } from "@/interfaces/product";
-import SimilarProductSection from "@/components/sections/similar-product-section";
+import dynamic from "next/dynamic";
+
+const NewArrrivalSection = dynamic(() => import("@/components/sections/new-arrival-section"), {
+  loading: () => {
+    return <div>Loading...</div>;
+  },
+});
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const response = await getProductBySlug(slug);
   console.log("prefetch data here", response);
-  
+
   if (response.error || !response.data) {
     return <div>Product not found</div>;
   }
 
   return (
-    <div className="w-full md:w-9/12 px-4 mx-auto mt-4 md:mt-8">
-      <ProductDisplay product={response.data as IProduct} />
-      <Suspense fallback={<div>Vitra ko Loading...</div>}>
-        <SimilarProductSection />
+    <div className="container w-full md:w-9/12 mx-auto space-y-8 md:space-y-12">
+      <ProductDisplay product={response.data} />
+
+      <div className=" py-4">
+        <p className="w-full border-t border-dashed border-gray-300" />
+      </div>
+
+      <Suspense fallback={<div> Loading...</div>}>
+        <NewArrrivalSection />
       </Suspense>
     </div>
   );

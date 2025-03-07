@@ -2,6 +2,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { getActiveStore } from "@/actions/store";
 import { CurrentStoreProvider } from "@/contexts/current-store-provider";
+import { Stores } from "@/lib/db/schema";
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const response = await getActiveStore();

@@ -5,7 +5,7 @@ import { Stores, storesTable } from "@/lib/db/schema";
 import { handleDbError } from "@/utils/db-error";
 import { ActionResponse } from ".";
 import { headers } from "next/headers";
-import { ActiveDomainInfo, IStoreMetadata } from "@/interfaces/store";
+import { ActiveDomainInfo, IStoreAppearance, IStoreMetadata } from "@/interfaces/store";
 import { unstable_cache } from "next/cache";
 
 // Cache configuration
@@ -129,7 +129,7 @@ export async function getActiveStore(): Promise<ActionResponse<Stores>> {
   2. Get store appearance from cache or database
   3. Return store appearance
 */
-export async function getActiveStoreAppearance(): Promise<ActionResponse<StoreAppearance | unknown>> {
+export async function getActiveStoreAppearance(): Promise<ActionResponse<IStoreAppearance | unknown>> {
   try {
     // 1. Get store subdomain from headers
     const store_subdomain = await getStoreSubdomainFromHeaders();

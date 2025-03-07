@@ -21,11 +21,7 @@ const FeatureProductSection = dynamic(() => import("@/components/sections/featur
     return <div>Loading...</div>;
   },
 });
-const MiddleBannerSection = dynamic(() => import("@/components/sections/middle-banner-section"), {
-  loading: () => {
-    return <div>Loading...</div>;
-  },
-});
+
 const NewArrrivalSection = dynamic(() => import("@/components/sections/new-arrival-section"), {
   loading: () => {
     return <div>Loading...</div>;
@@ -34,26 +30,48 @@ const NewArrrivalSection = dynamic(() => import("@/components/sections/new-arriv
 
 export default async function Page() {
   return (
-    <div className="w-full container px-4 md:px-24 mx-auto space-y-12">
-      <Suspense fallback={<LoaderCircle size={16} className="animate-spin" />}>
-      <HeroSection />
+    <div className="w-full container  md:px-24 mx-auto space-y-4 md:space-y-12 ">
+      <Suspense
+        fallback={
+          <LoaderCircle
+            size={16}
+            className="animate-spin"
+          />
+        }>
+        <HeroSection />
       </Suspense>
 
-      <Suspense fallback={<LoaderCircle size={16} className="animate-spin" />}>
-        <CategoryCarouselSection />
-      </Suspense>
+      <div className=" px-4 md:px-0 space-y-4 md:space-y-12 ">
+        <Suspense
+          fallback={
+            <LoaderCircle
+              size={16}
+              className="animate-spin"
+            />
+          }>
+          <CategoryCarouselSection />
+        </Suspense>
 
-      <Suspense fallback={<LoaderCircle size={16} className="animate-spin" />}>
-        <FeatureProductSection />
-      </Suspense>
+        <Suspense
+          fallback={
+            <LoaderCircle
+              size={16}
+              className="animate-spin"
+            />
+          }>
+          <FeatureProductSection />
+        </Suspense>
 
-      <Suspense fallback={<LoaderCircle size={16} className="animate-spin" />}>
-        <MiddleBannerSection />
-      </Suspense>
-
-      <Suspense fallback={<LoaderCircle size={16} className="animate-spin" />}>
-      <NewArrrivalSection />
-      </Suspense>
+        <Suspense
+          fallback={
+            <LoaderCircle
+              size={16}
+              className="animate-spin"
+            />
+          }>
+          <NewArrrivalSection />
+        </Suspense>
+      </div>
     </div>
   );
 }
