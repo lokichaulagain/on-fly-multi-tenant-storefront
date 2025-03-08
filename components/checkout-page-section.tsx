@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { orderFormSchema } from "@/form-schemas/order";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useCurrentStore } from "@/contexts/current-store-provider";
 
 export default function CheckoutPageSection({ store_id }: { store_id: string }) {
   const { isLoaded, isSignedIn, user } = useUser();
@@ -26,6 +27,15 @@ export default function CheckoutPageSection({ store_id }: { store_id: string }) 
   const { cart, isCartOpen, setIsCartOpen, removeFromCart, increaseQuantity, decreaseQuantity, clearCart } = useCart();
   const totalPrice = cart.reduce((total, item) => total + (item.price || 0) * item.quantity, 0);
   const [activeSection, setActiveSection] = useState<string>("");
+
+
+  const store = useCurrentStore();
+
+  const store_logo = store.store_logo;
+  const store_subdomain = store.store_subdomain;
+  const primary_color = store.store_appearance?.primary_color;
+  const border_radius = `${(store.store_appearance?.border_radius ?? 0) / 16}rem`;
+  const font_family = store.store_appearance?.font_family;
 
   const form = useForm<z.infer<typeof orderFormSchema>>({
     resolver: zodResolver(orderFormSchema),
@@ -445,23 +455,41 @@ export default function CheckoutPageSection({ store_id }: { store_id: string }) 
               </div>
             </div>
 
+
             {isSignedIn ? (
               <Button
                 type="submit"
-                className="w-full bg-primary hover:bg-primary/80 text-white">
+                className="w-full bg-[var(--secondary)] hover:bg-[var(--secondary)] text-white">
                 {isPending ? "Placing Order..." : "Order Now"}
               </Button>
             ) : (
               <SignInButton
-                mode="modal"
-                signUpForceRedirectUrl={"/checkout"}
-                forceRedirectUrl={"/checkout"}>
-                <Button
-                  type="button"
-                  className="w-full bg-primary hover:bg-primary/80 text-white">
-                  Sign In to Continue
-                </Button>
-              </SignInButton>
+              mode="modal"
+              forceRedirectUrl={"/checkout"}
+              appearance={{
+                variables: {
+                  colorPrimary: primary_color,
+                  borderRadius: border_radius,
+                  fontFamily: font_family,
+                },
+
+                layout: {
+                  logoImageUrl: store_logo,
+                  logoLinkUrl: `https://${store_subdomain}.fenzora.com`,
+                  helpPageUrl: "/help",
+                  privacyPageUrl: "/privacy-policy",
+                  termsPageUrl: "/terms-of-service",
+                  logoPlacement: "inside",
+                  unsafe_disableDevelopmentModeWarnings: false,
+                },
+              }}>
+              <Button
+               
+                className="w-full bg-[var(--secondary)] hover:bg-[var(--secondary)] text-white">
+                Sign In
+              </Button>
+            </SignInButton>
+
             )}
           </form>
         </Form>

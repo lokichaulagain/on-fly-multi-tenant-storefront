@@ -9,8 +9,9 @@ import { useCart } from "@/contexts/cart-provider";
 import { SignedIn, SignedOut, SignInButton, SignUpButton, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { IStoreAppearance } from "@/interfaces/store";
+import { IActiveStorePagesWithPreviewData } from "@/actions/page";
 
-export default function Navbar({ store_name, store_logo, store_subdomain, store_appearance }: { store_name: string; store_logo: string; store_subdomain: string; store_appearance: IStoreAppearance }) {
+export default function Navbar({ store_name, store_logo, store_subdomain, store_appearance, pages }: { store_name: string; store_logo: string; store_subdomain: string; store_appearance: IStoreAppearance; pages: IActiveStorePagesWithPreviewData[] }) {
   const primary_color = store_appearance.primary_color;
   const border_radius = `${store_appearance.border_radius / 16}rem`;
   const font_family = store_appearance.font_family;
@@ -18,12 +19,7 @@ export default function Navbar({ store_name, store_logo, store_subdomain, store_
   const { cart } = useCart();
   const { user } = useUser();
   const pathname = usePathname();
-  const navigation = [
-    { title: "Home", path: "/" },
-    { title: "Shop", path: "/shop" },
-    { title: "About", path: "/about" },
-    { title: "Contact", path: "/contact" },
-  ];
+  const navigation = [{ title: "Home", path: "/" }, { title: "Shop", path: "/shop" }, ...pages.map((page) => ({ title: page.title, path: `/p/${page.slug}` }))];
 
   return (
     <nav className="bg-[var(--primary)]  shadow-sm w-full md:static md:text-sm  h-16 flex items-center justify-center   ">
@@ -67,7 +63,7 @@ export default function Navbar({ store_name, store_logo, store_subdomain, store_
                     size={20}
                     className="hover:text-[var(--secondary)] duration-300"
                   />
-                  {cart.length > 0 && <span className="absolute -top-2 -right-2 bg-primary text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">{cart.length}</span>}
+                  {cart.length > 0 && <span className="absolute -top-2 -right-2 bg-[var(--secondary)]  text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]">{cart.length}</span>}
                 </div>
               </Link>
 

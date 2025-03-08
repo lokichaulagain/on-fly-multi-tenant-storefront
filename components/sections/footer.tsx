@@ -2,8 +2,9 @@ import Link from "next/link";
 import { ChevronRight, Facebook, Instagram, MapPin, Youtube, Zap } from "lucide-react";
 import Image from "next/image";
 import { Stores } from "@/lib/db/schema";
+import { IActiveStorePagesWithPreviewData } from "@/actions/page";
 
-export default function Footer({ store }: { store: Stores }) {
+export default function Footer({ store, pages }: { store: Stores; pages: IActiveStorePagesWithPreviewData[] }) {
   return (
     <footer className="footerbg py-12 bg-[var(--primary)]   text-white/90 mt-16 ">
       <div className=" w-full container px-4 md:px-24 mx-auto space-y-10 ">
@@ -44,17 +45,20 @@ export default function Footer({ store }: { store: Stores }) {
                   />
                 </Link>
               </li>
-              <li>
-                <Link
-                  href={"/about"}
-                  className="  flex items-center hover:text-[var(--secondary)] duration-300">
-                  About
-                  <ChevronRight
-                    size={16}
-                    className=""
-                  />
-                </Link>
-              </li>
+
+              {pages.map((page) => (
+                <li key={page.id}>
+                  <Link
+                    href={`/p/${page.slug}`}
+                    className="  flex items-center hover:text-[var(--secondary)] duration-300">
+                    {page.title}
+                    <ChevronRight
+                      size={16}
+                      className=""
+                    />
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -130,8 +134,6 @@ export default function Footer({ store }: { store: Stores }) {
                   Message us on Whatsapp
                 </Link>
               )}
-
-              
 
               {store.social_links?.google_map_url && (
                 <Link

@@ -54,10 +54,10 @@ export default function HeroSection() {
             <Image
               src={banner}
               alt="carousel"
-              className=" h-52  lg:h-[70vh] object-cover rounded-sm"
+              className="h-52 md:h-[70vh] object-cover rounded-sm"
               height={500}
               width={1500}
-              priority
+              priority={index === 0}
             />
           </CarouselItem>
         ))}

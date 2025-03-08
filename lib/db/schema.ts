@@ -319,3 +319,19 @@ export const productsToCategories = pgTable(
   (table) => [primaryKey({ columns: [table.product_id, table.category_id] })]
 );
 export type ProductsToCategories = typeof productsToCategories.$inferSelect;
+
+
+// ✅ Pages Table
+export const pagesTable = pgTable("pages", {
+  id: uuid("id").defaultRandom().primaryKey().notNull().unique(),
+  title: varchar("title", { length: 100 }).notNull(),
+  slug: varchar("slug", { length: 100 }).notNull(),
+  content: varchar("content", { length: 5000 }),
+  store_id: varchar("store_id", { length: 255 })
+    .notNull()
+    .references(() => storesTable.id), 
+  created_at: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
+  deleted_at: timestamp("deleted_at", { mode: "date" }),
+});
+export type Pages = typeof pagesTable.$inferSelect;

@@ -4,6 +4,7 @@ import { getActiveStore, getActiveStoreMetadata } from "@/actions/store";
 import Navbar from "@/components/sections/navbar";
 import Footer from "@/components/sections/footer";
 import { CartProvider } from "@/contexts/cart-provider";
+import { getActiveStorePagesWithPreviewData } from "@/actions/page";
 
 export async function generateMetadata(): Promise<Metadata | null> {
   const response = await getActiveStoreMetadata();
@@ -42,6 +43,13 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
     return <div>Error fetching store appearance</div>;
   }
 
+  const res = await getActiveStorePagesWithPreviewData();
+  const pages = res.data;
+
+  if (res.error || !pages) {
+    return <div>Error fetching pages</div>;
+  }
+
   return (
     <CartProvider>
       <div>
@@ -51,10 +59,14 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
             store_logo={response.data.store_logo}
             store_subdomain={response.data.store_subdomain}
             store_appearance={store_appearance}
+            pages={pages}
           />
         </div>
         <div className="pt-16">{children}</div>
-        <Footer store={response.data} />
+        <Footer
+          store={response.data}
+          pages={pages}
+        />
       </div>
     </CartProvider>
   );

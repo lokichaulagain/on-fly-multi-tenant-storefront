@@ -63,7 +63,7 @@ const SingleProductCard = memo(({ product }: { product: IProductPreview }) => {
               className={`object-cover transition-transform duration-700 ${isHovered ? "scale-110" : "scale-100"}`}
             />
             {/* Show discount badge only if discountPercentage is greater than 0 */}
-            {discountPercentage > 0 && <Badge className="absolute left-3 top-3 bg-[var(--primary)] hover:bg-[var(--primary)] text-xs">{discountPercentage}% OFF</Badge>}
+            {discountPercentage > 0 && <Badge className="absolute right-2 top-2 bg-[var(--primary)] hover:bg-[var(--primary)] text-[10px]">{discountPercentage}% OFF</Badge>}
           </div>
 
           <div className="p-4">
@@ -97,7 +97,7 @@ const SingleProductCard = memo(({ product }: { product: IProductPreview }) => {
           </Button>
         </div>
       </div>
-      <CartSheet />
+      <CartSheet  />
     </div>
   );
 });

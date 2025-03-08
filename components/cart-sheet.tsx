@@ -1,9 +1,9 @@
 "use client";
 
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/cart-provider";
-import { X, Plus, Minus } from "lucide-react";
+import { Plus, Minus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { SignedOut, SignUpButton } from "@clerk/nextjs";
@@ -22,10 +22,16 @@ export function CartSheet() {
   const border_radius = `${(store.store_appearance?.border_radius ?? 0) / 16}rem`;
   const font_family = store.store_appearance?.font_family;
 
+
   return (
     <Sheet
-      open={isCartOpen}
-      onOpenChange={setIsCartOpen}>
+    open={isCartOpen}
+    onOpenChange={setIsCartOpen}
+    >
+      {/* <SheetTrigger>
+        <Button variant="outline">Add to cart </Button>
+      </SheetTrigger> */}
+
       <SheetContent className=" w-10/12">
         <SheetHeader>
           <SheetTitle className=" text-center">MY CART ({cart.length})</SheetTitle>
