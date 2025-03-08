@@ -55,7 +55,7 @@ const SingleProductCard = memo(({ product }: { product: IProductPreview }) => {
         <Link
           href={`/shop/${product.slug}`}
           prefetch={true}>
-          <div className="relative aspect-square overflow-hidden">
+          <div className="relative aspect-square overflow -hidden">
             <Image
               src={product.image_url || "/placeholder.svg"}
               alt={product.name}

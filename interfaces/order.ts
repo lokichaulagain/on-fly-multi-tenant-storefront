@@ -6,7 +6,7 @@ export interface IShippingAndBillingAddress {
   district: string;
   city: string;
   landmark: string;
-  postal_code: string;
+  postal_code: number;
 }
 
 export interface IOrderItem {

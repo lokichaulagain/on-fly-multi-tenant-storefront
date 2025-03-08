@@ -1,5 +1,6 @@
 import { border_radius, button_style, DEFAULT_STORE_LOGO, favicon, font_family, primary_color, product_aspect_ratio, secondary_color } from "@/constants";
 import { ENUM_CATEGORY_STATUS, ENUM_PAYMENT_STATUS, ENUM_PRODUCT_STATUS, ENUM_SHIPPING_STATUS, ENUM_STORE_STATUS, ENUM_SUBSCRIPTION_PLAN, ENUM_SUBSCRIPTION_STATUS, ENUM_STORE_CATEGORY } from "@/enums";
+import { IShippingAndBillingAddress } from "@/interfaces/order";
 import { IStoreAppearance, IStoreSocialLinks } from "@/interfaces/store";
 import { sql } from "drizzle-orm";
 import { pgTable, decimal, varchar, text, timestamp, integer, jsonb, index, boolean, uuid, AnyPgColumn, primaryKey } from "drizzle-orm/pg-core";
@@ -234,18 +235,19 @@ export const ordersTable = pgTable("orders", {
   //   postal_code: null,
   // }),
 
-  shipping_address: jsonb("shipping_address")
-    .default({
-      full_name: varchar("full_name", { length: 100 }),
-      email_address: varchar("email_address", { length: 100 }),
-      phone_number: integer("phone_number"),
-      province: varchar("province", { length: 100 }),
-      district: varchar("district", { length: 100 }),
-      city: varchar("city", { length: 100 }),
-      landmark: varchar("landmark", { length: 100 }),
-      postal_code: integer("postal_code"),
-    })
-    .default(null),
+  // shipping_address: jsonb("shipping_address")
+  //   .default({
+    shipping_address: jsonb("shipping_address").$type<IShippingAndBillingAddress>().default({
+      full_name: "" ,
+      email_address: "",
+      phone_number: "",
+      province: "",
+      district: "",
+      city: "",
+      landmark: "",
+      postal_code: 0,
+    }),
+    
 
   billing_address: jsonb("billing_address")
     .default({

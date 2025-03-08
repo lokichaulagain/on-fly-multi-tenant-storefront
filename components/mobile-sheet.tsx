@@ -6,30 +6,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { SignedIn, SignedOut, SignInButton, SignUpButton, useUser } from "@clerk/nextjs";
 import { useCurrentStore } from "@/contexts/current-store-provider";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
-const navigation = [
-  {
-    title: "Shop",
-    path: "/shop",
-  },
-  {
-    title: "Cart",
-    path: "/checkout",
-  },
-
-  {
-    title: "Privacy Policy",
-    path: "/privacy-policy",
-  },
-  {
-    title: "Terms of Service",
-    path: "/terms-of-service",
-  },
-];
-
-export default function MobileSheet() {
+export default function MobileSheet({ navitems }: { navitems: { title: string; slug: string }[] }) {
   const { user } = useUser();
   const store = useCurrentStore();
+
+  const pathname = usePathname();
 
   const store_logo = store.store_logo;
   const store_subdomain = store.store_subdomain;
@@ -42,14 +26,14 @@ export default function MobileSheet() {
       <SheetTrigger asChild>
         <Button
           size="icon"
-          className="md:hidden">
-          <Menu size={20} />
+          className="md:hidden bg-[var(--secondary)] text-white">
+          <Menu size={16} />
           <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>
       <SheetContent
         side="right"
-        className="w-[300px] sm:w-[400px] flex flex-col">
+        className="w-[300px] sm:w-[400px] flex flex-col border-none ">
         <SheetHeader>
           <SheetTitle className="flex items-center justify-center text-primary">
             <Link
@@ -66,16 +50,25 @@ export default function MobileSheet() {
             </Link>
           </SheetTitle>
         </SheetHeader>
+
+        <div className=" py-1">
+          <p className="w-full border-t border-dashed border-gray-100" />
+        </div>
+
+
         <div className="flex flex-col">
-          <nav className="flex flex-col space-y-2">
-            {navigation.map((item) => (
-              <Link
-                key={item.path}
-                href={item.path}
-                className="font-medium ">
-                <p className="ml-2">{item.title}</p>
-              </Link>
-            ))}
+          <nav className="flex flex-col">
+            {navitems.map((item, index) => {
+              const isActive = pathname === item.slug;
+              return (
+                <Link
+                  key={index}
+                  href={item.slug}
+                  className="font-medium transition-colors">
+                  <p className={cn("text-sm p-2", "active:bg-[var(--primary)] active:text-[var(--secondary)]  touch-manipulation", isActive ? " text-[var(--primary)] font-medium" : "  opacity-85")}>{item.title}</p>
+                </Link>
+              );
+            })}
           </nav>
         </div>
 
@@ -119,11 +112,7 @@ export default function MobileSheet() {
                   unsafe_disableDevelopmentModeWarnings: false,
                 },
               }}>
-              <Button
-                variant={"outline"}
-                className="hover:text-[var(--secondary)] duration-300 w-full">
-                Sign In
-              </Button>
+              <Button className="bg-[var(--secondary)] hover:bg-[var(--secondary)] w-full">Sign In</Button>
             </SignInButton>
 
             <SignUpButton
@@ -146,7 +135,7 @@ export default function MobileSheet() {
                   unsafe_disableDevelopmentModeWarnings: false,
                 },
               }}>
-              <Button className="bg-[var(--secondary)] hover:bg-[var(--secondary)] duration-300 w-full">Sign Up</Button>
+              <Button className="bg-[var(--primary)] hover:bg-[var(--primary)] w-full">Sign Up</Button>
             </SignUpButton>
           </div>
         </SignedOut>

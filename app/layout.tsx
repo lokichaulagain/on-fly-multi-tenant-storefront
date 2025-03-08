@@ -2,7 +2,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { getActiveStore } from "@/actions/store";
 import { CurrentStoreProvider } from "@/contexts/current-store-provider";
-import { Stores } from "@/lib/db/schema";
+import { Toaster } from "@/components/ui/sonner";
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const response = await getActiveStore();
@@ -31,7 +31,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             `}
             </style>
           </head>
-          <body>{children}</body>
+          <body>
+            
+            {children}
+            <Toaster />
+          </body>
         </html>
       </CurrentStoreProvider>
     </ClerkProvider>
