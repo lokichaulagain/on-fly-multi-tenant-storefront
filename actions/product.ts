@@ -126,7 +126,7 @@ export async function getActiveStoreProductsByCategorySlug(categorySlug: string)
     const products = await getProducts();
 
     // 6. Return products with preview data
-    return { data: products, status: 200, msg: "Products fetched successfully", error: null };
+    return { data: products as IProductPreview[], status: 200, msg: "Products fetched successfully", error: null };
   } catch (error: unknown) {
     console.error("Error fetching active store products by category:", error);
     return { data: null, status: 500, error: handleDbError(error) };
