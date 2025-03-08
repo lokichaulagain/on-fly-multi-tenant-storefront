@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
-import type { IProduct } from "@/interfaces/product";
 import parse from "html-react-parser";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/cart-provider";
@@ -12,10 +11,13 @@ import { ShoppingCart, LoaderCircle, Minus, Plus } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/format-currency";
+import { Products } from "@/lib/db/schema";
 
-export default function ProductDisplay({ product }: { product: IProduct }) {
-  const [selectedImage, setSelectedImage] = useState(product.image_urls[0]);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+export default function ProductDisplay({ product }: { product: Products }) {
+  const imageUrls = Array.isArray(product.image_urls) ? product.image_urls : [];
+
+  const [selectedImage, setSelectedImage] = useState(imageUrls[0] || '');
+  const [selectedIndex, setSelectedIndex] = useState(0); 
   const [quantity, setQuantity] = useState(1);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const { addToCart } = useCart();
@@ -31,7 +33,7 @@ export default function ProductDisplay({ product }: { product: IProduct }) {
     const handleSelect = () => {
       const selectedIndex = mainCarouselApi.selectedScrollSnap();
       setSelectedIndex(selectedIndex);
-      setSelectedImage(product.image_urls[selectedIndex]);
+      setSelectedImage(imageUrls[selectedIndex] || '');  
     };
 
     mainCarouselApi.on("select", handleSelect);
@@ -39,7 +41,7 @@ export default function ProductDisplay({ product }: { product: IProduct }) {
     return () => {
       mainCarouselApi.off("select", handleSelect);
     };
-  }, [mainCarouselApi, product.image_urls]);
+  }, [mainCarouselApi, imageUrls]);
 
   const handleImageClick = (image: string, index: number) => {
     setSelectedImage(image);
@@ -57,9 +59,9 @@ export default function ProductDisplay({ product }: { product: IProduct }) {
       name: product.name,
       price: product.selling_price,
       crossed_price: product.crossed_price,
-      image: product.image_urls[0],
+      image: imageUrls[0] || '',
     };
-    setTimeout(() => {
+    setTimeout(() => { 
       addToCart(toBeSentToCart, quantity);
       setIsAddingToCart(false);
 
@@ -85,7 +87,7 @@ export default function ProductDisplay({ product }: { product: IProduct }) {
           <div className="relative h-[500px]">
             <ScrollArea className="h-full pr-2">
               <div className="space-y-2">
-                {product.image_urls.map((item: string, index: number) => (
+                {imageUrls.map((item: string, index: number) => (
                   <div
                     key={index}
                     className={`relative aspect-square rounded-md overflow-hidden cursor-pointer transition-all 
@@ -114,7 +116,7 @@ export default function ProductDisplay({ product }: { product: IProduct }) {
               containScroll: false,
             }}>
             <CarouselContent>
-              {product.image_urls.map((item: string, index: number) => (
+              {imageUrls.map((item: string, index: number) => (
                 <CarouselItem
                   key={index}
                   className="relative overflow-hidden">
@@ -136,7 +138,7 @@ export default function ProductDisplay({ product }: { product: IProduct }) {
           {/* Mobile/tablet thumbnail carousel */}
           <Carousel className="w-full lg:hidden px-4">
             <CarouselContent>
-              {product.image_urls.map((item: string, index: number) => (
+              {imageUrls.map((item: string, index: number) => (
                 <CarouselItem
                   key={index}
                   className="basis-1/4 md:basis-1/5">

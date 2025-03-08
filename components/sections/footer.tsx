@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ChevronRight, Facebook, Instagram, MapPin, Youtube, Zap } from "lucide-react";
 import Image from "next/image";
 import { Stores } from "@/lib/db/schema";
-import { IActiveStorePagesWithPreviewData } from "@/actions/page";
+
 
 export default function Footer({ store, pages }: { store: Stores; pages: IActiveStorePagesWithPreviewData[] }) {
   const quickLinks = [
@@ -167,6 +167,7 @@ export default function Footer({ store, pages }: { store: Stores; pages: IActive
 }
 
 import React from "react";
+import { IActiveStorePagesWithPreviewData } from "@/interfaces/page";
 
 function IconWhatsApp() {
   return (

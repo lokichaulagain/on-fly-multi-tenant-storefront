@@ -1,46 +1,57 @@
 "use server";
-import { and, eq, or } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db } from "@/lib/db/drizzle";
-import { Orders, ordersTable } from "@/lib/db/schema";
+import { ordersTable } from "@/lib/db/schema";
 import { handleDbError } from "@/utils/db-error";
-import { ActionResponse } from ".";
-import { headers } from "next/headers";
-import { ActiveDomainInfo, IStoreAppearance, IStoreMetadata } from "@/interfaces/store";
-import { unstable_cache } from "next/cache";
+import { ActionResponse, getStoreIdFromSubdomain } from ".";
 import { currentUser } from "@clerk/nextjs/server";
-import { getStoreIdBySubdomain, getStoreSubdomainFromHeaders } from "./store";
+import { unstable_cache } from "next/cache";
+import { CACHE_REVALIDATION_TIME } from "./constant";
 
-// export async function getActiveUserOrders() {
-
-// }
-
+// ✅
 export async function getActiveUserOrders(): Promise<ActionResponse<any[]>> {
+  // 1. Get store_id from subdomain
+  const response = await getStoreIdFromSubdomain();
+  const store_id = response.data;
+  if (!store_id) {
+    return { data: null, status: 404, msg: "Store not found", error: "Store not found" };
+  }
+
+  // 2. Get user_id from clerk
+  const user = await currentUser();
+  if (!user) {
+    return { data: null, status: 404, msg: "User not found", error: "User not found" };
+  }
+
   try {
-    // 1. Get subdomain from headers
-    const store_subdomain = await getStoreSubdomainFromHeaders();
+    // 3. Get orders from database from cache or database
+    const getOrders = unstable_cache(
+      async () => {
+        const orders = await db.query.ordersTable.findMany({
+          where: and(eq(ordersTable.store_id, store_id), eq(ordersTable.user_id, user.id)),
+        });
+        return orders;
+      },
 
-    // 2. Get store id by subdomain
-    const response = await getStoreIdBySubdomain(store_subdomain);
-    const store_id = response.data;
+      //  Cache key
+      ["active-user-orders", store_id, user.id],
 
-    if (!store_id) {
-      return { data: null, status: 404, msg: "Store not found", error: "Store not found" };
-    }
+      {
+        // Cache tags for invalidation
+        tags: [`active-user-orders-${user.id}`],
 
-    const user = await currentUser();
+        // Cache revalidation time
+        revalidate: CACHE_REVALIDATION_TIME,
+      }
+    );
 
-    if (!user) {
-      return { data: null, status: 404, msg: "User not found", error: "User not found" };
-    }
+    // 4. Return the orders
+    const orders = await getOrders();
 
-    // 
-    const orders = await db.query.ordersTable.findMany({
-      where: and(eq(ordersTable.store_id, store_id), eq(ordersTable.user_id, user.id)),
-    });
-
+    // 5. Return the orders
     return { data: orders, status: 200, msg: "Orders fetched successfully", error: null };
   } catch (error) {
-    console.error("Error fetching orders:", error);
+    console.error(`Error fetching orders for user_id: ${user.id} for store_id: ${store_id}`, error);
     return { data: null, status: 500, error: handleDbError(error) };
   }
 }

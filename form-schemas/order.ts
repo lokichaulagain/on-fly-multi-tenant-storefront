@@ -41,9 +41,11 @@ export const orderFormSchema = z.object({
     .min(2, "Landmark must be at least 2 characters")
     .max(100, "Landmark must not exceed 100 characters"),
 
+ 
   postal_code: z
     .string()
-    .regex(/^\d{6}$/, "Postal code must be exactly 6 digits"),
+    .min(6, "Postal code must be exactly 6 digits")
+    .max(6, "Postal code must be exactly 6 digits"),
 
   // Order Information
   payment_method: z

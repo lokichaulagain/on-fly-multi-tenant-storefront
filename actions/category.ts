@@ -7,31 +7,20 @@ import { ICategoryPreview } from "@/interfaces/category";
 import { ENUM_CATEGORY_STATUS } from "@/enums";
 import { handleDbError } from "@/utils/db-error";
 import { unstable_cache } from "next/cache";
-import { getStoreIdBySubdomain, getStoreSubdomainFromHeaders } from "./store";
+import { getStoreIdFromSubdomain } from "./index";
+import { CACHE_REVALIDATION_TIME } from "./constant";
 
-// Cache configuration
-const CACHE_REVALIDATION_TIME = 60 * 60 * 24; // 24 hours
-
-/*
-  Get Active store categories action with preview data
-  1. Get subdomain from headers
-  2. Get store id by subdomain
-  3. Get active store categories from cache or database
-*/
+// ✅
 export async function getActiveStoreCategoriesWithPreviewData(): Promise<ActionResponse<ICategoryPreview[]>> {
+  // 1. Get store id from subdomain
+  const response = await getStoreIdFromSubdomain();
+  const store_id = response.data;
+  if (!store_id) {
+    return { data: null, status: 404, msg: "Store not found", error: "Store not found" };
+  }
+
   try {
-    // 1. Get subdomain from headers
-    const store_subdomain = await getStoreSubdomainFromHeaders();
-
-    // 2. Get store id by subdomain
-    const response = await getStoreIdBySubdomain(store_subdomain);
-    const store_id = response.data;
-
-    if (!store_id) {
-      return { data: null, status: 404, msg: "Store not found", error: "Store not found" };
-    }
-
-    // 3. Get active store categories from cache or database
+    // 2. Get active store categories from cache or database
     const getCategories = unstable_cache(
       async () =>
         await db
@@ -50,13 +39,13 @@ export async function getActiveStoreCategoriesWithPreviewData(): Promise<ActionR
       { tags: [`active-store-categories-${store_id}`], revalidate: CACHE_REVALIDATION_TIME }
     );
 
-    // 4. Get categories
+    // 3. Get categories
     const categories = await getCategories();
 
-    // 5. Return categories
+    // 4. Return categories
     return { data: categories, status: 200, msg: "Categories fetched successfully", error: null };
   } catch (error: unknown) {
-    console.error("Error fetching categories:", error);
+    console.error(`Error fetching categories for store ${store_id} : Error: ${error}`);
     return { data: null, status: 500, error: handleDbError(error) };
   }
 }

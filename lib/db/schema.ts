@@ -179,7 +179,8 @@ export const productsTable = pgTable(
 
     // images: jsonb("images").default([]),
     has_variants: boolean("has_variants").default(false),
-    image_urls: jsonb("image_urls").default([]),
+    // image_urls: jsonb("image_urls").default([]),
+    image_urls: jsonb("image_urls").$type<string[]>().default([]),
 
     status: varchar("status", {
       length: 20,
@@ -226,41 +227,28 @@ export const ordersTable = pgTable("orders", {
   // payment_amount: integer("payment_amount"),
 
   // 🛒 Address information
-  // shipping_address: jsonb("shipping_address"),
-  // shipping_address: jsonb("shipping_address").default({
-  //   address: null,
-  //   city: null,
-  //   state: null,
-  //   country: null,
-  //   postal_code: null,
-  // }),
 
-  // shipping_address: jsonb("shipping_address")
-  //   .default({
-    shipping_address: jsonb("shipping_address").$type<IShippingAndBillingAddress>().default({
-      full_name: "" ,
-      email_address: "",
-      phone_number: "",
-      province: "",
-      district: "",
-      city: "",
-      landmark: "",
-      postal_code: 0,
-    }),
-    
+  shipping_address: jsonb("shipping_address").$type<IShippingAndBillingAddress>().default({
+    full_name: "",
+    email_address: "",
+    phone_number: "",
+    province: "",
+    district: "",
+    city: "",
+    landmark: "",
+    postal_code: "",
+  }),
 
-  billing_address: jsonb("billing_address")
-    .default({
-      full_name: varchar("full_name", { length: 100 }),
-      email_address: varchar("email_address", { length: 100 }),
-      phone_number: integer("phone_number"),
-      province: varchar("province", { length: 100 }),
-      district: varchar("district", { length: 100 }),
-      city: varchar("city", { length: 100 }),
-      landmark: varchar("landmark", { length: 100 }),
-      postal_code: integer("postal_code"),
-    })
-    .default(null),
+  billing_address: jsonb("billing_address").$type<IShippingAndBillingAddress>().default({
+    full_name: "",
+    email_address: "",
+    phone_number: "",
+    province: "",
+    district: "",
+    city: "",
+    landmark: "",
+    postal_code: "",
+  }),
 
   // 🛒 Order details
   order_items: jsonb("order_items")
@@ -322,7 +310,6 @@ export const productsToCategories = pgTable(
 );
 export type ProductsToCategories = typeof productsToCategories.$inferSelect;
 
-
 // ✅ Pages Table
 export const pagesTable = pgTable("pages", {
   id: uuid("id").defaultRandom().primaryKey().notNull().unique(),
@@ -331,7 +318,7 @@ export const pagesTable = pgTable("pages", {
   content: varchar("content", { length: 5000 }),
   store_id: varchar("store_id", { length: 255 })
     .notNull()
-    .references(() => storesTable.id), 
+    .references(() => storesTable.id),
   created_at: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
   updated_at: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
   deleted_at: timestamp("deleted_at", { mode: "date" }),

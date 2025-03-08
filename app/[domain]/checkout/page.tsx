@@ -1,8 +1,8 @@
-import { getActiveDomainInfo } from "@/actions/store";
+import { getActiveStore } from "@/actions/store";
 import CheckoutPageSection from "@/components/checkout-page-section";
 
 export default async function Page() {
-  const response = await getActiveDomainInfo();
+  const response = await getActiveStore();
   const store_id = response.data?.id;
 
   return (

@@ -9,7 +9,7 @@ import { useCart } from "@/contexts/cart-provider";
 import { SignedIn, SignedOut, SignInButton, SignUpButton, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { IStoreAppearance } from "@/interfaces/store";
-import { IActiveStorePagesWithPreviewData } from "@/actions/page";
+import { IActiveStorePagesWithPreviewData } from "@/interfaces/page";
 
 export default function Navbar({ store_name, store_logo, store_subdomain, store_appearance, pages }: { store_name: string; store_logo: string; store_subdomain: string; store_appearance: IStoreAppearance; pages: IActiveStorePagesWithPreviewData[] }) {
   const primary_color = store_appearance.primary_color;
