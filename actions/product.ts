@@ -36,6 +36,7 @@ export async function getActiveStoreProductsWithPreviewData(): Promise<ActionRes
       async () => {
         return await db
           .select({
+            id: productsTable.id,
             name: productsTable.name,
             slug: productsTable.slug,
             selling_price: productsTable.selling_price,
@@ -67,9 +68,6 @@ export async function getActiveStoreProductsWithPreviewData(): Promise<ActionRes
   }
 }
 
-
-
-
 export async function getActiveStoreProductsByCategorySlug(categorySlug: string): Promise<ActionResponse<IProductPreview[]>> {
   try {
     // 1. Get store subdomain from headers
@@ -89,13 +87,7 @@ export async function getActiveStoreProductsByCategorySlug(categorySlug: string)
         id: categoriesTable.id,
       })
       .from(categoriesTable)
-      .where(
-        and(
-          eq(categoriesTable.store_id, store_id),
-          eq(categoriesTable.slug, categorySlug),
-          eq(categoriesTable.status, ENUM_CATEGORY_STATUS.ACTIVE)
-        )
-      )
+      .where(and(eq(categoriesTable.store_id, store_id), eq(categoriesTable.slug, categorySlug), eq(categoriesTable.status, ENUM_CATEGORY_STATUS.ACTIVE)))
       .limit(1);
 
     if (!categoryResponse || categoryResponse.length === 0) {
@@ -116,27 +108,15 @@ export async function getActiveStoreProductsByCategorySlug(categorySlug: string)
             image_url: sql<string>`${productsTable.image_urls}->0`,
           })
           .from(productsTable)
-          .innerJoin(
-            productsToCategories,
-            eq(productsTable.id, productsToCategories.product_id)
-          )
-          .where(
-            and(
-              eq(productsTable.store_id, store_id),
-              eq(productsTable.status, ENUM_PRODUCT_STATUS.ACTIVE),
-              eq(productsToCategories.category_id, category_id)
-            )
-          )
+          .innerJoin(productsToCategories, eq(productsTable.id, productsToCategories.product_id))
+          .where(and(eq(productsTable.store_id, store_id), eq(productsTable.status, ENUM_PRODUCT_STATUS.ACTIVE), eq(productsToCategories.category_id, category_id)))
           .orderBy(desc(productsTable.created_at));
       },
       // Cache key unique identifier for the store and category
       [`active-store-products-${store_subdomain}-category-${categorySlug}`],
       {
         // Cache tags for invalidation
-        tags: [
-          `active-store-products-${store_subdomain}`,
-          `category-products-${categorySlug}`
-        ],
+        tags: [`active-store-products-${store_subdomain}`, `category-products-${categorySlug}`],
         // Cache revalidation time
         revalidate: CACHE_REVALIDATION_TIME,
       }
@@ -160,7 +140,7 @@ export async function getActiveStoreProductsByCategorySlug(categorySlug: string)
 */
 export async function getProductBySlug(slug: string): Promise<ActionResponse<any>> {
   try {
-    console.log("hereeeeee")
+    console.log("hereeeeee");
     // 1. Get product by slug from cache or database
     const [product] = await db.select().from(productsTable).where(eq(productsTable.slug, slug)).limit(1);
 

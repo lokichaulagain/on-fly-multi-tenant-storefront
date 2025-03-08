@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
-import { Separator } from "@/components/ui/separator";
 import type { IProduct } from "@/interfaces/product";
 import parse from "html-react-parser";
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,6 @@ import { ShoppingCart, LoaderCircle, Minus, Plus } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/format-currency";
-import dynamic from "next/dynamic";
 
 export default function ProductDisplay({ product }: { product: IProduct }) {
   const [selectedImage, setSelectedImage] = useState(product.image_urls[0]);
@@ -53,8 +51,16 @@ export default function ProductDisplay({ product }: { product: IProduct }) {
     setIsAddingToCart(true);
 
     // Simulate a short loading state
+
+    const toBeSentToCart = {
+      id: product.id,
+      name: product.name,
+      price: product.selling_price,
+      crossed_price: product.crossed_price,
+      image: product.image_urls[0],
+    };
     setTimeout(() => {
-      addToCart(product, quantity);
+      addToCart(toBeSentToCart, quantity);
       setIsAddingToCart(false);
 
       toast.success("Success!", {
@@ -201,7 +207,7 @@ export default function ProductDisplay({ product }: { product: IProduct }) {
                   size={16}
                   className="animate-spin"
                 />
-                Adding to cart
+                Adding to cart...
               </span>
             ) : (
               <span className="flex items-center gap-2">

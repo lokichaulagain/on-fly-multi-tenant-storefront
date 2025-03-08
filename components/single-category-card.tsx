@@ -9,6 +9,7 @@ import { ICategoryPreview } from "@/interfaces/category";
 
 */
 const SingleCategoryCard = memo(({ category }: { category: ICategoryPreview }) => {
+  
   return (
     <div className=" relative md:h-92  overflow-hidden rounded-2xl">
       {category.thumbnail && (

@@ -1,4 +1,5 @@
 export interface IProductPreview {
+  id: string;
   name: string;
   slug: string;
   selling_price: number | null;
