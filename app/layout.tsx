@@ -1,14 +1,17 @@
-import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { getActiveStore } from "@/actions/store";
-import { CurrentStoreProvider } from "@/contexts/current-store-provider";
-import { Toaster } from "@/components/ui/sonner";
+import AppClientWrapper from "@/components/app-client-wrapper";
 import { NoStoreFound } from "@/components/no-store-found";
+
+// It ensures the page is freshly generated on the server for every user request.
+// And offcourse it has performance tradeoffs.
+// export const dynamic = "force-dynamic";
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const response = await getActiveStore();
 
   if (response.error || !response.data) {
+    console.error("Failed to fetch active store:", response.error);
     return (
       <html lang="en">
         <body>
@@ -18,29 +21,25 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     );
   }
 
+  const storeAppearance = response.data.store_appearance;
+  const dynamicStyles = `
+    :root {
+      --font-family: ${storeAppearance?.font_family || "sans-serif"};
+      --primary: ${storeAppearance?.primary_color || "#000000"};
+      --secondary: ${storeAppearance?.secondary_color || "#ffffff"};
+      --radius: ${storeAppearance?.border_radius || "0"}px;
+      --ring: ${storeAppearance?.primary_color || "#000000"};
+    }
+  `;
+
   return (
-    <ClerkProvider dynamic>
-      <CurrentStoreProvider store={response.data}>
-        <html lang="en">
-          <head>
-            <style>
-              {`
-              :root {
-                --font-family: ${response.data.store_appearance?.font_family};
-                --primary: ${response.data.store_appearance?.primary_color};
-                --secondary: ${response.data.store_appearance?.secondary_color};
-                --radius: ${response.data.store_appearance?.border_radius}px;
-                --ring: ${response.data.store_appearance?.primary_color} 
-              }
-            `}
-            </style>
-          </head>
-          <body>
-            {children}
-            <Toaster />
-          </body>
-        </html>
-      </CurrentStoreProvider>
-    </ClerkProvider>
+    <html lang="en">
+      <head>
+        <style>{dynamicStyles}</style>
+      </head>
+      <body>
+        <AppClientWrapper store={response.data}>{children}</AppClientWrapper>
+      </body>
+    </html>
   );
 }
