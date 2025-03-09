@@ -34,7 +34,12 @@ export default function ProfileSection({ orders }: { orders: Orders[] }) {
         <TabsContent
           value="orders"
           className="w-full  border border-gray-200 rounded-md p-4 shadow-lg ">
-          <LokiComponent orders={orders} />
+
+          {orders.length > 0 ? (
+            <OrderComponent orders={orders} />
+          ) : (
+           <NoOrderFound/>
+          )}
         </TabsContent>
         <TabsContent value="profile">
           <UserProfile
@@ -62,6 +67,7 @@ import { Separator } from "@/components/ui/separator";
 import { StatusBadge } from "./custom-badge";
 import { ENUM_PAYMENT_STATUS, ENUM_SHIPPING_STATUS } from "@/enums";
 import { formatCurrency } from "@/lib/format-currency";
+import { NoOrderFound } from "./no-order-found";
 
 
 
@@ -77,7 +83,7 @@ interface ExpandedOrdersState {
 }
 
 
-function LokiComponent({ orders }: { orders: Orders[] }) {
+function OrderComponent({ orders }: { orders: Orders[] }) {
   const [expandedOrders, setExpandedOrders] = useState<ExpandedOrdersState>({});
 
   const toggleOrderExpand = (orderId: any) => {

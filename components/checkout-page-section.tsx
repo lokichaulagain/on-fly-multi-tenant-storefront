@@ -427,9 +427,9 @@ export default function CheckoutPageSection() {
                     layout: {
                       logoImageUrl: store_logo,
                       logoLinkUrl: `https://${store_subdomain}.fenzora.com`,
-                      helpPageUrl: "/help",
-                      privacyPageUrl: "/privacy-policy",
-                      termsPageUrl: "/terms-of-service",
+                      helpPageUrl: "/p/help",
+                      privacyPageUrl: "/p/privacy-policy",
+                      termsPageUrl: "/p/terms-of-service",
                       logoPlacement: "inside",
                       unsafe_disableDevelopmentModeWarnings: false,
                     },

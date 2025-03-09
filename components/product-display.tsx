@@ -7,17 +7,23 @@ import parse from "html-react-parser";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/cart-provider";
 import { CartSheet } from "@/components/cart-sheet";
-import { ShoppingCart, LoaderCircle, Minus, Plus } from "lucide-react";
+import { ShoppingCart, LoaderCircle, Minus, Plus, ChevronRight, Shield, RotateCcw, Truck, ShoppingBag, Heart, Share2, Star } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/format-currency";
 import { Products } from "@/lib/db/schema";
+import Link from "next/link";
+import { Separator } from "@radix-ui/react-separator";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import { Label } from "./ui/label";
+import { Badge } from "./ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
 export default function ProductDisplay({ product }: { product: Products }) {
   const imageUrls = Array.isArray(product.image_urls) ? product.image_urls : [];
 
-  const [selectedImage, setSelectedImage] = useState(imageUrls[0] || '');
-  const [selectedIndex, setSelectedIndex] = useState(0); 
+  const [selectedImage, setSelectedImage] = useState(imageUrls[0] || "");
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const { addToCart } = useCart();
@@ -33,7 +39,7 @@ export default function ProductDisplay({ product }: { product: Products }) {
     const handleSelect = () => {
       const selectedIndex = mainCarouselApi.selectedScrollSnap();
       setSelectedIndex(selectedIndex);
-      setSelectedImage(imageUrls[selectedIndex] || '');  
+      setSelectedImage(imageUrls[selectedIndex] || "");
     };
 
     mainCarouselApi.on("select", handleSelect);
@@ -59,9 +65,9 @@ export default function ProductDisplay({ product }: { product: Products }) {
       name: product.name,
       price: product.selling_price,
       crossed_price: product.crossed_price,
-      image: imageUrls[0] || '',
+      image: imageUrls[0] || "",
     };
-    setTimeout(() => { 
+    setTimeout(() => {
       addToCart(toBeSentToCart, quantity);
       setIsAddingToCart(false);
 
@@ -77,151 +83,445 @@ export default function ProductDisplay({ product }: { product: Products }) {
     }, 400);
   };
 
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 py-4">
-      {/* Left column: Image gallery */}
+  const [mainImage, setMainImage] = useState("/placeholder.svg?height=600&width=600");
+  // const [quantity, setQuantity] = useState(1)
+  const [selectedSize, setSelectedSize] = useState("UK 8");
+  const [selectedColor, setSelectedColor] = useState("White/Yellow");
+  const [wishlist, setWishlist] = useState(false);
 
-      <div className="flex flex-col-reverse lg:flex-row gap-4">
-        {/* Thumbnail carousel left side */}
-        <div className="hidden lg:block w-24">
-          <div className="relative h-[500px]">
-            <ScrollArea className="h-full pr-2">
-              <div className="space-y-2">
+  const thumbnails = ["/placeholder.svg?height=100&width=100", "/placeholder.svg?height=100&width=100", "/placeholder.svg?height=100&width=100", "/placeholder.svg?height=100&width=100", "/placeholder.svg?height=100&width=100"];
+
+  const sizes = ["UK 6", "UK 7", "UK 8", "UK 9", "UK 10", "UK 11"];
+  const colors = ["White/Yellow", "Black/White", "Grey/Blue", "Red/White"];
+
+  const decreaseQuantity = () => {
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
+    }
+  };
+
+  const increaseQuantity = () => {
+    setQuantity(quantity + 1);
+  };
+
+  const toggleWishlist = () => {
+    setWishlist(!wishlist);
+  };
+
+  return (
+    <div className="container mx-auto px-4 py-6">
+      {/* Breadcrumb */}
+      <nav className="flex items-center text-sm mb-4">
+        <Link
+          href="/"
+          className="text-muted-foreground hover:text-primary">
+          Home
+        </Link>
+        <ChevronRight className="h-4 w-4 mx-2 text-muted-foreground" />
+        <Link
+          href="/category/mens-wears"
+          className="text-muted-foreground hover:text-primary">
+          Mens Wears
+        </Link>
+        <ChevronRight className="h-4 w-4 mx-2 text-muted-foreground" />
+        <Link
+          href="/category/mens-wears/shoes"
+          className="text-muted-foreground hover:text-primary">
+          Shoes
+        </Link>
+        <ChevronRight className="h-4 w-4 mx-2 text-muted-foreground" />
+        <span className="text-foreground font-medium">{product.name}</span>
+      </nav>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 py-4">
+        {/* Left column: Image gallery */}
+
+        <div className="flex flex-col-reverse lg:flex-row ">
+          {/* Thumbnail carousel left side */}
+          <div className="hidden lg:block w-20">
+            <div className="relative h-[500px]">
+              <ScrollArea className="h-full pr-2">
+                <div className="space-y-2">
+                  {imageUrls.map((item: string, index: number) => (
+                    <div
+                      key={index}
+                      className={`relative aspect-square overflow-hidden cursor-pointer transition-all 
+                      ${selectedIndex === index ? "ring-2 ring-[var(--primary)] ring-offset-2" : "hover:ring-1 hover:ring-[var(--primary)] hover:ring-offset-1"}`}
+                      onClick={() => handleImageClick(item, index)}>
+                      <Image
+                        src={item || "/placeholder.svg"}
+                        alt={`${product.name} - Image ${index + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+          </div>
+
+          {/* Main image display */}
+          <div className="flex-1">
+            <Carousel
+              setApi={setMainCarouselApi}
+              opts={{
+                loop: true,
+                containScroll: false,
+              }}>
+              <CarouselContent>
                 {imageUrls.map((item: string, index: number) => (
-                  <div
-                    key={index}
-                    className={`relative aspect-square rounded-md overflow-hidden cursor-pointer transition-all 
-                      ${selectedIndex === index ? "ring-2 ring-primary ring-offset-2" : "hover:ring-1 hover:ring-primary/30 hover:ring-offset-1"}`}
-                    onClick={() => handleImageClick(item, index)}>
+                  <CarouselItem key={index}>
                     <Image
                       src={item || "/placeholder.svg"}
                       alt={`${product.name} - Image ${index + 1}`}
-                      fill
-                      className="object-cover rounded-[var(--radius)]"
+                      height={500}
+                      width={500}
+                      priority={index === 0}
+                      className="w-full h-[500px]"
                     />
-                  </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
+
+            {/* Mobile/tablet thumbnail carousel */}
+            <Carousel className="w-full lg:hidden px-4">
+              <CarouselContent>
+                {imageUrls.map((item: string, index: number) => (
+                  <CarouselItem
+                    key={index}
+                    className="basis-1/4 md:basis-1/5">
+                    <div
+                      className={` rounded-sm cursor-pointer transition-all
+                      ${selectedIndex === index ? "ring-2 ring-primary ring-offset-1" : "hover:ring-1 hover:ring-primary/30"}`}
+                      onClick={() => handleImageClick(item, index)}>
+                      <Image
+                        src={item || "/placeholder.svg"}
+                        alt={`${product.name} - Image ${index + 1}`}
+                        width={100}
+                        height={100}
+                        className="object-cover aspect-square rounded-sm"
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+
+              <CarouselPrevious className="left-2  h-6 w-6 bg-[var(--secondary)] hover:bg-[var(--secondary)] active:bg-[var(--secondary)] text-white border-none" />
+              <CarouselNext className="right-2  h-6 w-6 bg-[var(--secondary)] hover:bg-[var(--secondary)] active:bg-[var(--secondary)] text-white border-none" />
+            </Carousel>
+          </div>
+        </div>
+
+        {/* Product Info */}
+        <div className="space-y-6">
+          <div>
+            <div className="flex items-center justify-between">
+              <Badge
+                variant="outline"
+                className="text-xs rounded-full">
+                Mens Wears
+              </Badge>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={toggleWishlist}>
+                  <Heart className={` ${wishlist ? "fill-red-500 text-red-500" : ""}`} />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon">
+                  <Share2 className="" />
+                </Button>
+              </div>
+            </div>
+            <h1 className="text-3xl font-bold mt-2">Reebok Classic Leather</h1>
+
+            <div className="flex items-center mt-2 space-x-2">
+              <div className="flex">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`h-4 w-4 ${i < 4 ? "fill-primary text-primary" : "text-muted-foreground"}`}
+                  />
                 ))}
               </div>
-            </ScrollArea>
+              <span className="text-sm text-muted-foreground">(128 reviews)</span>
+              <span className="text-sm text-muted-foreground">|</span>
+              <span className="text-sm text-green-600">In Stock</span>
+            </div>
           </div>
-        </div>
 
-        {/* Main image display */}
-        <div className="flex-1 space-y-4">
-          <Carousel
-            className="w-full"
-            setApi={setMainCarouselApi}
-            opts={{
-              loop: true,
-              containScroll: false,
-            }}>
-            <CarouselContent>
-              {imageUrls.map((item: string, index: number) => (
-                <CarouselItem
-                  key={index}
-                  className="relative overflow-hidden">
-                  <Image
-                    src={item || "/placeholder.svg"}
-                    alt={`${product.name} - Image ${index + 1}`}
-                    height={500}
-                    width={600}
-                    priority={index === 0}
-                    className="object-cover h-[500px] w-[600px] rounded-[var(--radius)]"
-                  />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="hidden md:block left-2   h-6 w-6 bg-[var(--secondary)] hover:bg-[var(--secondary)] active:bg-[var(--secondary)] text-white border-none" />
-            <CarouselNext className="hidden md:block right-2  h-6 w-6 bg-[var(--secondary)] hover:bg-[var(--secondary)] active:bg-[var(--secondary)] text-white border-none" />
-          </Carousel>
+          <div className="flex items-baseline space-x-2">
+            <span className="text-3xl font-bold">{formatCurrency(product.selling_price ?? 0)}</span>
+            <span className="text-lg text-muted-foreground line-through">{formatCurrency(product.crossed_price ?? 0)}</span>
+            <Badge className="ml-2 bg-green-100 text-green-800 hover:bg-green-100 shadow-none rounded-full border-none">Save {formatCurrency(product.crossed_price ? product.crossed_price - product.selling_price! : 0)}</Badge>
+          </div>
 
-          {/* Mobile/tablet thumbnail carousel */}
-          <Carousel className="w-full lg:hidden px-4">
-            <CarouselContent>
-              {imageUrls.map((item: string, index: number) => (
-                <CarouselItem
-                  key={index}
-                  className="basis-1/4 md:basis-1/5">
+          {/* Color Selection */}
+          <div className="space-y-4">
+            <div>
+              <h3 className="font-medium mb-2">
+                Color: <span className="text-muted-foreground">{selectedColor}</span>
+              </h3>
+              <RadioGroup
+                defaultValue={selectedColor}
+                onValueChange={setSelectedColor}
+                className="flex flex-wrap gap-2">
+                {colors.map((color) => (
                   <div
-                    className={` rounded-md cursor-pointer transition-all
-                      ${selectedIndex === index ? "ring-2 ring-primary ring-offset-1" : "hover:ring-1 hover:ring-primary/30"}`}
-                    onClick={() => handleImageClick(item, index)}>
-                    <Image
-                      src={item || "/placeholder.svg"}
-                      alt={`${product.name} - Image ${index + 1}`}
-                      width={100}
-                      height={100}
-                      className="object-cover aspect-square rounded-md"
+                    key={color}
+                    className="flex items-center space-x-2">
+                    <RadioGroupItem
+                      value={color}
+                      id={`color-${color}`}
+                      className="peer sr-only"
                     />
+                    <Label
+                      htmlFor={`color-${color}`}
+                      className="flex items-center justify-center rounded-sm border border-accent bg-popover px-3 py-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-[var(--secondary)]">
+                      {color}
+                    </Label>
                   </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
+                ))}
+              </RadioGroup>
+            </div>
 
-            <CarouselPrevious className="left-2  h-6 w-6 bg-[var(--secondary)] hover:bg-[var(--secondary)] active:bg-[var(--secondary)] text-white border-none" />
-            <CarouselNext className="right-2  h-6 w-6 bg-[var(--secondary)] hover:bg-[var(--secondary)] active:bg-[var(--secondary)] text-white border-none" />
-          </Carousel>
-        </div>
-      </div>
+            {/* Size Selection */}
+            <div>
+              <h3 className="font-medium mb-2">
+                Size: <span className="text-muted-foreground">{selectedSize}</span>
+              </h3>
 
-      {/* Right column: Product details */}
-      <div className="space-y-2 px-4">
-        <p className=" text-base font-medium md:text-lg opacity-50 ">Mens Wears</p>
-        <p className="text-2xl md:text-3xl font-semibold opacity-80 ">{product.name}</p>
-        <p className="text-2xl md:text-3xl font-semibold opacity-85 ">
-          <span className=" line-through font-medium text-lg opacity-50">{formatCurrency(product.crossed_price ?? 0)}</span> {formatCurrency(product.selling_price ?? 0)}
-        </p>
-        <div className=" py-4">
-          <p className="w-full border-t border-dashed border-gray-300" />
-        </div>
-        <div className=" line-clamp-[10]  opacity-70">{parse(product.description || "")}</div>
-        <div className=" py-4">
-          <p className="w-full border-t border-dashed border-gray-300  " />
-        </div>
-
-        <div className="flex items-center gap-4">
-          <div className="flex items-center ">
-            <button
-              type="button"
-              title="Decrease Quantity"
-              onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
-              className="p-1 rounded-full border hover:bg-gray-50">
-              <Minus size={16} />
-            </button>
-            <span className="text-sm w-8 text-center">{quantity}</span>
-
-            <button
-              type="button"
-              title="Increase Quantity"
-              onClick={() => setQuantity((prev) => prev + 1)}
-              className="p-1 rounded-full border hover:bg-gray-50">
-              <Plus size={16} />
-            </button>
+              <RadioGroup
+                defaultValue={selectedSize}
+                onValueChange={setSelectedSize}
+                className="flex flex-wrap gap-2">
+                {sizes.map((size) => (
+                  <div
+                    key={size}
+                    className="flex items-center space-x-2">
+                    <RadioGroupItem
+                      value={size}
+                      id={`size-${size}`}
+                      className="peer sr-only"
+                    />
+                    <Label
+                      htmlFor={`size-${size}`}
+                      className="flex h-8 w-14 items-center justify-center rounded-sm border border-accent bg-popover hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-[var(--secondary)]">
+                      {size}
+                    </Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
           </div>
 
-          <Button
-            className=" bg-[var(--secondary)] hover:bg-[var(--secondary)"
-            onClick={handleAddToCart}
-            disabled={isAddingToCart}>
-            {isAddingToCart ? (
-              <span className="flex items-center gap-2">
-                <LoaderCircle
-                  size={16}
-                  className="animate-spin"
-                />
-                Adding to cart...
-              </span>
-            ) : (
-              <span className="flex items-center gap-2">
-                <ShoppingCart size={16} />
-                Add to Cart
-              </span>
-            )}
-          </Button>
+          <Separator />
+
+          {/* Quantity and Add to Cart */}
+          <div className="space-y-4">
+            <div className="flex items-center space-x-4">
+              <span className="font-medium">Quantity:</span>
+              <div className="flex items-center">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  title="Decrease Quantity"
+                  onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                  disabled={quantity <= 1}
+                  className="h-8 w-10 rounded-r-none">
+                  -
+                </Button>
+                <div className="h-8 w-12 flex items-center justify-center border-y border-input">{quantity}</div>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  title="Increase Quantity"
+                  onClick={() => setQuantity((prev) => prev + 1)}
+                  className="h-8 w-10 rounded-l-none">
+                  +
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                onClick={handleAddToCart}
+                disabled={isAddingToCart}
+                size="lg"
+                className="flex-1 bg-[var(--secondary)] hover:bg-[var(--secondary)] active:bg-[var(--secondary)]">
+                <span className="flex items-center gap-2">
+                  {isAddingToCart ? (
+                    <LoaderCircle
+                      size={16}
+                      className="animate-spin"
+                    />
+                  ) : (
+                    <ShoppingBag size={16} />
+                  )}
+                  Add to Cart
+                </span>
+              </Button>
+              <Button
+                variant="outline"
+                className="flex-1"
+                size="lg">
+                Buy Now
+              </Button>
+            </div>
+          </div>
         </div>
+
+        <CartSheet />
       </div>
 
-      <CartSheet />
+      {/* Product Details Tabs */}
+      <div className="mt-12">
+        <Tabs defaultValue="description">
+          <TabsList className="w-full justify-start border-b rounded-none h-auto p-0">
+            <TabsTrigger
+              value="description"
+              className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-[var(--secondary)] px-4 py-2">
+              Description
+            </TabsTrigger>
+
+            <TabsTrigger
+              value="reviews"
+              className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-[var(--secondary)] px-4 py-2">
+              Reviews (128)
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent
+            value="description"
+            className="pt-6">
+            <h3 className="text-lg font-medium mb-4">Product Description</h3>
+
+            <div className="prose prose-lg prose-p:text-lg prose-p:text-muted-foreground max-w-none">{parse(product.description || "")}</div>
+          </TabsContent>
+
+          <TabsContent
+            value="reviews"
+            className="pt-6">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-medium">Customer Reviews</h3>
+                  <div className="flex items-center mt-1">
+                    <div className="flex">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-5 w-5 ${i < 4 ? "fill-primary text-primary" : "text-muted-foreground"}`}
+                        />
+                      ))}
+                    </div>
+                    <span className="ml-2 text-sm text-muted-foreground">Based on 128 reviews</span>
+                  </div>
+                </div>
+                <Button className="bg-[var(--secondary)] hover:bg-[var(--secondary)] active:bg-[var(--secondary)]">Write a Review</Button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+                <div className="md:col-span-2">
+                  <div className="space-y-3">
+                    <div className="flex items-center">
+                      <span className="w-16 text-sm text-muted-foreground">5 stars</span>
+                      <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                        <div className="bg-primary h-full w-[75%]"></div>
+                      </div>
+                      <span className="w-12 text-sm text-muted-foreground text-right">75%</span>
+                    </div>
+                    <div className="flex items-center">
+                      <span className="w-16 text-sm text-muted-foreground">4 stars</span>
+                      <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                        <div className="bg-primary h-full w-[15%]"></div>
+                      </div>
+                      <span className="w-12 text-sm text-muted-foreground text-right">15%</span>
+                    </div>
+                    <div className="flex items-center">
+                      <span className="w-16 text-sm text-muted-foreground">3 stars</span>
+                      <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                        <div className="bg-primary h-full w-[5%]"></div>
+                      </div>
+                      <span className="w-12 text-sm text-muted-foreground text-right">5%</span>
+                    </div>
+                    <div className="flex items-center">
+                      <span className="w-16 text-sm text-muted-foreground">2 stars</span>
+                      <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                        <div className="bg-primary h-full w-[3%]"></div>
+                      </div>
+                      <span className="w-12 text-sm text-muted-foreground text-right">3%</span>
+                    </div>
+                    <div className="flex items-center">
+                      <span className="w-16 text-sm text-muted-foreground">1 star</span>
+                      <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                        <div className="bg-primary h-full w-[2%]"></div>
+                      </div>
+                      <span className="w-12 text-sm text-muted-foreground text-right">2%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="md:col-span-3 space-y-6">
+                  {/* Sample Review */}
+                  <div className="border-b pb-6">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="font-medium">John D.</h4>
+                        <div className="flex items-center mt-1">
+                          <div className="flex">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`h-4 w-4 ${i < 5 ? "fill-primary text-primary" : "text-muted-foreground"}`}
+                              />
+                            ))}
+                          </div>
+                          <span className="ml-2 text-xs text-muted-foreground">Verified Purchase</span>
+                        </div>
+                      </div>
+                      <span className="text-sm text-muted-foreground">2 months ago</span>
+                    </div>
+                    <p className="mt-3 text-sm">These shoes are amazing! I&apos;ve been wearing Reebok Classics for years and this pair doesnt disappoint. The leather is soft yet durable, and they&apos;re comfortable right out of the box. The white and yellow colorway looks even better in person.</p>
+                  </div>
+
+                  {/* Sample Review */}
+                  <div className="border-b pb-6">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="font-medium">Sarah M.</h4>
+                        <div className="flex items-center mt-1">
+                          <div className="flex">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`h-4 w-4 ${i < 4 ? "fill-primary text-primary" : "text-muted-foreground"}`}
+                              />
+                            ))}
+                          </div>
+                          <span className="ml-2 text-xs text-muted-foreground">Verified Purchase</span>
+                        </div>
+                      </div>
+                      <span className="text-sm text-muted-foreground">1 month ago</span>
+                    </div>
+                    <p className="mt-3 text-sm">Great classic sneakers that go with everything. They run true to size and are comfortable for all-day wear. The only reason I&apos;m giving 4 stars instead of 5 is that they took a few days to break in.</p>
+                  </div>
+
+                  <Button
+                    size="default"
+                    variant="outline"
+                    className="w-full">
+                    Load More Reviews
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }

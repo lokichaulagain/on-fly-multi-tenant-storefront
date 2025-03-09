@@ -18,24 +18,27 @@ export default function Footer({ store, pages }: { store: Stores; pages: IActive
       title: "Shop",
       href: "/shop",
     },
-    ...pages.map((page) => ({
-      title: page.title,
-      href: `/p/${page.slug}`,
-    })),
+    ...pages
+      .filter((page) => !["help", "privacy-policy", "terms-of-service"].includes(page.slug)) 
+      .map((page) => ({
+        title: page.title,
+        href: `/p/${page.slug}`,
+      })),
   ];
+  
 
   const helpLinks = [
     {
       title: "Help",
-      href: "/help",
+      href: "/p/help",
     },
     {
       title: "Privacy Policy",
-      href: "/privacy-policy",
+      href: "/p/privacy-policy",
     },
     {
       title: "Terms of Service",
-      href: "/terms-of-service",
+      href: "/p/terms-of-service",
     },
   ];
   return (

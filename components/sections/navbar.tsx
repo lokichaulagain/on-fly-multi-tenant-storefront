@@ -24,10 +24,12 @@ export default function Navbar({ store_name, store_logo, store_subdomain, store_
     { title: "Home", slug: "/" },
     { title: "Shop", slug: "/shop" },
     { title: "Cart", slug: "/checkout" },
-    ...pages.map((page) => ({
-      title: page.title,
-      slug: `/p/${page.slug}`,
-    })),
+    ...pages
+      .filter((page) => !["help", "privacy-policy", "terms-of-service"].includes(page.slug))
+      .map((page) => ({
+        title: page.title,
+        slug: `/p/${page.slug}`,
+      })),
   ];
 
   // Main navigation items (Home and Shop)
@@ -36,11 +38,13 @@ export default function Navbar({ store_name, store_logo, store_subdomain, store_
     { title: "Shop", slug: "/shop" },
   ];
 
-  // First 4 pages to display directly in navbar
-  const visiblePages = pages.slice(0, 3).map((page) => ({
-    title: page.title,
-    slug: `/p/${page.slug}`,
-  }));
+  const visiblePages = pages
+    .filter((page) => !["help", "privacy-policy", "terms-of-service"].includes(page.slug)) // Exclude specific pages
+    .slice(0, 3) // Take the first 3 after filtering
+    .map((page) => ({
+      title: page.title,
+      slug: `/p/${page.slug}`,
+    }));
 
   // Remaining pages for dropdown
   const dropdownPages = pages.slice(4);
@@ -193,9 +197,9 @@ export default function Navbar({ store_name, store_logo, store_subdomain, store_
                     layout: {
                       logoImageUrl: store_logo,
                       logoLinkUrl: `https://${store_subdomain}.fenzora.com`,
-                      helpPageUrl: "/help",
-                      privacyPageUrl: "/privacy-policy",
-                      termsPageUrl: "/terms-of-service",
+                      helpPageUrl: "/p/help",
+                      privacyPageUrl: "/p/privacy-policy",
+                      termsPageUrl: "/p/terms-of-service",
                       logoPlacement: "inside",
                       unsafe_disableDevelopmentModeWarnings: false,
                     },
@@ -219,9 +223,9 @@ export default function Navbar({ store_name, store_logo, store_subdomain, store_
                     layout: {
                       logoImageUrl: store_logo,
                       logoLinkUrl: `https://${store_subdomain}.fenzora.com`,
-                      helpPageUrl: "/help",
-                      privacyPageUrl: "/privacy-policy",
-                      termsPageUrl: "/terms-of-service",
+                      helpPageUrl: "/p/help",
+                      privacyPageUrl: "/p/privacy-policy",
+                      termsPageUrl: "/p/terms-of-service",
                       logoPlacement: "inside",
                       unsafe_disableDevelopmentModeWarnings: false,
                     },
