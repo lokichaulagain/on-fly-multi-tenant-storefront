@@ -2,10 +2,6 @@ import { LoaderCircle } from "lucide-react";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
 
-/*
-1.Code Splitting is the technique of splitting the code into smaller chunks that means load the components when they are needed , it reduces the initial load time of the page.
-
-*/
 const HeroSection = dynamic(() => import("@/components/sections/hero-section"), {
   loading: () => {
     return <div>Loading...</div>;
