@@ -23,9 +23,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     <div className="container w-full md:w-9/12 mx-auto space-y-8 md:space-y-12">
       <ProductDisplay product={response.data} />
 
-      <div className=" py-4">
-        <p className="w-full border-t border-dashed border-gray-300" />
-      </div>
+      
 
       <Suspense fallback={<div> Loading...</div>}>
         <NewArrrivalSection />

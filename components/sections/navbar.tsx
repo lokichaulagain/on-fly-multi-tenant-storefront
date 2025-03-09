@@ -22,13 +22,14 @@ export default function Navbar({ store_name, store_logo, store_subdomain, store_
 
   const navitems = [
     { title: "Home", slug: "/" },
-
     { title: "Shop", slug: "/shop" },
     { title: "Cart", slug: "/checkout" },
-    ...pages.map((page) => ({
-      title: page.title,
-      slug: `/p/${page.slug}`,
-    })),
+    ...pages
+      .filter((page) => !["help", "privacy-policy", "terms-of-service"].includes(page.slug))
+      .map((page) => ({
+        title: page.title,
+        slug: `/p/${page.slug}`,
+      })),
   ];
 
   // Main navigation items (Home and Shop)
@@ -37,11 +38,13 @@ export default function Navbar({ store_name, store_logo, store_subdomain, store_
     { title: "Shop", slug: "/shop" },
   ];
 
-  // First 4 pages to display directly in navbar
-  const visiblePages = pages.slice(0, 3).map((page) => ({
-    title: page.title,
-    slug: `/p/${page.slug}`,
-  }));
+  const visiblePages = pages
+    .filter((page) => !["help", "privacy-policy", "terms-of-service"].includes(page.slug)) // Exclude specific pages
+    .slice(0, 3) // Take the first 3 after filtering
+    .map((page) => ({
+      title: page.title,
+      slug: `/p/${page.slug}`,
+    }));
 
   // Remaining pages for dropdown
   const dropdownPages = pages.slice(4);
@@ -85,11 +88,23 @@ export default function Navbar({ store_name, store_logo, store_subdomain, store_
             <p className="text-2xl tracking-wide font-serif">{store_name}</p>
           </Link>
 
-          
-          <div className="md:hidden">
-            <MobileSheet
-              navitems={navitems}
-            />
+          <div className="flex items-center gap-4">
+            <Link
+              prefetch={true}
+              href="/checkout"
+              className=" text-white block md:hidden">
+              <div className="relative">
+                <ShoppingCart
+                  size={20}
+                  className="hover:text-[var(--secondary)] duration-300"
+                />
+                {cart.length > 0 && <span className="absolute -top-2 -right-2 bg-[var(--secondary)] text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]">{cart.length}</span>}
+              </div>
+            </Link>
+
+            <div className="md:hidden">
+              <MobileSheet navitems={navitems} />
+            </div>
           </div>
         </div>
         <div className="flex-1 pb-3 mt-8 md:pb-0 md:mt-0 hidden md:block">
@@ -125,9 +140,9 @@ export default function Navbar({ store_name, store_logo, store_subdomain, store_
                   <div className="absolute z-10 right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 text-gray-800">
                     {dropdownPages.map((page, idx) => (
                       <Link
+                        prefetch={true}
                         key={idx}
                         href={`/p/${page.slug}`}
-                        prefetch={true}
                         onClick={() => setDropdownOpen(false)}
                         className={`block px-4 py-2 text-sm ${pathname === `/p/${page.slug}` ? "bg-gray-100 text-[var(--primary)]" : "hover:bg-gray-100"}`}>
                         {page.title}
@@ -141,7 +156,9 @@ export default function Navbar({ store_name, store_logo, store_subdomain, store_
             <span className="hidden w-px h-6 bg-white opacity-50 md:block"></span>
 
             <div className="flex items-center gap-x-2">
-              <Link href="/checkout">
+              <Link
+                prefetch={true}
+                href="/checkout">
                 <div className="relative">
                   <ShoppingCart
                     size={20}
@@ -180,9 +197,9 @@ export default function Navbar({ store_name, store_logo, store_subdomain, store_
                     layout: {
                       logoImageUrl: store_logo,
                       logoLinkUrl: `https://${store_subdomain}.fenzora.com`,
-                      helpPageUrl: "/help",
-                      privacyPageUrl: "/privacy-policy",
-                      termsPageUrl: "/terms-of-service",
+                      helpPageUrl: "/p/help",
+                      privacyPageUrl: "/p/privacy-policy",
+                      termsPageUrl: "/p/terms-of-service",
                       logoPlacement: "inside",
                       unsafe_disableDevelopmentModeWarnings: false,
                     },
@@ -206,9 +223,9 @@ export default function Navbar({ store_name, store_logo, store_subdomain, store_
                     layout: {
                       logoImageUrl: store_logo,
                       logoLinkUrl: `https://${store_subdomain}.fenzora.com`,
-                      helpPageUrl: "/help",
-                      privacyPageUrl: "/privacy-policy",
-                      termsPageUrl: "/terms-of-service",
+                      helpPageUrl: "/p/help",
+                      privacyPageUrl: "/p/privacy-policy",
+                      termsPageUrl: "/p/terms-of-service",
                       logoPlacement: "inside",
                       unsafe_disableDevelopmentModeWarnings: false,
                     },

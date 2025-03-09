@@ -1,18 +1,21 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Book, Calendar, Facebook, Handshake, HelpCircle, Instagram, Mail, Menu, MessageSquare, Phone, Shield, ShoppingBag, ShoppingCart } from "lucide-react";
+import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { ChevronRight, LogOut, Menu, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { SignedIn, SignedOut, SignInButton, SignUpButton, useUser } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, SignOutButton, SignUpButton, useUser } from "@clerk/nextjs";
 import { useCurrentStore } from "@/contexts/current-store-provider";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { useCart } from "@/contexts/cart-provider";
 
 export default function MobileSheet({ navitems }: { navitems: { title: string; slug: string }[] }) {
+  const [open, setOpen] = useState(false);
   const { user } = useUser();
   const store = useCurrentStore();
-
   const pathname = usePathname();
 
   const store_logo = store.store_logo;
@@ -21,126 +24,159 @@ export default function MobileSheet({ navitems }: { navitems: { title: string; s
   const font_family = store.store_appearance?.font_family;
   const border_radius = `${(store.store_appearance?.border_radius ?? 0) / 16}rem`;
 
+  const handleClose = () => {
+    setTimeout(() => setOpen(false), 100); // Delay of 100ms
+  };
+
+  const { cart } = useCart();
+
   return (
-    <Sheet>
+    <Sheet
+      open={open}
+      onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button
-          size="icon"
-          className="md:hidden bg-[var(--secondary)] text-white">
-          <Menu size={16} />
-          <span className="sr-only">Toggle menu</span>
-        </Button>
+        <Menu
+          size={26}
+          className="md:hidden  text-white"
+        />
       </SheetTrigger>
       <SheetContent
         side="right"
-        className="w-[300px] sm:w-[400px] flex flex-col border-none ">
-        <SheetHeader>
-          <SheetTitle className="flex items-center justify-center text-primary">
-            <Link
-              href="/"
-              className="flex flex-col items-center">
-              <Image
-                src={store.store_logo}
-                priority
-                alt="restronp logo"
-                height={200}
-                width={200}
-                className=" w-56 h-20  object-cover"
+        className="w-[300px] sm:w-[400px] flex flex-col border-none p-0 ">
+        <SheetHeader className=" h-32 bg-[var(--primary)] flex items-center justify-center ">
+          <Link
+            prefetch={true}
+            href="/checkout"
+            onClick={handleClose}
+            className="absolute top-4 left-4 text-white bg-white/5 rounded-full p-2">
+            <div className="relative">
+              <ShoppingCart
+                size={18}
+                className="hover:text-[var(--secondary)] duration-300"
               />
-            </Link>
+              {cart.length > 0 && <span className="absolute -top-2 -right-2 bg-[var(--secondary)] text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]">{cart.length}</span>}
+            </div>
+          </Link>
+
+          <SignedIn>
+            <SignOutButton>
+              <Button className="text-red-500 bg-red-500/20 rounded-full p-2 absolute top-20 right-1 hover:bg-red-500/30">
+                <LogOut size={16} />
+              </Button>
+            </SignOutButton>
+          </SignedIn>
+
+          <SheetTitle className="text-white">
+            <Image
+              src={store_logo}
+              alt={store.store_name}
+              width={100}
+              height={100}
+              className="w-16"
+            />
           </SheetTitle>
         </SheetHeader>
 
-        <div className=" py-1">
-          <p className="w-full border-t border-dashed border-gray-100" />
-        </div>
+        <div className=" px-4 space-y-4">
+          <SignedIn>
+            <Link
+              prefetch={true}
+              href="/profile"
+              onClick={handleClose}
+              className="flex items-center gap-2 p-2 rounded-md hover:bg-accent cursor-pointer bg-accent/50">
+              <Avatar className="h-8 w-8">
+                <AvatarImage
+                  src={user?.imageUrl || "/placeholder.svg"}
+                  alt={user?.fullName || "user avatar"}
+                />
+                <AvatarFallback>{"Loki".charAt(0).toUpperCase()}</AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col text-sm">
+                <span className="font-medium">{user?.fullName}</span>
+                <span className="text-muted-foreground text-xs">{user?.emailAddresses[0].emailAddress}</span>
+              </div>
+              <ChevronRight className="h-4 w-4 ml-auto text-muted-foreground" />
+            </Link>
+          </SignedIn>
 
+          <SignedOut>
+            <div className=" flex items-center gap-2">
+              <SignInButton
+                mode="modal"
+                forceRedirectUrl={"/checkout"}
+                appearance={{
+                  variables: {
+                    colorPrimary: primary_color,
+                    borderRadius: border_radius,
+                    fontFamily: font_family,
+                  },
 
-        <div className="flex flex-col">
-          <nav className="flex flex-col">
+                  layout: {
+                    logoImageUrl: store_logo,
+                    logoLinkUrl: `https://${store_subdomain}.fenzora.com`,
+                    helpPageUrl: "/p/help",
+                    privacyPageUrl: "/p/privacy-policy",
+                    termsPageUrl: "/p/terms-of-service",
+                    logoPlacement: "inside",
+                    unsafe_disableDevelopmentModeWarnings: false,
+                  },
+                }}>
+                <Button className="bg-[var(--secondary)] hover:bg-[var(--secondary)] w-full">Sign In</Button>
+              </SignInButton>
+
+              <SignUpButton
+                mode="modal"
+                forceRedirectUrl={"/checkout"}
+                appearance={{
+                  variables: {
+                    colorPrimary: primary_color,
+                    borderRadius: border_radius,
+                    fontFamily: font_family,
+                  },
+
+                  layout: {
+                    logoImageUrl: store_logo,
+                    logoLinkUrl: `https://${store_subdomain}.fenzora.com`,
+                    helpPageUrl: "/p/help",
+                    privacyPageUrl: "/p/privacy-policy",
+                    termsPageUrl: "/p/terms-of-service",
+                    logoPlacement: "inside",
+                    unsafe_disableDevelopmentModeWarnings: false,
+                  },
+                }}>
+                <Button className="bg-[var(--primary)] hover:bg-[var(--primary)] w-full">Sign Up</Button>
+              </SignUpButton>
+            </div>
+          </SignedOut>
+
+          <div className=" py-1">
+            <p className="w-full border-t border-dashed border-gray-200" />
+          </div>
+
+          <nav className="flex flex-col  ">
             {navitems.map((item, index) => {
               const isActive = pathname === item.slug;
               return (
                 <Link
+                  prefetch={true}
                   key={index}
                   href={item.slug}
+                  onClick={handleClose}
                   className="font-medium transition-colors">
-                  <p className={cn("text-sm p-2", "active:bg-[var(--primary)] active:text-[var(--secondary)]  touch-manipulation", isActive ? " text-[var(--primary)] font-medium" : "  opacity-85")}>{item.title}</p>
+                  <p className={cn("text-sm p-1", "active:text-[var(--secondary)]  touch-manipulation", isActive ? " text-[var(--primary)] font-medium" : "  opacity-85")}>{item.title}</p>
                 </Link>
               );
             })}
           </nav>
         </div>
 
-        <SignedIn>
-          <Link
-            href="/profile"
-            className="flex items-center gap-2 w-full p-2 bg-secondary rounded-md">
-            <Image
-              src={user?.imageUrl || "/placeholder.svg"}
-              alt="user"
-              height={100}
-              width={100}
-              className="w-8 h-8 rounded-full hover:opacity-80 transition-opacity duration-300"
-            />
-            <div>
-              <p className="text-sm font-medium">{user?.fullName}</p>
-              <p className="text-xs">{user?.emailAddresses[0].emailAddress}</p>
-            </div>
-          </Link>
-        </SignedIn>
-
-        <SignedOut>
-          <div className=" flex items-center gap-2">
-            <SignInButton
-              mode="modal"
-              forceRedirectUrl={"/checkout"}
-              appearance={{
-                variables: {
-                  colorPrimary: primary_color,
-                  borderRadius: border_radius,
-                  fontFamily: font_family,
-                },
-
-                layout: {
-                  logoImageUrl: store_logo,
-                  logoLinkUrl: `https://${store_subdomain}.fenzora.com`,
-                  helpPageUrl: "/help",
-                  privacyPageUrl: "/privacy-policy",
-                  termsPageUrl: "/terms-of-service",
-                  logoPlacement: "inside",
-                  unsafe_disableDevelopmentModeWarnings: false,
-                },
-              }}>
-              <Button className="bg-[var(--secondary)] hover:bg-[var(--secondary)] w-full">Sign In</Button>
-            </SignInButton>
-
-            <SignUpButton
-              mode="modal"
-              forceRedirectUrl={"/checkout"}
-              appearance={{
-                variables: {
-                  colorPrimary: primary_color,
-                  borderRadius: border_radius,
-                  fontFamily: font_family,
-                },
-
-                layout: {
-                  logoImageUrl: store_logo,
-                  logoLinkUrl: `https://${store_subdomain}.fenzora.com`,
-                  helpPageUrl: "/help",
-                  privacyPageUrl: "/privacy-policy",
-                  termsPageUrl: "/terms-of-service",
-                  logoPlacement: "inside",
-                  unsafe_disableDevelopmentModeWarnings: false,
-                },
-              }}>
-              <Button className="bg-[var(--primary)] hover:bg-[var(--primary)] w-full">Sign Up</Button>
-            </SignUpButton>
-          </div>
-        </SignedOut>
-
         {/* Footer */}
+
+        <Link href={"https://fenzora.com"}>
+          <SheetFooter className="bg-[var(--primary)] absolute bottom-0 left-0 right-0">
+            <p className="text-white text-center p-2 text-[10px]">Powered by Fenzora</p>
+          </SheetFooter>
+        </Link>
       </SheetContent>
     </Sheet>
   );

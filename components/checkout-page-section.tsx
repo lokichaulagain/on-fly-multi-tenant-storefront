@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { ChevronLeft, Wallet, Building2, Plus, Minus, Truck, PackageSearch } from "lucide-react";
@@ -19,16 +19,14 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCurrentStore } from "@/contexts/current-store-provider";
 import Link from "next/link";
+import { formatCurrency } from "@/lib/format-currency";
 
-export default function CheckoutPageSection({ store_id }: { store_id: string }) {
-  const { isLoaded, isSignedIn, user } = useUser();
-  console.log(user, "its a user");
+export default function CheckoutPageSection() {
+  const { isSignedIn, user } = useUser();
 
   const router = useRouter();
   const { cart, isCartOpen, setIsCartOpen, removeFromCart, increaseQuantity, decreaseQuantity, clearCart } = useCart();
   const totalPrice = cart.reduce((total, item) => total + (item.price || 0) * item.quantity, 0);
-  const [activeSection, setActiveSection] = useState<string>("");
-
   const store = useCurrentStore();
 
   const store_logo = store.store_logo;
@@ -117,7 +115,7 @@ export default function CheckoutPageSection({ store_id }: { store_id: string }) 
   return (
     <div className=" min-h-screen w-full flex items-center justify-center">
       {cart.length > 0 ? (
-        <div className="max-w-2xl mx-auto rounded-md shadow-md border border-gray-50 w-full ">
+        <div className="max-w-2xl mx-auto rounded-md shadow-md border border-accent/50 w-full ">
           {/* Header */}
 
           <div className="p-2 border-b flex items-center">
@@ -128,8 +126,8 @@ export default function CheckoutPageSection({ store_id }: { store_id: string }) 
               }}
               type="button"
               title="Back"
-              className="p-2 hover:bg-gray-100 rounded-full">
-              <ChevronLeft className="w-5 h-5" />
+              className="p-2 bg-accent/50 hover:bg-accent rounded-full">
+              <ChevronLeft size={20} />
             </button>
             <h1 className="ml-4 text-xl font-semibold">Checkout ({cart.length})</h1>
           </div>
@@ -145,7 +143,7 @@ export default function CheckoutPageSection({ store_id }: { store_id: string }) 
                   {cart.map((item: ICartItem) => (
                     <div
                       key={item.id}
-                      className="flex gap-3 bg-gray-50 p-3 rounded-lg">
+                      className="flex gap-3 bg-accent/50 p-3 rounded-lg">
                       <Image
                         src={item.image || "/placeholder.svg"}
                         alt={item.name}
@@ -153,7 +151,7 @@ export default function CheckoutPageSection({ store_id }: { store_id: string }) 
                         height={80}
                         quality={50}
                         loading="eager"
-                        className="rounded-md object-cover h-24 w-24 border border-gray-50 overflow-hidden"
+                        className="rounded-md object-cover h-24 w-24 border border-accent/50 overflow-hidden"
                       />
                       <div className="flex-1 space-y-1">
                         <h3 className="font-medium">{item.name}</h3>
@@ -162,7 +160,7 @@ export default function CheckoutPageSection({ store_id }: { store_id: string }) 
                             type="button"
                             title="Decrease Quantity"
                             onClick={() => decreaseQuantity(item.id)}
-                            className="p-1 rounded-full border hover:bg-gray-50">
+                            className="p-1 rounded-full border hover:bg-accent">
                             <Minus className="h-3 w-3" />
                           </button>
                           <span className="text-sm w-8 text-center">{item.quantity}</span>
@@ -170,7 +168,7 @@ export default function CheckoutPageSection({ store_id }: { store_id: string }) 
                             type="button"
                             title="Increase Quantity"
                             onClick={() => increaseQuantity(item.id)}
-                            className="p-1 rounded-full border hover:bg-gray-50">
+                            className="p-1 rounded-full border hover:bg-accent">
                             <Plus className="h-3 w-3" />
                           </button>
                           <button
@@ -181,10 +179,10 @@ export default function CheckoutPageSection({ store_id }: { store_id: string }) 
                             Remove
                           </button>
                         </div>
-                        <p className="text-sm text-muted-foreground">Variation: Yellow, L</p>
 
-                        <p className=" text-xs md:text-sm font-medium">
-                          Rs. Rs. {(item.price || 0).toFixed(2)} x {item.quantity} = Rs. {(item.price || 0) * item.quantity}
+                        <p className=" flex flex-col ">
+                          <span className=" text-sm font-medium">{formatCurrency((item.price || 0) * item.quantity)}</span>
+                          <span className=" text-muted-foreground text-xs font-medium">{formatCurrency(item.price || 0)} for each</span>
                         </p>
                       </div>
                     </div>
@@ -193,14 +191,12 @@ export default function CheckoutPageSection({ store_id }: { store_id: string }) 
               </div>
 
               <Accordion
-                type="single"
-                collapsible
-                value={activeSection}
-                onValueChange={setActiveSection}
+                type="multiple"
+                defaultValue={["address", "payment"]}
                 className="w-full">
                 {/* Delivery Address */}
                 <AccordionItem value="address">
-                  <AccordionTrigger className="hover:no-underline">
+                  <AccordionTrigger className="hover:no-underline bg-accent/50 p-2">
                     <span className="font-medium">Delivery Address</span>
                   </AccordionTrigger>
                   <AccordionContent className="space-y-4 p-2 pb-8">
@@ -349,36 +345,9 @@ export default function CheckoutPageSection({ store_id }: { store_id: string }) 
                   </AccordionContent>
                 </AccordionItem>
 
-                {/* Voucher */}
-                {/* <AccordionItem value="voucher">
-                <AccordionTrigger className="hover:no-underline">
-                  <span className="font-medium">Voucher and Promo</span>
-                </AccordionTrigger>
-                <AccordionContent className="flex items-center gap-2 justify-between p-2 pb-8">
-                  <FormField
-                    control={form.control}
-                    name="promo_code"
-                    render={({ field }) => (
-                      <FormItem className="w-full">
-                        <FormControl>
-                          <Input
-                            type="text"
-                            placeholder="Enter promo code"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <Button variant="secondary">Apply</Button>
-                </AccordionContent>
-              </AccordionItem> */}
-
                 {/* Payment Method */}
                 <AccordionItem value="payment">
-                  <AccordionTrigger className="hover:no-underline">
+                  <AccordionTrigger className="hover:no-underline bg-accent/50 p-2">
                     <span className="font-medium">Payment Method</span>
                   </AccordionTrigger>
                   <AccordionContent className="p-2 pb-8">
@@ -392,42 +361,24 @@ export default function CheckoutPageSection({ store_id }: { store_id: string }) 
                               onValueChange={field.onChange}
                               defaultValue={field.value}
                               className="grid grid-cols-3 gap-4">
-                              <FormItem>
-                                <FormControl>
-                                  <RadioGroupItem
-                                    value="cod"
-                                    className="peer sr-only"
-                                  />
-                                </FormControl>
-                                <FormLabel className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                                  <Truck className="mb-3 h-6 w-6" />
-                                  COD
-                                </FormLabel>
-                              </FormItem>
-                              <FormItem>
-                                <FormControl>
-                                  <RadioGroupItem
-                                    value="wallet"
-                                    className="peer sr-only"
-                                  />
-                                </FormControl>
-                                <FormLabel className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                                  <Wallet className="mb-3 h-6 w-6" />
-                                  Wallet
-                                </FormLabel>
-                              </FormItem>
-                              <FormItem>
-                                <FormControl>
-                                  <RadioGroupItem
-                                    value="bank"
-                                    className="peer sr-only"
-                                  />
-                                </FormControl>
-                                <FormLabel className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                                  <Building2 className="mb-3 h-6 w-6" />
-                                  Bank
-                                </FormLabel>
-                              </FormItem>
+                              {[
+                                { value: "cod", label: "COD", icon: Truck },
+                                { value: "wallet", label: "Wallet", icon: Wallet },
+                                { value: "bank", label: "Bank", icon: Building2 },
+                              ].map((payment) => (
+                                <FormItem key={payment.value}>
+                                  <FormControl>
+                                    <RadioGroupItem
+                                      value={payment.value}
+                                      className="peer sr-only"
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="flex flex-col items-center justify-between rounded-md border border-accent p-4 hover:bg-accent  peer-data-[state=checked]:border-[var(--secondary)] [&:has([data-state=checked])]:border-[var(--secondary)]">
+                                    <payment.icon className="mb-3 h-6 w-6" />
+                                    {payment.label}
+                                  </FormLabel>
+                                </FormItem>
+                              ))}
                             </RadioGroup>
                           </FormControl>
                           <FormMessage />
@@ -440,19 +391,19 @@ export default function CheckoutPageSection({ store_id }: { store_id: string }) 
 
               {/* Order Summary */}
               <div className=" mt-6 space-y-2">
-                <div className="flex justify-between text-sm font-medium ">
+                <div className="flex justify-between text-sm font-medium text-muted-foreground ">
                   <p>Subtotal:</p>
-                  <p>Rs. {totalPrice.toFixed(2)}</p>
+                  <p>{formatCurrency(totalPrice)}</p>
                 </div>
 
-                <div className="flex justify-between text-sm font-medium ">
+                <div className="flex justify-between text-sm font-medium text-muted-foreground ">
                   <p>Shipping:</p>
-                  <p>Rs. 0</p>
+                  <p>{formatCurrency(0)}</p>
                 </div>
 
-                <div className="flex justify-between text-base font-medium border-b border-gray-100 pb-2">
+                <div className="flex justify-between text-base font-medium border-b border-accent/50 pb-2">
                   <p>Total:</p>
-                  <p>Rs. {totalPrice.toFixed(2)}</p>
+                  <p>{formatCurrency(totalPrice)}</p>
                 </div>
               </div>
 
@@ -476,9 +427,9 @@ export default function CheckoutPageSection({ store_id }: { store_id: string }) 
                     layout: {
                       logoImageUrl: store_logo,
                       logoLinkUrl: `https://${store_subdomain}.fenzora.com`,
-                      helpPageUrl: "/help",
-                      privacyPageUrl: "/privacy-policy",
-                      termsPageUrl: "/terms-of-service",
+                      helpPageUrl: "/p/help",
+                      privacyPageUrl: "/p/privacy-policy",
+                      termsPageUrl: "/p/terms-of-service",
                       logoPlacement: "inside",
                       unsafe_disableDevelopmentModeWarnings: false,
                     },
@@ -499,7 +450,7 @@ export default function CheckoutPageSection({ store_id }: { store_id: string }) 
 function EmptyCart() {
   return (
     <div className="flex flex-col items-center justify-center text-center">
-      <div className="rounded-full bg-muted p-4 mb-4">
+      <div className="rounded-full bg-accent/50 p-4 mb-4">
         <PackageSearch className="h-6 w-6 text-muted-foreground" />
       </div>
       <h3 className="text-lg font-medium  mb-1">Empty Cart</h3>
