@@ -7,28 +7,27 @@ import EditorContentParser from "@/components/editor-content-parser";
 
 export async function generateMetadata(): Promise<Metadata> {
   const response = await getActiveStore();
+
   if (response.error || !response.data) {
     return fallbackMetadata;
   }
 
   return {
     title: response.data.store_name,
-    description: response.data.store_description || `${response.data.store_description} - ${response.data.store_name}`,
+    description: response.data.store_name,
     openGraph: {
-      title: response.data.store_name,
-      description: response.data.store_description || `${response.data.store_description} - ${response.data.store_name}`,
-      images: response.data.store_meta_image ? [{ url: response.data.store_meta_image }] : [{ url: response.data.store_logo }],
-      type: "website",
-      siteName: response.data.store_name,
+      title: response.data.store_meta_title || response.data.store_name,
+      description: response.data.store_meta_description || response.data.store_name,
+      images: [response.data.store_meta_image || response.data.store_logo || ""],
     },
     twitter: {
       card: "summary_large_image",
-      title: response.data.store_name,
-      description: response.data.store_description || `${response.data.store_description} - ${response.data.store_name}`,
-      images: response.data.store_meta_image ? [response.data.store_meta_image] : [response.data.store_logo],
+      title: response.data.store_meta_title || response.data.store_name,
+      description: response.data.store_meta_description || response.data.store_name,
+      images: [response.data.store_meta_image || response.data.store_logo || ""],
+      creator: "@fenzora",
     },
-
-    icons: response.data.store_meta_image || response.data.store_logo || "",
+    icons: [response.data.store_meta_image || response.data.store_logo || ""],
     metadataBase: new URL(`https://${response.data.store_subdomain}`),
   };
 }
