@@ -1,7 +1,7 @@
 export interface IShippingAndBillingAddress {
   full_name: string;
   email_address: string;
-  phone_number: string;
+  phone_number: number | null;
   province: string;
   district: string;
   city: string;

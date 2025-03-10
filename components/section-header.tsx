@@ -5,5 +5,5 @@ type Props = {
 };
 
 export default function SectionHeader({ title }: Props) {
-  return <h3 className="text-2xl font-bold mb-6">{title}</h3>;
+  return <h3 className="prose text-xl  sm:text-2xl font-bold mb-6">{title}</h3>;
 }

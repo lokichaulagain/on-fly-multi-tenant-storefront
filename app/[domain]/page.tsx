@@ -1,32 +1,17 @@
+const CategoryCarouselSection = dynamic(() => import("@/components/sections/category-carousel-section"));
+const GridProductSection = dynamic(() => import("@/components/sections/grid-product-section"));
+const FeatureProductSection = dynamic(() => import("@/components/feature-product-section"));
+import CategoryCarouselSkeleton from "@/components/skeletons/category-carousel-skeleton";
+import ProductCarouselSkeleton from "@/components/skeletons/product-carousel-skeleton";
+import GridProductsSkeleton from "@/components/skeletons/grid-products-sekelton";
+const HeroSection = dynamic(() => import("@/components/sections/hero-section"));
 import { LoaderCircle } from "lucide-react";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
 
-const HeroSection = dynamic(() => import("@/components/sections/hero-section"), {
-  loading: () => {
-    return <div>Loading...</div>;
-  },
-});
-const CategoryCarouselSection = dynamic(() => import("@/components/sections/category-carousel-section"), {
-  loading: () => {
-    return <div>Loading...</div>;
-  },
-});
-const FeatureProductSection = dynamic(() => import("@/components/sections/feature-products-section"), {
-  loading: () => {
-    return <div>Loading...</div>;
-  },
-});
-
-const NewArrrivalSection = dynamic(() => import("@/components/sections/new-arrival-section"), {
-  loading: () => {
-    return <div>Loading...</div>;
-  },
-});
-
 export default async function Page() {
   return (
-    <div className="w-full container  md:px-24 mx-auto space-y-4 md:space-y-12 ">
+    <div className="w-full container px-4 md:px-24  space-y-4 md:space-y-12 mx-auto ">
       <Suspense
         fallback={
           <LoaderCircle
@@ -37,35 +22,17 @@ export default async function Page() {
         <HeroSection />
       </Suspense>
 
-      <div className=" px-4 md:px-0 space-y-4 md:space-y-12 ">
-        <Suspense
-          fallback={
-            <LoaderCircle
-              size={16}
-              className="animate-spin"
-            />
-          }>
+      <div className="space-y-4 md:space-y-12 ">
+        <Suspense fallback={<CategoryCarouselSkeleton />}>
           <CategoryCarouselSection />
         </Suspense>
 
-        <Suspense
-          fallback={
-            <LoaderCircle
-              size={16}
-              className="animate-spin"
-            />
-          }>
+        <Suspense fallback={<ProductCarouselSkeleton />}>
           <FeatureProductSection />
         </Suspense>
 
-        <Suspense
-          fallback={
-            <LoaderCircle
-              size={16}
-              className="animate-spin"
-            />
-          }>
-          <NewArrrivalSection />
+        <Suspense fallback={<GridProductsSkeleton />}>
+          <GridProductSection />
         </Suspense>
       </div>
     </div>

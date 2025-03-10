@@ -18,6 +18,7 @@ import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Label } from "./ui/label";
 import { Badge } from "./ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import WishListButton from "./wish-list-button";
 
 export default function ProductDisplay({ product }: { product: Products }) {
   const imageUrls = Array.isArray(product.image_urls) ? product.image_urls : [];
@@ -109,7 +110,7 @@ export default function ProductDisplay({ product }: { product: Products }) {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="  ">
       {/* Breadcrumb */}
       <nav className="flex items-center text-sm mb-4">
         <Link
@@ -224,12 +225,7 @@ export default function ProductDisplay({ product }: { product: Products }) {
                 Mens Wears
               </Badge>
               <div className="flex items-center space-x-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={toggleWishlist}>
-                  <Heart className={` ${wishlist ? "fill-red-500 text-red-500" : ""}`} />
-                </Button>
+                <WishListButton product_id={product.id} />
                 <Button
                   variant="ghost"
                   size="icon">
