@@ -7,27 +7,29 @@ import EditorContentParser from "@/components/editor-content-parser";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const response = await getActiveStorePage(slug);
-  const storeResponse = await getActiveStore(); 
+  const [pageResponse, storeResponse] = await Promise.all([
+    getActiveStorePage(slug),
+    getActiveStore(),
+  ]);
 
 
 
-  if (response.error || !response.data) {
+  if (pageResponse.error || !pageResponse.data) { 
     return fallbackMetadata;
   }
 
   return {
-    title: response.data.title,
-    description: response.data.content,
+    title: pageResponse.data.title,
+    description: storeResponse.data?.store_meta_description || storeResponse.data?.store_name, 
     openGraph: {
-      title: response.data.title,
-      description: response.data.content || "",
+      title: pageResponse.data.title,
+      description: storeResponse.data?.store_meta_description || storeResponse.data?.store_name, 
       images: [storeResponse.data?.store_meta_image || storeResponse.data?.store_logo || ""],
     },
     twitter: {
       card: "summary_large_image",
-      title: response.data.title,
-      description: response.data.content || "",
+      title: pageResponse.data.title,
+      description: storeResponse.data?.store_meta_description || storeResponse.data?.store_name, 
       images: [storeResponse.data?.store_meta_image || storeResponse.data?.store_logo || ""], 
       creator: "@fenzora",
     },
