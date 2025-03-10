@@ -14,7 +14,7 @@ export default async function FeatureProductSection() {
 
   return (
     <ProductCarouselSection
-      title="Featured Productsss"
+      title="Featured Products"
       products={products}
     />
   );

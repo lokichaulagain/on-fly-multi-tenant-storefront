@@ -8,8 +8,7 @@ import { getActiveStore } from "@/actions/store";
 import { Button } from "@/components/ui/button";
 const YouMayLikeSection = dynamic(() => import("@/components/sections/you-may-like-section"));
 const ProductCarouselSkeleton = dynamic(() => import("@/components/skeletons/product-carousel-skeleton"));
-const ProductShareButton = dynamic(() => import("@/components/product-share-button"));
-
+const ProductShareButtons = dynamic(() => import("@/components/product-share-buttons"));
 
 // Generate metadata for the page
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }, parent: ResolvingMetadata): Promise<Metadata> {
@@ -57,14 +56,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         url: img,
         alt: `${product.name} - ${store.store_name}`,
       })) || [],
-    metadataBase: new URL(`https://${store.store_subdomain}/shop/${product.slug}`),
+    metadataBase: new URL(`https://${store.store_subdomain}.fenzora.com/shop/${product.slug}`),
   };
 }
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  // const response = await getProductBySlug(slug);
-  // console.log("prefetch data here", response);
 
   const [productResponse, storeResponse] = await Promise.all([getProductBySlug(slug), getActiveStore()]);
 
@@ -72,18 +69,17 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     return <div>Product not found</div>;
   }
 
-  const shareUrl = `https://${storeResponse.data?.store_subdomain}/shop/${productResponse.data?.slug}`;
+  const shareUrl = `https://${storeResponse.data?.store_subdomain}.fenzora.com/shop/${productResponse.data?.slug}`;
   const title = `${productResponse.data?.name} - ${storeResponse.data?.store_name}`;
-
 
   return (
     <div className="w-full container px-4 md:px-24  space-y-4 md:space-y-12 mx-auto pt-6">
-      <ProductDisplay product={productResponse.data} />
+      <ProductDisplay product={productResponse.data} shareUrl={shareUrl} title={title} />
 
-    
-<ProductShareButton shareUrl={shareUrl} title={title} />
       <Suspense fallback={<ProductCarouselSkeleton />}>
         <YouMayLikeSection />
+
+
       </Suspense>
     </div>
   );

@@ -79,7 +79,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       return [...prevCart, newCartItem];
     });
-    setIsCartOpen(true);
+    // setIsCartOpen(true);
   };
 
   const increaseQuantity = (productId: string) => {

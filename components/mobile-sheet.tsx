@@ -121,7 +121,7 @@ export default function MobileSheet({ navitems }: { navitems: { title: string; s
                     unsafe_disableDevelopmentModeWarnings: false,
                   },
                 }}>
-                <Button className="bg-[var(--secondary)] hover:bg-[var(--secondary)] w-full">Sign In</Button>
+                <Button onClick={handleClose} className="bg-[var(--secondary)] hover:bg-[var(--secondary)] w-full">Sign In</Button>
               </SignInButton>
 
               <SignUpButton
@@ -144,7 +144,7 @@ export default function MobileSheet({ navitems }: { navitems: { title: string; s
                     unsafe_disableDevelopmentModeWarnings: false,
                   },
                 }}>
-                <Button className="bg-[var(--primary)] hover:bg-[var(--primary)] w-full">Sign Up</Button>
+                <Button onClick={handleClose}  className="bg-[var(--primary)] hover:bg-[var(--primary)] w-full">Sign Up</Button>
               </SignUpButton>
             </div>
           </SignedOut>

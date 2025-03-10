@@ -5,8 +5,8 @@ import Image from "next/image";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
 import parse from "html-react-parser";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/contexts/cart-provider";
-import { CartSheet } from "@/components/cart-sheet";
+import { ICartProduct, useCart } from "@/contexts/cart-provider";
+// import { CartSheet } from "@/components/cart-sheet";
 import { ShoppingCart, LoaderCircle, Minus, Plus, ChevronRight, Shield, RotateCcw, Truck, ShoppingBag, Heart, Share2, Star } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
@@ -19,8 +19,9 @@ import { Label } from "./ui/label";
 import { Badge } from "./ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import WishListButton from "./wish-list-button";
+import ProductShareBuuttons from "./product-share-buttons";
 
-export default function ProductDisplay({ product }: { product: Products }) {
+export default function ProductDisplay({ product, shareUrl, title }: { product: Products; shareUrl: string; title: string }) {
   const imageUrls = Array.isArray(product.image_urls) ? product.image_urls : [];
 
   const [selectedImage, setSelectedImage] = useState(imageUrls[0] || "");
@@ -72,16 +73,16 @@ export default function ProductDisplay({ product }: { product: Products }) {
       addToCart(toBeSentToCart, quantity);
       setIsAddingToCart(false);
 
-      toast.success("Success!", {
-        description: `${quantity} × ${product.name} added to your cart`,
-        action: {
-          label: "Undo",
-          onClick: () => console.log("Undo"),
-        },
-      });
+      // toast.success("Success!", {
+      //   description: `${quantity} × ${product.name} added to your cart`,
+      //   action: {
+      //     label: "Undo",
+      //     onClick: () => console.log("Undo"),
+      //   },
+      // });
 
       setQuantity(1);
-    }, 400);
+    }, 300);
   };
 
   const [mainImage, setMainImage] = useState("/placeholder.svg?height=600&width=600");
@@ -120,23 +121,21 @@ export default function ProductDisplay({ product }: { product: Products }) {
         </Link>
         <ChevronRight className="h-4 w-4 mx-2 text-muted-foreground" />
         <Link
-          href="/category/mens-wears"
-          className="text-muted-foreground hover:text-primary">
-          Mens Wears
-        </Link>
-        <ChevronRight className="h-4 w-4 mx-2 text-muted-foreground" />
-        <Link
-          href="/category/mens-wears/shoes"
+          href="/shop/category/shoes"
           className="text-muted-foreground hover:text-primary">
           Shoes
         </Link>
+
         <ChevronRight className="h-4 w-4 mx-2 text-muted-foreground" />
-        <span className="text-foreground font-medium">{product.name}</span>
+        <Link
+          href={`/shop/category/${product.slug}`}
+          className="text-foreground font-medium">
+          {product.name}
+        </Link>
       </nav>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 py-4">
         {/* Left column: Image gallery */}
-
         <div className="flex flex-col-reverse lg:flex-row ">
           {/* Thumbnail carousel left side */}
           <div className="hidden lg:block w-20">
@@ -179,15 +178,19 @@ export default function ProductDisplay({ product }: { product: Products }) {
                       height={500}
                       width={500}
                       priority={index === 0}
-                      className="w-full h-[500px]"
+                      className="w-full h-[300px] md:h-[500px]"
                     />
+
+                    <div className="absolute top-2 right-2">
+                      <WishListButton product_id={product.id} />
+                    </div>
                   </CarouselItem>
                 ))}
               </CarouselContent>
             </Carousel>
 
             {/* Mobile/tablet thumbnail carousel */}
-            <Carousel className="w-full lg:hidden px-4">
+            <Carousel className="w-full lg:hidden mt-4">
               <CarouselContent>
                 {imageUrls.map((item: string, index: number) => (
                   <CarouselItem
@@ -195,7 +198,7 @@ export default function ProductDisplay({ product }: { product: Products }) {
                     className="basis-1/4 md:basis-1/5">
                     <div
                       className={` rounded-sm cursor-pointer transition-all
-                      ${selectedIndex === index ? "ring-2 ring-primary ring-offset-1" : "hover:ring-1 hover:ring-primary/30"}`}
+                      ${selectedIndex === index ? "ring-2 ring-[var(--primary)] ring-offset-2" : "hover:ring-1 hover:ring-[var(--primary)] hover:ring-offset-1"}`}
                       onClick={() => handleImageClick(item, index)}>
                       <Image
                         src={item || "/placeholder.svg"}
@@ -208,9 +211,6 @@ export default function ProductDisplay({ product }: { product: Products }) {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-
-              <CarouselPrevious className="left-2  h-6 w-6 bg-[var(--secondary)] hover:bg-[var(--secondary)] active:bg-[var(--secondary)] text-white border-none" />
-              <CarouselNext className="right-2  h-6 w-6 bg-[var(--secondary)] hover:bg-[var(--secondary)] active:bg-[var(--secondary)] text-white border-none" />
             </Carousel>
           </div>
         </div>
@@ -224,16 +224,13 @@ export default function ProductDisplay({ product }: { product: Products }) {
                 className="text-xs rounded-full">
                 Mens Wears
               </Badge>
-              <div className="flex items-center space-x-2">
-                <WishListButton product_id={product.id} />
-                <Button
-                  variant="ghost"
-                  size="icon">
-                  <Share2 className="" />
-                </Button>
-              </div>
+
+              <ProductShareBuuttons
+                shareUrl={shareUrl}
+                title={title}
+              />
             </div>
-            <h1 className="text-3xl font-bold mt-2">Reebok Classic Leather</h1>
+            <h1 className="text-2xl md:text-3xl font-bold mt-2">{product.name}</h1>
 
             <div className="flex items-center mt-2 space-x-2">
               <div className="flex">
@@ -251,8 +248,8 @@ export default function ProductDisplay({ product }: { product: Products }) {
           </div>
 
           <div className="flex items-baseline space-x-2">
-            <span className="text-3xl font-bold">{formatCurrency(product.selling_price ?? 0)}</span>
-            <span className="text-lg text-muted-foreground line-through">{formatCurrency(product.crossed_price ?? 0)}</span>
+            <span className="text-2xl md:text-3xl font-bold">{formatCurrency(product.selling_price ?? 0)}</span>
+            <span className=" text-base md:text-lg text-muted-foreground line-through">{formatCurrency(product.crossed_price ?? 0)}</span>
             <Badge className="ml-2 bg-green-100 text-green-800 hover:bg-green-100 shadow-none rounded-full border-none">Save {formatCurrency(product.crossed_price ? product.crossed_price - product.selling_price! : 0)}</Badge>
           </div>
 
@@ -343,24 +340,9 @@ export default function ProductDisplay({ product }: { product: Products }) {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Button
-                onClick={handleAddToCart}
-                disabled={isAddingToCart}
-                size="lg"
-                className="flex-1 bg-[var(--secondary)] hover:bg-[var(--secondary)] active:bg-[var(--secondary)]">
-                <span className="flex items-center gap-2">
-                  {isAddingToCart ? (
-                    <LoaderCircle
-                      size={16}
-                      className="animate-spin"
-                    />
-                  ) : (
-                    <ShoppingBag size={16} />
-                  )}
-                  Add to Cart
-                </span>
-              </Button>
+            <div className="flex  gap-3">
+              <AddToCartSheet product={product as any} />
+
               <Button
                 variant="outline"
                 className="flex-1"
@@ -371,7 +353,7 @@ export default function ProductDisplay({ product }: { product: Products }) {
           </div>
         </div>
 
-        <CartSheet />
+        {/* <CartSheet /> */}
       </div>
 
       {/* Product Details Tabs */}
@@ -519,5 +501,80 @@ export default function ProductDisplay({ product }: { product: Products }) {
         </Tabs>
       </div>
     </div>
+  );
+}
+
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { IProductPreview } from "@/interfaces/product";
+import { CartSheetContent } from "./cart-sheet-content";
+
+function AddToCartSheet({ product }: { product: IProductPreview }) {
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const { addToCart } = useCart();
+  const { cart } = useCart();
+
+  const [open, setOpen] = useState(false);
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsAddingToCart(true);
+
+    const toBeSentToCart: ICartProduct = {
+      id: product.id,
+      name: product.name,
+      price: product.selling_price,
+      crossed_price: product.crossed_price,
+      image: product.image_url,
+    };
+    setTimeout(() => {
+      addToCart(toBeSentToCart, 1);
+      setIsAddingToCart(false);
+      setOpen(true);
+    }, 300);
+  };
+
+  return (
+    <Sheet
+      open={open}
+      onOpenChange={setOpen}>
+      <SheetTrigger asChild>
+        {/* <span className="flex items-center gap-2">
+            {isAddingToCart ? (
+              <LoaderCircle
+                size={16}
+                className="animate-spin"
+              />
+            ) : (
+              <ShoppingCart size={16} />
+            )}
+            Add to Cart
+          </span> */}
+
+        <Button
+          onClick={handleAddToCart}
+          disabled={isAddingToCart}
+          size="lg"
+          className="flex-1 bg-[var(--secondary)] hover:bg-[var(--secondary)] active:bg-[var(--secondary)]">
+          <span className="flex items-center gap-2">
+            {isAddingToCart ? (
+              <LoaderCircle
+                size={16}
+                className="animate-spin"
+              />
+            ) : (
+              <ShoppingBag size={16} />
+            )}
+            Add to Cart
+          </span>
+        </Button>
+      </SheetTrigger>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle className="text-center">MY CART ({cart.length})</SheetTitle>
+        </SheetHeader>
+        <CartSheetContent />
+      </SheetContent>
+    </Sheet>
   );
 }
