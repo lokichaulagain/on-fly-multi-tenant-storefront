@@ -66,7 +66,7 @@ export default function CheckoutPageSection() {
         shipping_address: {
           full_name: values.full_name,
           email_address: values.email_address,
-          phone_number: values.phone_number,
+          phone_number: parseInt(values.phone_number),
           province: values.province,
           district: values.district,
           city: values.city,
@@ -245,6 +245,7 @@ export default function CheckoutPageSection() {
                           <FormLabel>Phone Number</FormLabel>
                           <FormControl>
                             <Input
+                              type="number"
                               placeholder="Enter your phone number"
                               {...field}
                             />

@@ -10,37 +10,10 @@ const YouMayLikeSection = dynamic(() => import("@/components/sections/you-may-li
 const ProductCarouselSkeleton = dynamic(() => import("@/components/skeletons/product-carousel-skeleton"));
 const ProductShareButton = dynamic(() => import("@/components/product-share-button"));
 
-import {
-  EmailShareButton,
-  FacebookIcon,
-  FacebookShareButton,
-  GabShareButton,
-  HatenaShareButton,
-  InstapaperShareButton,
-  LineShareButton,
-  LinkedinShareButton,
-  LivejournalShareButton,
-  MailruShareButton,
-  OKShareButton,
-  PinterestShareButton,
-  PocketShareButton,
-  RedditShareButton,
-  TelegramShareButton,
-  ThreadsShareButton,
-  TumblrShareButton,
-  TwitterIcon,
-  TwitterShareButton,
-  WhatsappIcon,
-  ViberShareButton,
-  VKShareButton,
-  WhatsappShareButton,
-  WorkplaceShareButton,
-  LinkedinIcon,
-} from "react-share";
 
 // Generate metadata for the page
-export async function generateMetadata({ params }: { params: { slug: string } }, parent: ResolvingMetadata): Promise<Metadata> {
-  const { slug } = params;
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }, parent: ResolvingMetadata): Promise<Metadata> {
+  const { slug } = await params;
 
   // do in parallel
   const [productResponse, storeResponse] = await Promise.all([getProductBySlug(slug), getActiveStore()]);
