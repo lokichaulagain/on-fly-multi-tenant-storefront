@@ -2,7 +2,6 @@ export interface IStoreAppearance {
   primary_color: string;
   secondary_color: string;
   font_family: string;
-  button_style: string;
   border_radius: number;
   product_aspect_ratio: string;
   favicon: string;

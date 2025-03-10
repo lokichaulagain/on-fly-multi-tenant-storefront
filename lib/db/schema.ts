@@ -1,9 +1,9 @@
-import { border_radius, button_style, DEFAULT_STORE_LOGO, favicon, font_family, primary_color, product_aspect_ratio, secondary_color } from "@/constants";
-import { ENUM_CATEGORY_STATUS, ENUM_PAYMENT_STATUS, ENUM_PRODUCT_STATUS, ENUM_SHIPPING_STATUS, ENUM_STORE_STATUS, ENUM_SUBSCRIPTION_PLAN, ENUM_SUBSCRIPTION_STATUS, ENUM_STORE_CATEGORY } from "@/enums";
+import { favicon, primary_color, secondary_color, DEFAULT_STORE_LOGO, border_radius, product_aspect_ratio, font_family } from "@/constants";
+import { ENUM_PRODUCT_STATUS, ENUM_SHIPPING_STATUS, ENUM_STORE_STATUS, ENUM_SUBSCRIPTION_PLAN, ENUM_SUBSCRIPTION_STATUS, ENUM_STORE_CATEGORY, ENUM_PAYMENT_STATUS, ENUM_CATEGORY_STATUS } from "@/enums";
 import { IShippingAndBillingAddress } from "@/interfaces/order";
 import { IStoreAppearance, IStoreSocialLinks } from "@/interfaces/store";
 import { sql } from "drizzle-orm";
-import { pgTable, decimal, varchar, text, timestamp, integer, jsonb, index, boolean, uuid, AnyPgColumn, primaryKey } from "drizzle-orm/pg-core";
+import { pgTable, decimal, varchar, text, timestamp, integer, jsonb, index, boolean, uuid, AnyPgColumn, primaryKey, uniqueIndex } from "drizzle-orm/pg-core";
 
 // ✅ Stores Table
 export const storesTable = pgTable(
@@ -77,7 +77,6 @@ export const storesTable = pgTable(
       font_family: font_family,
       primary_color: primary_color,
       secondary_color: secondary_color,
-      button_style: button_style,
       border_radius: border_radius,
       product_aspect_ratio: product_aspect_ratio,
       favicon: favicon,
@@ -179,7 +178,6 @@ export const productsTable = pgTable(
 
     // images: jsonb("images").default([]),
     has_variants: boolean("has_variants").default(false),
-    // image_urls: jsonb("image_urls").default([]),
     image_urls: jsonb("image_urls").$type<string[]>().default([]),
 
     status: varchar("status", {
@@ -226,12 +224,10 @@ export const ordersTable = pgTable("orders", {
   // payment_method: varchar("payment_method", { length: 50 }),
   // payment_amount: integer("payment_amount"),
 
-  // 🛒 Address information
-
   shipping_address: jsonb("shipping_address").$type<IShippingAndBillingAddress>().default({
     full_name: "",
     email_address: "",
-    phone_number: "",
+    phone_number: null,
     province: "",
     district: "",
     city: "",
@@ -242,7 +238,7 @@ export const ordersTable = pgTable("orders", {
   billing_address: jsonb("billing_address").$type<IShippingAndBillingAddress>().default({
     full_name: "",
     email_address: "",
-    phone_number: "",
+    phone_number: null,
     province: "",
     district: "",
     city: "",
@@ -311,16 +307,53 @@ export const productsToCategories = pgTable(
 export type ProductsToCategories = typeof productsToCategories.$inferSelect;
 
 // ✅ Pages Table
-export const pagesTable = pgTable("pages", {
-  id: uuid("id").defaultRandom().primaryKey().notNull().unique(),
-  title: varchar("title", { length: 100 }).notNull(),
-  slug: varchar("slug", { length: 100 }).notNull(),
-  content: varchar("content", { length: 5000 }),
-  store_id: varchar("store_id", { length: 255 })
-    .notNull()
-    .references(() => storesTable.id),
-  created_at: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
-  updated_at: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
-  deleted_at: timestamp("deleted_at", { mode: "date" }),
-});
+export const pagesTable = pgTable(
+  "pages",
+  {
+    id: uuid("id").defaultRandom().primaryKey().notNull().unique(),
+    title: varchar("title", { length: 100 }).notNull(),
+    slug: varchar("slug", { length: 100 }).notNull(),
+    content: varchar("content", { length: 5000 }),
+    store_id: varchar("store_id", { length: 255 })
+      .notNull()
+      .references(() => storesTable.id),
+    created_at: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+    updated_at: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
+    deleted_at: timestamp("deleted_at", { mode: "date" }),
+  },
+  (table) => [
+    // Unique constraint for slug and store_id
+    uniqueIndex("store_slug_unique").on(table.store_id, table.slug),
+
+    // Unique constraint for title and store_id
+    uniqueIndex("store_title_unique").on(table.store_id, table.title),
+  ]
+);
 export type Pages = typeof pagesTable.$inferSelect;
+
+// ✅ WishList Table
+export const wishListTable = pgTable(
+  "wish_list",
+  {
+    id: uuid("id").defaultRandom().primaryKey().notNull().unique(),
+    user_id: varchar("user_id", { length: 255 }).notNull(),
+    store_id: varchar("store_id", { length: 255 })
+      .notNull()
+      .references(() => storesTable.id),
+    product_id: uuid("product_id")
+      .notNull()
+      .references(() => productsTable.id),
+
+    created_at: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+    updated_at: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
+    deleted_at: timestamp("deleted_at", { mode: "date" }),
+  },
+  (table) => [
+    // Unique constraint for user_id and store_id
+    uniqueIndex("user_id_store_id_unique").on(table.user_id, table.store_id),
+
+    // Unique constraint for product_id and store_id
+    uniqueIndex("product_id_store_id_unique").on(table.product_id, table.store_id),
+  ]
+);
+export type WishList = typeof wishListTable.$inferSelect;

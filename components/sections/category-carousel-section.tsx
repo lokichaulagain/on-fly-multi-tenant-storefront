@@ -6,27 +6,32 @@ import SingleCategoryCard from "@/components/single-category-card";
 
 export default async function CategoryCarouselSection() {
   const response = await getActiveStoreCategoriesWithPreviewData();
-  const categories = response?.data;
+  const categories = response?.data || []
 
-  if (response.error || !categories) {
-    return <p>No categories found</p>;
+  if (response.error || categories?.length === 0) {
+    console.log("Something went wrong", response.error);
+    return null;
   }
 
   return (
     <section>
-      <SectionHeader title="Explore Categories" />
-      <Carousel opts={{ align: "start" }}>
+      <div>
+        <SectionHeader title="Explore Categories" />
+      </div>
+      <Carousel opts={{ align: "start", loop: true }}>
         <CarouselContent>
           {categories?.map((category: ICategoryPreview) => (
             <CarouselItem
               key={category.slug}
-              className="md:basis-1/2 lg:basis-1/4 group shadow-sm">
+              className="basis-1/2 sm:basis-1/3 lg:basis-1/4 xl:basis-1/5 group shadow-sm">
               <SingleCategoryCard category={category} />
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="absolute z-20 left-0 ml-2" />
-        <CarouselNext className="absolute z-20 right-0 mr-2" />
+        <div className="absolute flex gap-2 -top-9 right-12">
+          <CarouselPrevious className="absolute z-20 -left-8" />
+          <CarouselNext />
+        </div>
       </Carousel>
     </section>
   );

@@ -36,14 +36,16 @@ const SingleProductCard = memo(({ product }: { product: IProductPreview }) => {
       addToCart(toBeSentToCart, 1);
       setIsAddingToCart(false);
 
-      toast.success("Success!", {
-        description: `${product.name} added to your cart`,
-        action: {
-          label: "Undo",
-          onClick: () => console.log("Undo"),
-        },
-      });
-    }, 400);
+      // toast.success("Success!", {
+      //   description: `${product.name} added to your cart`,
+      //   position: "top-right",
+      //   duration: 1000,
+      //   action: {
+      //     label: "Undo",
+      //     onClick: () => console.log("Undo"),
+      //   },
+      // });
+    }, 300);
   };
 
   return (
@@ -80,24 +82,21 @@ const SingleProductCard = memo(({ product }: { product: IProductPreview }) => {
             className="w-full gap-2 transition-all bg-[var(--secondary)]  hover:bg-[var(--secondary)]"
             onClick={handleAddToCart}
             disabled={isAddingToCart}>
-            {isAddingToCart ? (
-              <span className="flex items-center gap-2">
+            <span className="flex items-center gap-2">
+              {isAddingToCart ? (
                 <LoaderCircle
                   size={16}
                   className="animate-spin"
                 />
-                Adding to cart...
-              </span>
-            ) : (
-              <span className="flex items-center gap-2">
+              ) : (
                 <ShoppingCart size={16} />
-                Add to Cart
-              </span>
-            )}
+              )}
+              Add to Cart
+            </span>
           </Button>
         </div>
       </div>
-      <CartSheet  />
+      <CartSheet />
     </div>
   );
 });

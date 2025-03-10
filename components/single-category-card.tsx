@@ -3,13 +3,7 @@ import React, { memo } from "react";
 import Image from "next/image";
 import { ICategoryPreview } from "@/interfaces/category";
 
-/*
-1. memo is used to prevent re-rendering of the component when the same component is used multiple times in the same component.
-2. memo is used to optimize the performance of the component.
-
-*/
 const SingleCategoryCard = memo(({ category }: { category: ICategoryPreview }) => {
-  
   return (
     <div className=" relative md:h-92  overflow-hidden rounded-2xl">
       {category.thumbnail && (
@@ -25,7 +19,7 @@ const SingleCategoryCard = memo(({ category }: { category: ICategoryPreview }) =
           />
         </Link>
       )}
-      <p className=" font-medium absolute top-4  left-4 group-hover:text-orange-500 duration-300 ">{category.name}</p>
+      <p className="prose line-clamp-2 text-sm md:text-base font-medium absolute top-2 md:top-4 left-2 md:left-4 group-hover:text-orange-500 duration-300 ">{category.name}</p>
     </div>
   );
 });
