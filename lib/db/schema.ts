@@ -357,3 +357,37 @@ export const wishListTable = pgTable(
   ]
 );
 export type WishList = typeof wishListTable.$inferSelect;
+
+// ✅ Reviews Table
+export const reviewsTable = pgTable(
+  "reviews",
+  {
+    id: uuid("id").defaultRandom().primaryKey().notNull().unique(),
+    user_id: varchar("user_id", { length: 255 }).notNull(),
+    store_id: varchar("store_id", { length: 255 })
+      .notNull()
+      .references(() => storesTable.id),
+    product_id: uuid("product_id")
+      .notNull()
+      .references(() => productsTable.id),
+    rating: integer("rating").notNull(),
+    review: text("review").default(sql`NULL`),
+    created_at: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+    updated_at: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
+    deleted_at: timestamp("deleted_at", { mode: "date" }),
+  },
+  (table) => [
+    // Unique constraint for user_id and store_id and product_id
+    uniqueIndex("user_id_store_id_product_id_unique").on(table.user_id, table.store_id, table.product_id),
+
+    // Fast queries filtering by user_id
+    index("reviews_user_id_idx").on(table.user_id),
+
+    // Fast queries filtering by store_id
+    index("reviews_store_id_idx").on(table.store_id),
+
+    // Fast queries filtering by product_id
+    index("reviews_product_id_idx").on(table.product_id),
+  ]
+);
+export type Reviews = typeof reviewsTable.$inferSelect;
