@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata | null> {
 
   return {
     title: response.data.store_name,
-    description: response.data.store_name,
+    description: response.data.store_meta_description || response.data.store_name,
     openGraph: {
       title: response.data.store_meta_title || response.data.store_name,
       description: response.data.store_meta_description || response.data.store_name,
@@ -27,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata | null> {
     twitter: {
       card: "summary_large_image",
       title: response.data.store_meta_title || response.data.store_name,
-      description: response.data.store_meta_description || response.data.store_name,
+      description: response.data.store_meta_description || response.data.store_name, 
       images: [response.data.store_meta_image || response.data.store_logo || ""],
       creator: "@fenzora",
     },
