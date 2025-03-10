@@ -7,28 +7,10 @@ import { CartProvider } from "@/contexts/cart-provider";
 import { getActiveStorePagesWithPreviewData } from "@/actions/page";
 import { IStoreAppearance } from "@/interfaces/store";
 import { NoStoreFound } from "@/components/no-store-found";
+import { fallbackMetadata } from "@/constants/metadata";
 
 export async function generateMetadata(): Promise<Metadata | null> {
   const response = await getActiveStore();
-
-  const fallbackMetadata: Metadata = {
-    title: "Fenzora",
-    description: "Launch your online store in 60 seconds. Build customize sell and manage —all in one powerful ecommerce platform in Nepal.",
-    openGraph: {
-      title: "Fenzora",
-      description: "Launch your online store in 60 seconds. Build customize sell and manage —all in one powerful ecommerce platform in Nepal.",
-      images: ["https://itmpwbjutsadjvzubrmf.supabase.co/storage/v1/object/public/fenzora/logos/Icon-two.png"],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: "Fenzora",
-      description: "Launch your online store in 60 seconds. Build customize sell and manage —all in one powerful ecommerce platform in Nepal.",
-      images: ["https://itmpwbjutsadjvzubrmf.supabase.co/storage/v1/object/public/fenzora/logos/Icon-two.png"],
-      creator: "@fenzora",
-    },
-    icons: ["https://itmpwbjutsadjvzubrmf.supabase.co/storage/v1/object/public/fenzora/logos/Icon-two.png"],
-    metadataBase: new URL(`https://fenzora.com`),
-  };
 
   if (response.error || !response.data) {
     return fallbackMetadata;

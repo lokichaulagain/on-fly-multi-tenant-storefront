@@ -3,7 +3,6 @@ import { ChevronRight, Facebook, Instagram, MapPin, Youtube, Zap } from "lucide-
 import Image from "next/image";
 import { Stores } from "@/lib/db/schema";
 
-
 export default function Footer({ store, pages }: { store: Stores; pages: IActiveStorePagesWithPreviewData[] }) {
   const quickLinks = [
     {
@@ -19,13 +18,12 @@ export default function Footer({ store, pages }: { store: Stores; pages: IActive
       href: "/shop",
     },
     ...pages
-      .filter((page) => !["help", "privacy-policy", "terms-of-service"].includes(page.slug)) 
+      .filter((page) => !["help", "privacy-policy", "terms-of-service"].includes(page.slug))
       .map((page) => ({
         title: page.title,
         href: `/p/${page.slug}`,
       })),
   ];
-  
 
   const helpLinks = [
     {
@@ -60,6 +58,7 @@ export default function Footer({ store, pages }: { store: Stores; pages: IActive
           <div className=" space-y-2 text-sm">
             {quickLinks.map((link, index) => (
               <Link
+                prefetch={true}
                 key={index}
                 href={link.href}
                 className=" flex items-center  hover:text-[var(--secondary)] duration-300">
@@ -75,6 +74,7 @@ export default function Footer({ store, pages }: { store: Stores; pages: IActive
           <div className=" space-y-2 text-sm">
             {helpLinks.map((link, index) => (
               <Link
+                prefetch={true}
                 key={index}
                 href={link.href}
                 className=" flex items-center hover:text-[var(--secondary)] duration-300 ">
