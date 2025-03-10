@@ -1,6 +1,5 @@
 import { getActiveStoreProductsWithPreviewData } from "@/actions/product";
-import GridProducts from "@/components/grid-products";
-  
+import ProductCarouselSection from "../product-carousel-section";
 export default async function YouMayLikeSection() {
   const response = await getActiveStoreProductsWithPreviewData(); 
 
@@ -9,7 +8,7 @@ export default async function YouMayLikeSection() {
   }
 
   return (
-    <GridProducts
+    <ProductCarouselSection
       title="You May Also Like"
       products={response.data}
     />
