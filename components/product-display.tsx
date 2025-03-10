@@ -341,7 +341,7 @@ export default function ProductDisplay({ product, shareUrl, title }: { product: 
             </div>
 
             <div className="flex  gap-3">
-              <AddToCartSheet product={product} />
+              <AddToCartSheet product={product as any} />
 
               <Button
                 variant="outline"
