@@ -56,6 +56,38 @@ export async function getActiveStoreProductsWithPreviewData(): Promise<ActionRes
   }
 }
 
+interface IProductSitemap {
+  slug: string;
+  updated_at: Date;
+}
+
+export async function getProductsForSitemap(): Promise<ActionResponse<IProductSitemap[]>> {
+  // 1. Get store_id
+  const response = await getStoreIdFromSubdomain();
+  const store_id = response.data;
+  if (!store_id) {
+    return { data: null, status: 404, error: "Store not found" };
+  }
+
+  try {
+    // 2. Get products
+    const products = await db
+      .select({
+        slug: productsTable.slug,
+        updated_at: productsTable.updated_at,
+      })
+      .from(productsTable)
+      .where(and(eq(productsTable.store_id, store_id), isNull(productsTable.deleted_at), eq(productsTable.status, ENUM_PRODUCT_STATUS.ACTIVE)))
+      .orderBy(desc(productsTable.created_at));
+
+    // 3. Return products
+    return { data: products, status: 200, msg: "Products fetched successfully", error: null };
+  } catch (error: unknown) {
+    console.error(`Error fetching products for sitemap for store ${store_id} : Error: ${error}`);
+    return { data: null, status: 500, error: handleDbError(error) };
+  }
+}
+
 // ✅
 export async function getProductBySlug(slug: string): Promise<ActionResponse<Products>> {
   // 1. Get store_id from subdomain

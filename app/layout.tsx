@@ -5,6 +5,7 @@ import { CurrentStoreProvider } from "@/contexts/current-store-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { CustomNotFound } from "@/components/not-found/custom-not-found";
 import { Store } from "lucide-react";
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const response = await getActiveStore();
 

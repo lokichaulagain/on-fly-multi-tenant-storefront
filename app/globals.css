@@ -59,25 +59,7 @@
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
-/* It prevent input field zoom issue in ios */
+/* Prevent input field zoom issue in ios */
 @layer base {
   input,
   select,
@@ -85,28 +67,3 @@
     font-size: 16px;
   }
 }
-.cl-internal-1jb7j6z {
-  width: 100% !important;
-}
-
-.cl-internal-1jb7j6z {
-  width: 100% !important;
-}
-
-.cl-internal-1jb7j6z { 
-  width: 100%  !important;
-}
-
-
-.bg-primary-50 {
-  background-color: var(--primary) !important;
-  opacity: 0.5 !important;
-}
-
-
-
-
-
-
-
-
