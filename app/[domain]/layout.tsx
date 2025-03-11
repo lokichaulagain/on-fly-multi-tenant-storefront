@@ -16,29 +16,53 @@ export async function generateMetadata(): Promise<Metadata | null> {
     return fallbackMetadata;
   }
 
-  // Construct the proper URL base
-  const baseUrl = response.data.custom_domain  
-    ? `https://${response.data.custom_domain}` 
-    : `https://${response.data.store_subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'fenzora.com'}`;
-
+  const STORE_NAME = response.data.store_name;
+  const STORE_META_TITLE = response.data.store_meta_title || STORE_NAME;
+  const STORE_META_DESCRIPTION = response.data.store_meta_description || STORE_NAME;
+  const LOGO_URL = response.data.store_meta_image || response.data.store_logo || "";
+  const BASE_URL = response.data?.custom_domain ? `https://${response.data?.custom_domain}` : `https://${response.data?.store_subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+  
   return {
-    title: response.data.store_name,
-    description: response.data.store_meta_description || response.data.store_name,
+    title: {
+      default: STORE_NAME,
+      template: "%s | " + STORE_NAME,
+    },
+    description: STORE_META_DESCRIPTION,
     openGraph: {
-      title: response.data.store_meta_title || response.data.store_name,
-      description: response.data.store_meta_description || response.data.store_name,
-      images: [response.data.store_meta_image || response.data.store_logo || ""],
-      url: baseUrl,
+      title: STORE_META_TITLE,
+      description: STORE_META_DESCRIPTION,
+      images: [LOGO_URL],
+      url: BASE_URL,
+    },
+
+    robots: {
+      index: true,
+      follow: true,
     },
     twitter: {
       card: "summary_large_image",
-      title: response.data.store_meta_title || response.data.store_name,
-      description: response.data.store_meta_description || response.data.store_name,
-      images: [response.data.store_meta_image || response.data.store_logo || ""],
+      title: STORE_META_TITLE,
+      description: STORE_META_DESCRIPTION,
+      images: [LOGO_URL],
       creator: "@fenzora",
     },
-    icons: [response.data.store_meta_image || response.data.store_logo || ""],
-    metadataBase: new URL(baseUrl),
+
+    icons: {
+      icon: LOGO_URL,
+      shortcut: LOGO_URL,
+      apple: LOGO_URL,
+      other: {
+        rel: "icon",
+        url: LOGO_URL,
+      },
+    },
+    metadataBase: new URL(BASE_URL),
+    alternates: {
+      canonical: BASE_URL,
+      languages: {
+        "en-US": BASE_URL,
+      },
+    },
   };
 }
 
