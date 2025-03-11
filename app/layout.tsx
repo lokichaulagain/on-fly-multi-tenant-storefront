@@ -5,6 +5,13 @@ import { CurrentStoreProvider } from "@/contexts/current-store-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { CustomNotFound } from "@/components/not-found/custom-not-found";
 import { Store } from "lucide-react";
+import { fallbackMetadata } from "@/constants/metadata";
+import { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return fallbackMetadata;
+}
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const response = await getActiveStore();
@@ -44,6 +51,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </head>
           <body>
             {children}
+            <Analytics />
             <Toaster />
           </body>
         </html>

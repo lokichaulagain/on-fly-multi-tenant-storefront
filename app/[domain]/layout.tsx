@@ -12,10 +12,14 @@ import { Store } from "lucide-react";
 
 export async function generateMetadata(): Promise<Metadata | null> {
   const response = await getActiveStore();
-
   if (response.error || !response.data) {
     return fallbackMetadata;
   }
+
+  // Construct the proper URL base
+  const baseUrl = response.data.custom_domain  
+    ? `https://${response.data.custom_domain}` 
+    : `https://${response.data.store_subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'fenzora.com'}`;
 
   return {
     title: response.data.store_name,
@@ -24,6 +28,7 @@ export async function generateMetadata(): Promise<Metadata | null> {
       title: response.data.store_meta_title || response.data.store_name,
       description: response.data.store_meta_description || response.data.store_name,
       images: [response.data.store_meta_image || response.data.store_logo || ""],
+      url: baseUrl,
     },
     twitter: {
       card: "summary_large_image",
@@ -33,7 +38,7 @@ export async function generateMetadata(): Promise<Metadata | null> {
       creator: "@fenzora",
     },
     icons: [response.data.store_meta_image || response.data.store_logo || ""],
-    metadataBase: new URL(`https://${response.data.store_subdomain}`),
+    metadataBase: new URL(baseUrl),
   };
 }
 
