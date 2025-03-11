@@ -38,7 +38,13 @@ export default function ProfileSection({ orders }: { orders: Orders[] }) {
           {orders.length > 0 ? (
             <OrderComponent orders={orders} />
           ) : (
-           <NoOrderFound/>
+           <CustomNotFound
+            icon={<Package className="h-6 w-6 text-muted-foreground" />}
+            title="No orders found"
+            description="You haven't placed any orders yet."
+            buttonText="Shop Now"
+            buttonLink="/shop"
+           />
           )}
         </TabsContent>
         <TabsContent value="profile">
@@ -67,7 +73,7 @@ import { Separator } from "@/components/ui/separator";
 import { StatusBadge } from "./custom-badge";
 import { ENUM_PAYMENT_STATUS, ENUM_SHIPPING_STATUS } from "@/enums";
 import { formatCurrency } from "@/lib/format-currency";
-import { NoOrderFound } from "./no-order-found";
+import { CustomNotFound } from "./not-found/custom-not-found";
 
 
 

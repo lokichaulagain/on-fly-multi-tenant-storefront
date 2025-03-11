@@ -6,8 +6,9 @@ import Footer from "@/components/sections/footer";
 import { CartProvider } from "@/contexts/cart-provider";
 import { getActiveStorePagesWithPreviewData } from "@/actions/page";
 import { IStoreAppearance } from "@/interfaces/store";
-import { NoStoreFound } from "@/components/no-store-found";
 import { fallbackMetadata } from "@/constants/metadata";
+import { CustomNotFound } from "@/components/not-found/custom-not-found";
+import { Store } from "lucide-react";
 
 export async function generateMetadata(): Promise<Metadata | null> {
   const response = await getActiveStore();
@@ -27,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata | null> {
     twitter: {
       card: "summary_large_image",
       title: response.data.store_meta_title || response.data.store_name,
-      description: response.data.store_meta_description || response.data.store_name, 
+      description: response.data.store_meta_description || response.data.store_name,
       images: [response.data.store_meta_image || response.data.store_logo || ""],
       creator: "@fenzora",
     },
@@ -40,7 +41,15 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
   // Fetch both in parallel
   const [storeResponse, pagesResponse] = await Promise.all([getActiveStore(), getActiveStorePagesWithPreviewData()]);
   if (storeResponse.error || !storeResponse.data) {
-    return <NoStoreFound />;
+    return (
+      <CustomNotFound
+        icon={<Store className="h-6 w-6 text-muted-foreground" />}
+        title="No store found"
+        description="We couldn't find any store that matches the br provided subdomain or custom domain."
+        buttonText="Create New Store"
+        buttonLink="https://app.fenzora.com"
+      />
+    );
   }
 
   return (

@@ -27,18 +27,13 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   return (
     <div className="space-y-6">
       <div>
-        <div className="flex items-center justify-between">
-          <Badge
-            variant="outline"
-            className="text-xs rounded-full">
-            Mens Wears
-          </Badge>
-
+        <div className="flex justify-end">
           <ProductShareBuuttons
             shareUrl={`https://loki.fenzora.com/shop/${product.slug}`}
             title={product.name}
           />
         </div>
+
         <h1 className="text-2xl md:text-3xl font-bold mt-2">{product.name}</h1>
 
         <div className="flex items-center mt-2 space-x-2">
@@ -150,7 +145,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         </div>
 
         <div className="flex  gap-3">
-         <AddToCart product={product} />
+          <AddToCart product={product} />
 
           <Button
             variant="outline"

@@ -5,7 +5,8 @@ import ProductDisplay from "@/components/product-detail/product-display";
 import dynamic from "next/dynamic";
 import { Metadata, ResolvingMetadata } from "next";
 import { getActiveStore } from "@/actions/store";
-import { NoProductsFound } from "@/components/no-product-found";
+import { CustomNotFound } from "@/components/not-found/custom-not-found";
+import { PackageSearch } from "lucide-react";
 const YouMayLikeSection = dynamic(() => import("@/components/sections/you-may-like-section"));
 const ProductCarouselSkeleton = dynamic(() => import("@/components/skeletons/product-carousel-skeleton"));
 
@@ -62,7 +63,13 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const response = await getProductBySlug(slug);
 
   if (response.error || !response.data) {
-    return <NoProductsFound />;
+      return <CustomNotFound
+      icon={<PackageSearch className="h-6 w-6 text-muted-foreground" />}
+      title="No product found"
+      description="We couldn't find any product that matches the br provided slug."
+      buttonText="Go Home"
+      buttonLink="/"
+    />;
   }
 
   return (

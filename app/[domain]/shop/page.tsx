@@ -3,7 +3,8 @@ import { getActiveStoreProductsWithPreviewData } from "@/actions/product";
 import { IProductPreview } from "@/interfaces/product";
 import SingleProductCard from "@/components/single-product-card";
 import { ErrorAlert } from "@/components/error-altert";
-import { NoProductsFound } from "@/components/no-product-found";
+import { CustomNotFound } from "@/components/not-found/custom-not-found";
+import { PackageSearch } from "lucide-react";
 const banner1 = "https://miniture.novaworks.net/wp-content/uploads/2023/10/m4_slide_03.jpg";
 
 export default async function Page() {
@@ -29,7 +30,13 @@ export default async function Page() {
             ))}
           </div>
         ) : (
-          <NoProductsFound />
+          <CustomNotFound
+            icon={<PackageSearch className="h-6 w-6 text-muted-foreground" />}
+            title="No products found"
+            description="We couldn't find any products that matches the br provided slug."
+            buttonText="Go Home"
+            buttonLink="/"
+          />
         )}
       </div>
     </div>

@@ -12,20 +12,20 @@ export default function ProductDetailPageBreadcumb({ slug, name }: ProductDetail
     <nav className="flex items-center text-sm mb-4">
       <Link
         href="/"
-        className="text-muted-foreground hover:text-primary">
+        className="text-muted-foreground hover:text-[var(--primary)] transition-colors duration-300">
         Home
       </Link>
       <ChevronRight className="h-4 w-4 mx-2 text-muted-foreground" />
       <Link
-        href="/shop/category/shoes"
-        className="text-muted-foreground hover:text-primary">
-        Shoes
+        href="/shop"
+        className="text-muted-foreground hover:text-[var(--primary)] transition-colors duration-300">
+        Shop
       </Link>
 
-      <ChevronRight className="h-4 w-4 mx-2 text-muted-foreground" />
+      <ChevronRight className="h-4 w-4 mx-2 text-muted-foreground " /> 
       <Link
-        href={`/shop/category/$slug}`}
-        className="text-foreground font-medium">
+        href={`/shop/${slug}`}
+        className="font-medium hover:text-[var(--primary)] transition-colors duration-300">
         {name}
       </Link>
     </nav>

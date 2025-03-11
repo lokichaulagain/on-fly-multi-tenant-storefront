@@ -1,9 +1,11 @@
 import { getActiveStorePage } from "@/actions/page";
-import { NoPageFound } from "@/components/no-page-found";
 import { Metadata } from "next";
 import { getActiveStore } from "@/actions/store";
 import { fallbackMetadata } from "@/constants/metadata";
 import EditorContentParser from "@/components/editor-content-parser";
+import { CustomNotFound } from "@/components/not-found/custom-not-found";
+import { Pen } from "lucide-react";
+
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -43,7 +45,13 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const response = await getActiveStorePage(slug);
 
   if (response.error || !response.data) {
-    return <NoPageFound />;
+    return <CustomNotFound
+      icon={<Pen className="h-6 w-6 text-muted-foreground" />}
+      title="No page found"
+      description="We couldn't find any page that matches the br provided slug."
+      buttonText="Go Home"
+      buttonLink="/"
+    />;
   }
 
   return (

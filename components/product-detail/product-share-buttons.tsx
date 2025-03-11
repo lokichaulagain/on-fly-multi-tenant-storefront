@@ -18,6 +18,7 @@ export default function ProductShareButtons({ shareUrl, title }: ProductShareBut
           round
         />
       </FacebookShareButton>
+      
       <TwitterShareButton
         url={shareUrl}
         title={title}>
@@ -26,6 +27,7 @@ export default function ProductShareButtons({ shareUrl, title }: ProductShareBut
           round
         />
       </TwitterShareButton>
+
       <WhatsappShareButton
         url={shareUrl}
         title={title}>
@@ -34,6 +36,7 @@ export default function ProductShareButtons({ shareUrl, title }: ProductShareBut
           round
         />
       </WhatsappShareButton>
+
       <LinkedinShareButton
         url={shareUrl}
         title={title}>
