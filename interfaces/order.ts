@@ -23,3 +23,15 @@ export interface IOrderCreate {
   order_items: IOrderItem[];
   shipping_cost: number;
 }
+
+
+export interface IOrderItem {
+  product_id: string;
+  product_name: string;
+  product_image: string;
+  product_price: number;
+  product_quantity: number;
+  user_id: string;
+  store_id: string;
+}
+

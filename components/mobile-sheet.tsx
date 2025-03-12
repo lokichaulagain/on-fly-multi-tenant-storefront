@@ -134,7 +134,7 @@ export default function MobileSheet({ navitems }: { navitems: { title: string; s
           </div>
 
           <div className=" py-1">
-            <p className="w-full border-t border-dashed border-gray-200" />
+            <p className="w-full border-t border-dashed border-accent" />
           </div>
 
           <nav className="flex flex-col  ">

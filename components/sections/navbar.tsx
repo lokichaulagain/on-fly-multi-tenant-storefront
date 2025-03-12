@@ -179,7 +179,7 @@ export default function Navbar({ store_name, store_logo, store_subdomain, store_
                       alt="user"
                       height={100}
                       width={100}
-                      className="w-8 h-8 rounded-full hover:opacity-80 transition-opacity duration-300 border-2 border-gray-200"
+                      className="w-8 h-8 rounded-full hover:opacity-80 transition-opacity duration-300 border-2 border-accent"
                     />
                   </Button>
                 </Link>

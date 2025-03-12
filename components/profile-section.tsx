@@ -3,29 +3,39 @@ import React, { useState } from "react";
 import { SignOutButton, UserProfile } from "@clerk/nextjs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp, CreditCard, LoaderCircle, MapPin, Package, Truck } from "lucide-react";
+import { ChevronDown, ChevronUp, CreditCard, LoaderCircle, MapPin, Package, LogOut } from "lucide-react";
 import { Orders } from "@/lib/db/schema";
 import Image from "next/image";
 import moment from "moment";
+import { Separator } from "@/components/ui/separator";
+import { StatusBadge } from "./custom-badge";
+import { ENUM_PAYMENT_STATUS, ENUM_SHIPPING_STATUS } from "@/enums";
+import { formatCurrency } from "@/lib/format-currency";
+import { CustomNotFound } from "./not-found/custom-not-found";
+import { IStoreAppearance } from "@/interfaces/store";
+import { calculateOrderTotal } from "@/utils/calculate-order-total";
+import { IOrderItem } from "@/interfaces/order";
+interface ProfileSectionProps {
+  orders: Orders[];
+  store_appearance: IStoreAppearance;
+}
 
-export default function ProfileSection({ orders }: { orders: Orders[] }) {
+export default function ProfileSection({ orders, store_appearance }: ProfileSectionProps) {
   return (
     <div className="px-4 w-full md:max-w-4xl mx-auto mt-4  min-h-screen">
-      <Tabs
-        defaultValue="orders"
-        className="">
+      <Tabs defaultValue="orders">
         <div className=" flex items-center justify-between">
           <TabsList className="flex justify-between">
             <TabsTrigger value="orders">Order History</TabsTrigger>
             <TabsTrigger value="profile">Profile Settings</TabsTrigger>
           </TabsList>
 
-          <div className=" flex">
+          <div className="flex">
             <SignOutButton>
               <Button
                 variant={"destructive"}
                 className="w-full">
-                Logout
+                Logout <LogOut size={16} />
               </Button>
             </SignOutButton>
           </div>
@@ -33,33 +43,39 @@ export default function ProfileSection({ orders }: { orders: Orders[] }) {
 
         <TabsContent
           value="orders"
-          className="w-full  border border-gray-200 rounded-md p-4 shadow-lg ">
+          className={`w-full  border border-accent rounded-t-[var(--radius)] p-4 shadow-lg`}>
+          <h1 className="pb-2 font-semibold">My Orders ({orders.length})</h1>
 
-          {orders.length > 0 ? (
-            <OrderComponent orders={orders} />
-          ) : (
-           <CustomNotFound
-            icon={<Package className="h-6 w-6 text-muted-foreground" />}
-            title="No orders found"
-            description="You haven't placed any orders yet."
-            buttonText="Shop Now"
-            buttonLink="/shop"
-           />
+          {orders.length > 0 && <OrderComponent orders={orders} />}
+
+          {orders.length === 0 && (
+            <CustomNotFound
+              icon={<Package className="h-6 w-6 text-muted-foreground" />}
+              title="You haven't placed any orders yet."
+              description="Shop now and start your journey with us."
+              buttonText="Shop Now"
+              buttonLink="/shop"
+              buttonbg="bg-[var(--primary)]"
+            />
           )}
         </TabsContent>
+
         <TabsContent value="profile">
           <UserProfile
             routing="hash"
             fallback={
-              <LoaderCircle
-                size={16}
-                className="animate-spin"
-              />
+              <div className=" w-full md:max-w-4xl mx-auto flex justify-center items-center min-h-screen border border-accent rounded-md shadow-lg">
+                <LoaderCircle
+                  size={16}
+                  className="animate-spin"
+                />
+              </div>
             }
             appearance={{
               variables: {
-                colorPrimary: "#2563eb",
-                borderRadius: "0.2rem",
+                colorPrimary: store_appearance?.primary_color,
+                borderRadius: `${(store_appearance?.border_radius ?? 0) / 32}rem`,
+                fontFamily: store_appearance?.font_family,
               },
             }}
           />
@@ -69,30 +85,14 @@ export default function ProfileSection({ orders }: { orders: Orders[] }) {
   );
 }
 
-import { Separator } from "@/components/ui/separator";
-import { StatusBadge } from "./custom-badge";
-import { ENUM_PAYMENT_STATUS, ENUM_SHIPPING_STATUS } from "@/enums";
-import { formatCurrency } from "@/lib/format-currency";
-import { CustomNotFound } from "./not-found/custom-not-found";
-
-
-
-// Helper function to calculate order total
-const calculateOrderTotal = (order: any) => {
-  const itemsTotal = order.order_items.reduce((sum: number, item:any) => sum + item.product_price * item.product_quantity, 0);
-  return itemsTotal + order.shipping_cost;
-};
-
-
 interface ExpandedOrdersState {
   [key: string]: boolean;
 }
 
-
 function OrderComponent({ orders }: { orders: Orders[] }) {
   const [expandedOrders, setExpandedOrders] = useState<ExpandedOrdersState>({});
 
-  const toggleOrderExpand = (orderId: any) => {
+  const toggleOrderExpand = (orderId: string) => {
     setExpandedOrders((prev) => ({
       ...prev,
       [orderId]: !prev[orderId],
@@ -101,7 +101,7 @@ function OrderComponent({ orders }: { orders: Orders[] }) {
 
   return (
     <div className=" space-y-4">
-      {orders?.map((order: any) => (
+      {orders?.map((order: Orders) => (
         <div
           key={order.id}
           className="border">
@@ -137,7 +137,7 @@ function OrderComponent({ orders }: { orders: Orders[] }) {
               {/* Order items */}
               <h4 className="text-sm font-medium mb-3">Items</h4>
               <div className="space-y-3 mb-6">
-                {order.order_items.map((item: any) => (
+                {order.order_items?.map((item: IOrderItem) => (
                   <div
                     key={item.product_id}
                     className="flex items-center gap-4">
@@ -191,7 +191,7 @@ function OrderComponent({ orders }: { orders: Orders[] }) {
                   <div className="space-y-1 text-sm">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Subtotal</span>
-                      <span>{formatCurrency(order.order_items.reduce((sum: number, item: any) => sum + item.product_price * item.product_quantity, 0))}</span>
+                      <span>{formatCurrency(order.order_items?.reduce((sum: number, item: IOrderItem) => sum + item.product_price * item.product_quantity, 0) || 0)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Shipping</span>

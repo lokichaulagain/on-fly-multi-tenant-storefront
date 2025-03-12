@@ -1,5 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
+import { LogOut } from "lucide-react"
 
 export default function Loading() {
   return (
@@ -13,7 +14,7 @@ export default function Loading() {
 
           <div className="flex">
             <Button variant={"destructive"} className="w-full opacity-70" disabled>
-              Logout
+              Logout <LogOut size={16} />
             </Button>
           </div>
         </div>

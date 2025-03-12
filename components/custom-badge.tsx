@@ -15,7 +15,7 @@ export const getPaymentStatusColor = (status: ENUM_PAYMENT_STATUS) => {
     case ENUM_PAYMENT_STATUS.CANCELLED:
       return "bg-red-100 text-red-800 hover:bg-red-100 hover:bg-red-200 border border-red-200";
     default:
-      return "bg-gray-100 text-gray-800 hover:bg-gray-100 hover:bg-gray-200 border border-gray-200";
+      return "bg-gray-100 text-gray-800 hover:bg-gray-100 hover:bg-gray-200 border border-accent";
   }
 };
 
@@ -34,9 +34,9 @@ export const getShippingStatusColor = (status: ENUM_SHIPPING_STATUS) => {
     case ENUM_SHIPPING_STATUS.CANCELLED:
       return "bg-red-100 text-red-800 hover:bg-red-100 hover:bg-red-200 border border-red-200";
     case ENUM_SHIPPING_STATUS.ON_HOLD:
-      return "bg-gray-100 text-gray-800 hover:bg-gray-100 hover:bg-gray-200 border border-gray-200";
+      return "bg-gray-100 text-gray-800 hover:bg-gray-100 hover:bg-gray-200 border border-accent";
     default:
-      return "bg-gray-100 text-gray-800 hover:bg-gray-100 hover:bg-gray-200 border border-gray-200";
+      return "bg-gray-100 text-gray-800 hover:bg-gray-100 hover:bg-gray-200 border border-accent";
   }
 };
 
@@ -49,9 +49,9 @@ export const getProductStatusColor = (status: ENUM_PRODUCT_STATUS) => {
     case ENUM_PRODUCT_STATUS.OUT_OF_STOCK:
       return "bg-yellow-100 text-yellow-800 hover:bg-yellow-100 hover:bg-yellow-200 border border-yellow-200";
     default:
-      return "bg-gray-100 text-gray-800 hover:bg-gray-100 hover:bg-gray-200 border border-gray-200";
+      return "bg-gray-100 text-gray-800 hover:bg-gray-100 hover:bg-gray-200 border border-accent";
     case ENUM_PRODUCT_STATUS.DRAFT:
-      return "bg-gray-100 text-gray-800 hover:bg-gray-100 hover:bg-gray-200 border border-gray-200";
+      return "bg-gray-100 text-gray-800 hover:bg-gray-100 hover:bg-gray-200 border border-accent";
   }
 };
 

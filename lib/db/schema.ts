@@ -1,6 +1,6 @@
 import { favicon, primary_color, secondary_color, DEFAULT_STORE_LOGO, border_radius, product_aspect_ratio, font_family } from "@/constants";
 import { ENUM_PRODUCT_STATUS, ENUM_SHIPPING_STATUS, ENUM_STORE_STATUS, ENUM_SUBSCRIPTION_PLAN, ENUM_SUBSCRIPTION_STATUS, ENUM_STORE_CATEGORY, ENUM_PAYMENT_STATUS, ENUM_CATEGORY_STATUS } from "@/enums";
-import { IShippingAndBillingAddress } from "@/interfaces/order";
+import { IOrderItem, IShippingAndBillingAddress } from "@/interfaces/order";
 import { IStoreAppearance, IStoreSocialLinks } from "@/interfaces/store";
 import { sql } from "drizzle-orm";
 import { pgTable, decimal, varchar, text, timestamp, integer, jsonb, index, boolean, uuid, AnyPgColumn, primaryKey, uniqueIndex } from "drizzle-orm/pg-core";
@@ -246,20 +246,8 @@ export const ordersTable = pgTable("orders", {
     postal_code: "",
   }),
 
-  // 🛒 Order details
-  order_items: jsonb("order_items")
-    .default([
-      {
-        product_id: varchar("product_id", { length: 255 }),
-        product_name: varchar("product_name", { length: 100 }),
-        product_image: varchar("product_image", { length: 255 }),
-        product_price: integer("product_price"),
-        product_quantity: integer("product_quantity"),
-        user_id: varchar("user_id", { length: 255 }), // assign user_id from clerk
-        store_id: varchar("store_id", { length: 255 }), // assign store_id from clerk organization
-      },
-    ])
-    .default([]),
+  order_items: jsonb("order_items").$type<IOrderItem[]>().default([]),
+
   // subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
   // tax_amount: decimal("tax_amount", { precision: 10, scale: 2 }).notNull(),
   // tax_rate: decimal("tax_rate", { precision: 5, scale: 2 }).notNull(),
