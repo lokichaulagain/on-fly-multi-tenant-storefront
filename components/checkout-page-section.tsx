@@ -15,22 +15,16 @@ import { createOrder } from "@/actions/order";
 import { toast } from "sonner";
 import { orderFormSchema, OrderFormValues } from "@/form-schemas/order";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCurrentStore } from "@/contexts/current-store-provider";
 import { formatCurrency } from "@/lib/format-currency";
 import { CustomNotFound } from "@/components/not-found/custom-not-found";
 import { SignedIn } from "@clerk/nextjs";
 import SignInModal from "@/components/auth/sign-in-modal";
+import { useCurrentStore } from "@/contexts/current-store-provider";
+
 export default function CheckoutPageSection() {
+  const store = useCurrentStore();
   const router = useRouter();
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity, clearCart } = useCart();
-  const totalPrice = cart.reduce((total, item) => total + (item.price || 0) * item.quantity, 0);
-  const store = useCurrentStore();
-
-  const store_logo = store.store_logo;
-  const store_subdomain = store.store_subdomain;
-  const primary_color = store.store_appearance?.primary_color;
-  const border_radius = `${(store.store_appearance?.border_radius ?? 0) / 16}rem`;
-  const font_family = store.store_appearance?.font_family;
 
   const form = useForm<OrderFormValues>({
     resolver: zodResolver(orderFormSchema),
@@ -51,7 +45,6 @@ export default function CheckoutPageSection() {
 
   const [isPending, startTransition] = useTransition();
   const onSubmit = async (values: OrderFormValues) => {
-
     startTransition(async () => {
       const orderPayload = {
         shipping_address: {
@@ -62,9 +55,10 @@ export default function CheckoutPageSection() {
           district: values.district,
           city: values.city,
           landmark: values.landmark,
-          postal_code: values.postal_code,
+          postal_code: parseInt(values.postal_code),
         },
         billing_address: null,
+        shipping_cost: values.shipping_cost || 0,
         order_items: cart.map((item: ICartItem) => ({
           product_id: item.id,
           product_name: item.name,
@@ -72,10 +66,7 @@ export default function CheckoutPageSection() {
           product_price: item.price || 0,
           product_quantity: item.quantity,
         })),
-        shipping_cost: values.shipping_cost || 0,
       };
-      console.log(orderPayload, "its a order payload");
-
       const response = await createOrder(orderPayload);
       if (response.error) {
         toast("Failed!", {
@@ -88,17 +79,15 @@ export default function CheckoutPageSection() {
         return;
       }
 
-      if (response.data) {
-        toast("Success!", {
-          description: response.msg,
-          action: {
-            label: "Undo",
-            onClick: () => console.log("Undo"),
-          },
-        });
-        form.reset();
-        clearCart();
-      }
+      toast("Success!", {
+        description: response.msg,
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
+      form.reset();
+      clearCart();
     });
   };
 
@@ -115,9 +104,10 @@ export default function CheckoutPageSection() {
     );
   }
 
+  const totalPrice = cart.reduce((total, item) => total + (item.price || 0) * item.quantity, 0);
 
   return (
-    <div className=" min-h-screen w-full flex items-center justify-center">
+    <div className="min-h-screen container mx-auto px-4 md:px-24 w-full ">
       <div className="max-w-2xl mx-auto rounded-md shadow-md border border-accent/50 w-full ">
         {/* Header */}
 
@@ -418,18 +408,20 @@ export default function CheckoutPageSection() {
               </Button>
             </SignedIn>
 
-          
-              
-
-              <SignInModal
-                primary_color={primary_color}
-                border_radius={border_radius || ""}
-                font_family={font_family || ""}
-                store_logo={store_logo || ""}
-                store_subdomain={store_subdomain || ""}
-                button={<Button className="w-full bg-[var(--secondary)] hover:bg-[var(--secondary)] text-white">Sign In</Button>}
-              />
-         
+            <SignInModal
+              primary_color={store.store_appearance?.primary_color}
+              border_radius={`${(store.store_appearance?.border_radius ?? 0) / 32}rem`}
+              font_family={store.store_appearance?.font_family}
+              store_logo={store.store_logo}
+              store_subdomain={store.store_subdomain}
+              button={
+                <Button
+                  type="button"
+                  className="w-full bg-[var(--secondary)] hover:bg-[var(--secondary)] text-white">
+                  Sign In
+                </Button>
+              }
+            />
           </form>
         </Form>
       </div>

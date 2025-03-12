@@ -5,7 +5,6 @@ import Image from "next/image";
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Products } from "@/lib/db/schema";
-import WishListButton from "../wish-list-button";
 
 interface ProductImageGalleryProps {
   product: Products;
@@ -89,9 +88,7 @@ export default function ProductImageGallery({ product }: ProductImageGalleryProp
                   className="w-full h-[300px] md:h-[500px]"
                 />
 
-                <div className="absolute top-2 right-2">
-                  <WishListButton product_id={product.id} />
-                </div>
+                
               </CarouselItem>
             ))}
           </CarouselContent>

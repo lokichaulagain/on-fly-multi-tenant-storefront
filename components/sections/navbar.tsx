@@ -8,15 +8,13 @@ import MobileSheet from "@/components/mobile-sheet";
 import { useCart } from "@/contexts/cart-provider";
 import { SignedIn, useUser } from "@clerk/nextjs";
 import Image from "next/image";
-import { IStoreAppearance } from "@/interfaces/store";
-import { IActiveStorePagesWithPreviewData } from "@/interfaces/page";
+import { IPagePreview } from "@/interfaces/page";
 import SignInModal from "../auth/sign-in-modal";
 import SignUpModal from "../auth/sign-up-modal";
-export default function Navbar({ store_name, store_logo, store_subdomain, store_appearance, pages }: { store_name: string; store_logo: string; store_subdomain: string; store_appearance: IStoreAppearance; pages: IActiveStorePagesWithPreviewData[] }) {
-  const primary_color = store_appearance.primary_color;
-  const border_radius = `${store_appearance.border_radius / 16}rem`;
-  const font_family = store_appearance.font_family;
+import { useCurrentStore } from "@/contexts/current-store-provider";
 
+export default function Navbar({ pages }: { pages: IPagePreview[] }) {
+  const store = useCurrentStore();
   const { cart } = useCart();
   const { user } = useUser();
   const pathname = usePathname();
@@ -81,12 +79,12 @@ export default function Navbar({ store_name, store_logo, store_subdomain, store_
             href="/"
             className="flex items-center gap-1 text-white">
             <Image
-              src={store_logo}
+              src={store.store_logo}
               alt="logo"
               width={32}
               height={32}
             />
-            <p className="text-2xl tracking-wide font-serif">{store_name}</p>
+            <p className="text-2xl tracking-wide font-serif">{store.store_name}</p>
           </Link>
 
           <div className="flex items-center gap-4">
@@ -185,28 +183,28 @@ export default function Navbar({ store_name, store_logo, store_subdomain, store_
                 </Link>
               </SignedIn>
 
-        
-
               <div className="flex items-center gap-x-2">
                 <SignInModal
-                  primary_color={primary_color}
-                  border_radius={border_radius}
-                  font_family={font_family}
-                  store_logo={store_logo}
-                  store_subdomain={store_subdomain}
-                  button={<Button
-                    variant="link"
-                    className="hover:text-[var(--secondary)] duration-300">
-                    Sign In
-                  </Button>}
+                  primary_color={store.store_appearance?.primary_color}
+                  border_radius={`${(store.store_appearance?.border_radius ?? 0) / 32}rem`}
+                  font_family={store.store_appearance?.font_family}
+                  store_logo={store.store_logo}
+                  store_subdomain={store.store_subdomain}
+                  button={
+                    <Button
+                      variant="link"
+                      className="hover:text-[var(--secondary)] duration-300">
+                      Sign In
+                    </Button>
+                  }
                 />
 
                 <SignUpModal
-                  primary_color={primary_color}
-                  border_radius={border_radius}
-                  font_family={font_family}
-                  store_logo={store_logo}
-                  store_subdomain={store_subdomain}
+                  primary_color={store.store_appearance?.primary_color}
+                  border_radius={`${(store.store_appearance?.border_radius ?? 0) / 32}rem`}
+                  font_family={store.store_appearance?.font_family}
+                  store_logo={store.store_logo}
+                  store_subdomain={store.store_subdomain}
                   button={<Button className="bg-[var(--secondary)] hover:bg-[var(--secondary)] duration-300">Sign Up</Button>}
                 />
               </div>

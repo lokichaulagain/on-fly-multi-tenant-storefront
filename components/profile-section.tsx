@@ -12,15 +12,17 @@ import { StatusBadge } from "./custom-badge";
 import { ENUM_PAYMENT_STATUS, ENUM_SHIPPING_STATUS } from "@/enums";
 import { formatCurrency } from "@/lib/format-currency";
 import { CustomNotFound } from "./not-found/custom-not-found";
-import { IStoreAppearance } from "@/interfaces/store";
 import { calculateOrderTotal } from "@/utils/calculate-order-total";
 import { IOrderItem } from "@/interfaces/order";
+import { useCurrentStore } from "@/contexts/current-store-provider";
 interface ProfileSectionProps {
   orders: Orders[];
-  store_appearance: IStoreAppearance;
 }
 
-export default function ProfileSection({ orders, store_appearance }: ProfileSectionProps) {
+export default function ProfileSection({ orders }: ProfileSectionProps) {
+  const store = useCurrentStore();
+  const store_appearance = store.store_appearance;
+  
   return (
     <div className="px-4 w-full md:max-w-4xl mx-auto mt-4  min-h-screen">
       <Tabs defaultValue="orders">
@@ -219,13 +221,7 @@ function OrderComponent({ orders }: { orders: Orders[] }) {
                   size="sm">
                   Track Order
                 </Button>
-                {order.shipping_status !== "DELIVERED" && (
-                  <Button
-                    variant="outline"
-                    size="sm">
-                    Cancel Order
-                  </Button>
-                )}
+
                 <Button
                   variant="outline"
                   size="sm">

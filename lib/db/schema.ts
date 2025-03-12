@@ -227,23 +227,23 @@ export const ordersTable = pgTable("orders", {
   shipping_address: jsonb("shipping_address").$type<IShippingAndBillingAddress>().default({
     full_name: "",
     email_address: "",
-    phone_number: null,
+    phone_number: 0,
     province: "",
     district: "",
     city: "",
     landmark: "",
-    postal_code: "",
+    postal_code: 0,
   }),
 
   billing_address: jsonb("billing_address").$type<IShippingAndBillingAddress>().default({
     full_name: "",
     email_address: "",
-    phone_number: null,
+    phone_number: 0,
     province: "",
     district: "",
     city: "",
     landmark: "",
-    postal_code: "",
+    postal_code: 0,
   }),
 
   order_items: jsonb("order_items").$type<IOrderItem[]>().default([]),
@@ -319,32 +319,7 @@ export const pagesTable = pgTable(
 );
 export type Pages = typeof pagesTable.$inferSelect;
 
-// ✅ WishList Table
-export const wishListTable = pgTable(
-  "wish_list",
-  {
-    id: uuid("id").defaultRandom().primaryKey().notNull().unique(),
-    user_id: varchar("user_id", { length: 255 }).notNull(),
-    store_id: varchar("store_id", { length: 255 })
-      .notNull()
-      .references(() => storesTable.id),
-    product_id: uuid("product_id")
-      .notNull()
-      .references(() => productsTable.id),
 
-    created_at: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
-    updated_at: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
-    deleted_at: timestamp("deleted_at", { mode: "date" }),
-  },
-  (table) => [
-    // Unique constraint for user_id and store_id
-    uniqueIndex("user_id_store_id_unique").on(table.user_id, table.store_id),
-
-    // Unique constraint for product_id and store_id
-    uniqueIndex("product_id_store_id_unique").on(table.product_id, table.store_id),
-  ]
-);
-export type WishList = typeof wishListTable.$inferSelect;
 
 // ✅ Reviews Table
 export const reviewsTable = pgTable(

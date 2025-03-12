@@ -5,11 +5,11 @@ import { handleDbError } from "@/utils/db-error";
 import { and, desc, eq, isNull } from "drizzle-orm";
 import { unstable_cache } from "next/cache";
 import { ActionResponse, getStoreIdFromSubdomain } from "@/actions/index";
-import { IActiveStorePagesWithPreviewData } from "@/interfaces/page";
+import { IPagePreview } from "@/interfaces/page";
 import { CACHE_REVALIDATION_TIME } from "./constant";
 
 //✅
-export async function getActiveStorePagesWithPreviewData(): Promise<ActionResponse<IActiveStorePagesWithPreviewData[]>> {
+export async function getActiveStorePagesWithPreviewData(): Promise<ActionResponse<IPagePreview[]>> {
   // 1. Get store_id from subdomain
   const response = await getStoreIdFromSubdomain();
   const store_id = response.data;

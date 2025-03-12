@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 // Define protected routes for Clerk
-const isProtectedRoute = createRouteMatcher(["/profile(.*)", "/checkout(.*)"]);
+const isProtectedRoute = createRouteMatcher(["/profile(.*)"]);
 
 // Combined middleware
 export default clerkMiddleware(async (auth, request) => {

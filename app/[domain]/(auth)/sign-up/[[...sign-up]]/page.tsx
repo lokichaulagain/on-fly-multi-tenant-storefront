@@ -1,11 +1,12 @@
-import { getActiveStore } from "@/actions/store";
+"use client";
 import { CustomNotFound } from "@/components/not-found/custom-not-found";
+import { useCurrentStore } from "@/contexts/current-store-provider";
 import { SignUp } from "@clerk/nextjs";
 import { LoaderCircle, Store } from "lucide-react";
 
-export default async function Page() {
-  const response = await getActiveStore();
-  if (response.error || !response.data) {
+export default function Page() {
+  const store = useCurrentStore();
+  if (!store) {
     return (
       <CustomNotFound
         title="No store found"
@@ -17,7 +18,7 @@ export default async function Page() {
     );
   }
 
-  const { store_name, store_logo, store_subdomain, store_appearance } = response.data;
+  const { store_name, store_logo, store_subdomain, store_appearance } = store;
 
   return (
     <div className="w-full h-screen flex items-center justify-center">

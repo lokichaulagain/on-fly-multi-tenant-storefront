@@ -1,12 +1,12 @@
 export interface IShippingAndBillingAddress {
   full_name: string;
   email_address: string;
-  phone_number: number | null;
+  phone_number: number;
   province: string;
   district: string;
   city: string;
   landmark: string;
-  postal_code: string;
+  postal_code: number;
 }
 
 export interface IOrderItem {
@@ -23,15 +23,3 @@ export interface IOrderCreate {
   order_items: IOrderItem[];
   shipping_cost: number;
 }
-
-
-export interface IOrderItem {
-  product_id: string;
-  product_name: string;
-  product_image: string;
-  product_price: number;
-  product_quantity: number;
-  user_id: string;
-  store_id: string;
-}
-
