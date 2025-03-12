@@ -4,13 +4,15 @@ import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger
 import { ChevronRight, LogOut, Menu, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { SignedIn, SignedOut, SignInButton, SignOutButton, SignUpButton, useUser } from "@clerk/nextjs";
+import { SignedIn, SignOutButton, useUser } from "@clerk/nextjs";
 import { useCurrentStore } from "@/contexts/current-store-provider";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useCart } from "@/contexts/cart-provider";
+import SignUpModal from "./auth/sign-up-modal";
+import SignInModal from "./auth/sign-in-modal";
 
 export default function MobileSheet({ navitems }: { navitems: { title: string; slug: string }[] }) {
   const [open, setOpen] = useState(false);
@@ -99,55 +101,37 @@ export default function MobileSheet({ navitems }: { navitems: { title: string; s
             </Link>
           </SignedIn>
 
-          <SignedOut>
-            <div className=" flex items-center gap-2">
-              <SignInButton
-                mode="modal"
-                forceRedirectUrl={"/checkout"}
-                appearance={{
-                  variables: {
-                    colorPrimary: primary_color,
-                    borderRadius: border_radius,
-                    fontFamily: font_family,
-                  },
+          <div className=" flex items-center gap-2">
+            <SignInModal
+              primary_color={primary_color}
+              border_radius={border_radius}
+              font_family={font_family}
+              store_logo={store_logo}
+              store_subdomain={store_subdomain}
+              button={
+                <Button
+                  onClick={handleClose}
+                  className="bg-[var(--secondary)] hover:bg-[var(--secondary)] w-full">
+                  Sign In
+                </Button>
+              }
+            />
 
-                  layout: {
-                    logoImageUrl: store_logo,
-                    logoLinkUrl: `https://${store_subdomain}.fenzora.com`,
-                    helpPageUrl: "/p/help",
-                    privacyPageUrl: "/p/privacy-policy",
-                    termsPageUrl: "/p/terms-of-service",
-                    logoPlacement: "inside",
-                    unsafe_disableDevelopmentModeWarnings: false,
-                  },
-                }}>
-                <Button onClick={handleClose} className="bg-[var(--secondary)] hover:bg-[var(--secondary)] w-full">Sign In</Button>
-              </SignInButton>
-
-              <SignUpButton
-                mode="modal"
-                forceRedirectUrl={"/checkout"}
-                appearance={{
-                  variables: {
-                    colorPrimary: primary_color,
-                    borderRadius: border_radius,
-                    fontFamily: font_family,
-                  },
-
-                  layout: {
-                    logoImageUrl: store_logo,
-                    logoLinkUrl: `https://${store_subdomain}.fenzora.com`,
-                    helpPageUrl: "/p/help",
-                    privacyPageUrl: "/p/privacy-policy",
-                    termsPageUrl: "/p/terms-of-service",
-                    logoPlacement: "inside",
-                    unsafe_disableDevelopmentModeWarnings: false,
-                  },
-                }}>
-                <Button onClick={handleClose}  className="bg-[var(--primary)] hover:bg-[var(--primary)] w-full">Sign Up</Button>
-              </SignUpButton>
-            </div>
-          </SignedOut>
+            <SignUpModal
+              primary_color={primary_color}
+              border_radius={border_radius}
+              font_family={font_family}
+              store_logo={store_logo}
+              store_subdomain={store_subdomain}
+              button={
+                <Button
+                  onClick={handleClose}
+                  className="bg-[var(--primary)] hover:bg-[var(--primary)] w-full">
+                  Sign Up
+                </Button>
+              }
+            />
+          </div>
 
           <div className=" py-1">
             <p className="w-full border-t border-dashed border-gray-200" />

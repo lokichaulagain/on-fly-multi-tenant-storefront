@@ -10,51 +10,52 @@ import { PackageSearch } from "lucide-react";
 const YouMayLikeSection = dynamic(() => import("@/components/sections/you-may-like-section"));
 const ProductCarouselSkeleton = dynamic(() => import("@/components/skeletons/product-carousel-skeleton"));
 
-// Generate metadata for the page
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }, parent: ResolvingMetadata): Promise<Metadata> {
   const { slug } = await params;
-  // Fetch product and store in parallel
   const [productResponse, storeResponse] = await Promise.all([getProductBySlug(slug), getActiveStore()]); // do in parallel
 
-  // Fallback metadata if product not found
-  if (productResponse.error || !productResponse.data || storeResponse.error || !storeResponse.data) {
+  // If product not found, return fallback metadata
+  if (productResponse.error || !productResponse.data) {
     return {
       title: "Product Not Found",
-      description: "The requested product could not be found",
+      description: "The product you are looking for does not exist.",
     };
   }
 
   const product = productResponse.data;
-  const store = storeResponse.data;
+  const STORE_NAME = storeResponse?.data?.store_name;
+  const TITLE = product.name + " - " + STORE_NAME;
+  const DESCRIPTION = product.description?.substring(0, 160);
+  const BASE_URL = storeResponse?.data?.custom_domain ? `https://${storeResponse?.data?.custom_domain}` : `https://${storeResponse?.data?.store_subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
 
   return {
-    title: `${product.name} - ${store.store_name}`,
-    description: product.description?.substring(0, 160),
+    title: TITLE,
+    description: DESCRIPTION,
     openGraph: {
-      title: product.name + " - " + store.store_name,
-      description: product.description?.substring(0, 160),
+      title: TITLE,
+      description: DESCRIPTION,
       images:
         product.image_urls?.map((img) => ({
           url: img,
-          alt: `${product.name} - ${store.store_name}`,
+          alt: `${product.name} - ${STORE_NAME}`,
         })) || [],
     },
     twitter: {
       card: "summary_large_image",
-      title: product.name + " - " + store.store_name,
-      description: product.description?.substring(0, 160),
+      title: TITLE,
+      description: DESCRIPTION,
       images:
         product.image_urls?.map((img) => ({
           url: img,
-          alt: `${product.name} - ${store.store_name}`,
+          alt: `${product.name} - ${STORE_NAME}`,
         })) || [],
     },
     icons:
       product.image_urls?.map((img) => ({
         url: img,
-        alt: `${product.name} - ${store.store_name}`,
+        alt: `${product.name} - ${STORE_NAME}`,
       })) || [],
-    metadataBase: new URL(`https://${store.store_subdomain}.fenzora.com/shop/${product.slug}`),
+    metadataBase: new URL(`${BASE_URL}/shop/${product.slug}`),
   };
 }
 
@@ -63,19 +64,22 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const response = await getProductBySlug(slug);
 
   if (response.error || !response.data) {
-      return <CustomNotFound
-      icon={<PackageSearch className="h-6 w-6 text-muted-foreground" />}
-      title="No product found"
-      description="We couldn't find any product that matches the br provided slug."
-      buttonText="Go Home"
-      buttonLink="/"
-    />;
+    return (
+      <CustomNotFound
+        icon={<PackageSearch className="h-6 w-6 text-muted-foreground" />}
+        title="No product found"
+        description="We couldn't find any product that matches the provided slug."
+        buttonText="Go Home"
+        buttonLink="/"
+        buttonbg="bg-[var(--primary)] "
+      />
+    );
   }
 
   return (
     <div className="w-full container px-4 md:px-24  space-y-4 md:space-y-12 mx-auto pt-6">
       <ProductDisplay product={response.data} />
-      
+
       <Suspense fallback={<ProductCarouselSkeleton />}>
         <YouMayLikeSection />
       </Suspense>

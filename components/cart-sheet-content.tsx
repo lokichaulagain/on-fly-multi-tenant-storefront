@@ -10,7 +10,7 @@ import { useCurrentStore } from "@/contexts/current-store-provider";
 import { formatCurrency } from "@/lib/format-currency";
 
 export function CartSheetContent() {
-  const { cart, isCartOpen, setIsCartOpen, removeFromCart, increaseQuantity, decreaseQuantity } = useCart();
+  const { cart,  removeFromCart, increaseQuantity, decreaseQuantity } = useCart();
   const totalPrice = cart.reduce((total, item) => total + (item.price || 0) * item.quantity, 0);
 
   const store = useCurrentStore();

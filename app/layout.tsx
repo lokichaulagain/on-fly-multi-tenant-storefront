@@ -23,7 +23,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <CustomNotFound
             icon={<Store className="h-6 w-6 text-muted-foreground" />}
             title="No store found"
-            description="We couldn't find any store that matches the br provided subdomain or custom domain."
+            description="This store is not active or does not exist."
             buttonText="Create New Store"
             buttonLink="https://app.fenzora.com"
           />

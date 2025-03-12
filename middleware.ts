@@ -1,12 +1,9 @@
-
-
-import { clerkClient, clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
-// Define public and protected routes for Clerk
-const isPublicRoute = createRouteMatcher(["/", "/sign-in(.*)", "/sign-up(.*)"]);
-const isProtectedRoute = createRouteMatcher(["/dashboard(.*)", "/profile", "/forum(.*)"]);
+// Define protected routes for Clerk
+const isProtectedRoute = createRouteMatcher(["/profile(.*)", "/checkout(.*)"]);
 
 // Combined middleware
 export default clerkMiddleware(async (auth, request) => {
@@ -19,15 +16,10 @@ export default clerkMiddleware(async (auth, request) => {
   }
 
   // Get hostname of request (e.g. demo.vercel.pub, demo.localhost:3000)
-  let hostname = req.headers
-    .get("host")!
-    .replace(".localhost:3000", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`);
+  let hostname = req.headers.get("host")!.replace(".localhost:3000", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`);
 
   // Special case for Vercel preview deployment URLs
-  if (
-    hostname.includes("---") &&
-    hostname.endsWith(`.${process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_SUFFIX}`)
-  ) {
+  if (hostname.includes("---") && hostname.endsWith(`.${process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_SUFFIX}`)) {
     hostname = `${hostname.split("---")[0]}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
   }
 
@@ -46,15 +38,12 @@ export default clerkMiddleware(async (auth, request) => {
   }
 
   // Special case for `vercel.pub` domain
-  if (hostname === "vercel.pub") {
-    return NextResponse.redirect("https://vercel.com/blog/platforms-starter-kit");
+  if (hostname === "fenzora.com") {
+    return NextResponse.redirect("https://fenzora.com");
   }
 
   // Rewrite root application to `/home` folder
-  if (
-    hostname === "localhost:3000" ||
-    hostname === process.env.NEXT_PUBLIC_ROOT_DOMAIN
-  ) {
+  if (hostname === "localhost:3000" || hostname === process.env.NEXT_PUBLIC_ROOT_DOMAIN) {
     return NextResponse.rewrite(new URL(`/home${path === "/" ? "" : path}`, req.url));
   }
 

@@ -4,6 +4,5 @@ import { getActiveUserOrders } from "@/actions/user";
 
 export default async function Page() {
   const response = await getActiveUserOrders();
-
   return <ProfileSection orders={response.data || []} />;
 }
