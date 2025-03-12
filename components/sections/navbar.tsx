@@ -3,19 +3,18 @@ import Link from "next/link";
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
-import { ChevronDown, Menu, ShoppingCart } from "lucide-react";
+import { ChevronDown, ShoppingCart } from "lucide-react";
 import MobileSheet from "@/components/mobile-sheet";
 import { useCart } from "@/contexts/cart-provider";
-import { SignedIn, SignedOut, SignInButton, SignUpButton, useUser } from "@clerk/nextjs";
+import { SignedIn, useUser } from "@clerk/nextjs";
 import Image from "next/image";
-import { IStoreAppearance } from "@/interfaces/store";
-import { IActiveStorePagesWithPreviewData } from "@/interfaces/page";
+import { IPagePreview } from "@/interfaces/page";
+import SignInModal from "../auth/sign-in-modal";
+import SignUpModal from "../auth/sign-up-modal";
+import { useCurrentStore } from "@/contexts/current-store-provider";
 
-export default function Navbar({ store_name, store_logo, store_subdomain, store_appearance, pages }: { store_name: string; store_logo: string; store_subdomain: string; store_appearance: IStoreAppearance; pages: IActiveStorePagesWithPreviewData[] }) {
-  const primary_color = store_appearance.primary_color;
-  const border_radius = `${store_appearance.border_radius / 16}rem`;
-  const font_family = store_appearance.font_family;
-
+export default function Navbar({ pages }: { pages: IPagePreview[] }) {
+  const store = useCurrentStore();
   const { cart } = useCart();
   const { user } = useUser();
   const pathname = usePathname();
@@ -80,12 +79,12 @@ export default function Navbar({ store_name, store_logo, store_subdomain, store_
             href="/"
             className="flex items-center gap-1 text-white">
             <Image
-              src={store_logo}
+              src={store.store_logo}
               alt="logo"
               width={32}
               height={32}
             />
-            <p className="text-2xl tracking-wide font-serif">{store_name}</p>
+            <p className="text-2xl tracking-wide font-serif">{store.store_name}</p>
           </Link>
 
           <div className="flex items-center gap-4">
@@ -178,61 +177,37 @@ export default function Navbar({ store_name, store_logo, store_subdomain, store_
                       alt="user"
                       height={100}
                       width={100}
-                      className="w-8 h-8 rounded-full hover:opacity-80 transition-opacity duration-300 border-2 border-gray-200"
+                      className="w-8 h-8 rounded-full hover:opacity-80 transition-opacity duration-300 border-2 border-accent"
                     />
                   </Button>
                 </Link>
               </SignedIn>
 
-              <SignedOut>
-                <SignInButton
-                  mode="modal"
-                  forceRedirectUrl="/checkout"
-                  appearance={{
-                    variables: {
-                      colorPrimary: primary_color,
-                      borderRadius: border_radius,
-                      fontFamily: font_family,
-                    },
-                    layout: {
-                      logoImageUrl: store_logo,
-                      logoLinkUrl: `https://${store_subdomain}.fenzora.com`,
-                      helpPageUrl: "/p/help",
-                      privacyPageUrl: "/p/privacy-policy",
-                      termsPageUrl: "/p/terms-of-service",
-                      logoPlacement: "inside",
-                      unsafe_disableDevelopmentModeWarnings: false,
-                    },
-                  }}>
-                  <Button
-                    variant="link"
-                    className="hover:text-[var(--secondary)] duration-300">
-                    Sign In
-                  </Button>
-                </SignInButton>
+              <div className="flex items-center gap-x-2">
+                <SignInModal
+                  primary_color={store.store_appearance?.primary_color}
+                  border_radius={`${(store.store_appearance?.border_radius ?? 0) / 32}rem`}
+                  font_family={store.store_appearance?.font_family}
+                  store_logo={store.store_logo}
+                  store_subdomain={store.store_subdomain}
+                  button={
+                    <Button
+                      variant="link"
+                      className="hover:text-[var(--secondary)] duration-300">
+                      Sign In
+                    </Button>
+                  }
+                />
 
-                <SignUpButton
-                  mode="modal"
-                  forceRedirectUrl="/checkout"
-                  appearance={{
-                    variables: {
-                      colorPrimary: primary_color,
-                      borderRadius: border_radius,
-                      fontFamily: font_family,
-                    },
-                    layout: {
-                      logoImageUrl: store_logo,
-                      logoLinkUrl: `https://${store_subdomain}.fenzora.com`,
-                      helpPageUrl: "/p/help",
-                      privacyPageUrl: "/p/privacy-policy",
-                      termsPageUrl: "/p/terms-of-service",
-                      logoPlacement: "inside",
-                      unsafe_disableDevelopmentModeWarnings: false,
-                    },
-                  }}>
-                  <Button className="bg-[var(--secondary)] hover:bg-[var(--secondary)] duration-300">Sign Up</Button>
-                </SignUpButton>
-              </SignedOut>
+                <SignUpModal
+                  primary_color={store.store_appearance?.primary_color}
+                  border_radius={`${(store.store_appearance?.border_radius ?? 0) / 32}rem`}
+                  font_family={store.store_appearance?.font_family}
+                  store_logo={store.store_logo}
+                  store_subdomain={store.store_subdomain}
+                  button={<Button className="bg-[var(--secondary)] hover:bg-[var(--secondary)] duration-300">Sign Up</Button>}
+                />
+              </div>
             </div>
           </div>
         </div>

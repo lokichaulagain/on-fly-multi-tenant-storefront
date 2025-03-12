@@ -5,7 +5,6 @@ import Navbar from "@/components/sections/navbar";
 import Footer from "@/components/sections/footer";
 import { CartProvider } from "@/contexts/cart-provider";
 import { getActiveStorePagesWithPreviewData } from "@/actions/page";
-import { IStoreAppearance } from "@/interfaces/store";
 import { fallbackMetadata } from "@/constants/metadata";
 import { CustomNotFound } from "@/components/not-found/custom-not-found";
 import { Store } from "lucide-react";
@@ -16,46 +15,68 @@ export async function generateMetadata(): Promise<Metadata | null> {
     return fallbackMetadata;
   }
 
-  const STORE_NAME = response.data.store_name;
-  const STORE_META_TITLE = response.data.store_meta_title || STORE_NAME;
-  const STORE_META_DESCRIPTION = response.data.store_meta_description || STORE_NAME;
-  const LOGO_URL = response.data.store_meta_image || response.data.store_logo || "";
-  const BASE_URL = response.data?.custom_domain ? `https://${response.data?.custom_domain}` : `https://${response.data?.store_subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
-  
+  const store = response.data;
+  const STORE_NAME = store.store_name;
+  const STORE_META_TITLE = store.store_meta_title || STORE_NAME;
+  const STORE_META_DESCRIPTION = store.store_meta_description || `Shop online at ${STORE_NAME}`;
+  const LOGO_URL = store.store_meta_image || store.store_logo || "";
+  const BASE_URL = store.custom_domain ? `https://${store.custom_domain}` : `https://${store.store_subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN || "fenzora.com"}`;
+
   return {
     title: {
-      default: STORE_NAME,
+      default: STORE_META_TITLE,
       template: "%s | " + STORE_NAME,
     },
     description: STORE_META_DESCRIPTION,
+    keywords: [`${STORE_NAME}`, "online store", "shop"],
+
     openGraph: {
       title: STORE_META_TITLE,
       description: STORE_META_DESCRIPTION,
-      images: [LOGO_URL],
+      images: LOGO_URL
+        ? [
+            {
+              url: LOGO_URL,
+              width: 1200,
+              height: 630,
+              alt: `${STORE_NAME} - Online Store`,
+            },
+          ]
+        : [],
       url: BASE_URL,
+      siteName: STORE_NAME,
+      locale: "en_US",
+      type: "website",
     },
 
     robots: {
       index: true,
       follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+      },
     },
+
     twitter: {
       card: "summary_large_image",
       title: STORE_META_TITLE,
       description: STORE_META_DESCRIPTION,
-      images: [LOGO_URL],
+      images: LOGO_URL ? [LOGO_URL] : [],
       creator: "@fenzora",
+      site: "@fenzora",
     },
 
-    icons: {
-      icon: LOGO_URL,
-      shortcut: LOGO_URL,
-      apple: LOGO_URL,
-      other: {
-        rel: "icon",
-        url: LOGO_URL,
-      },
-    },
+    icons: LOGO_URL
+      ? {
+          icon: [{ url: LOGO_URL }],
+          shortcut: LOGO_URL,
+          apple: [{ url: LOGO_URL, sizes: "180x180" }],
+          other: [{ rel: "icon", url: LOGO_URL }],
+        }
+      : undefined,
+
     metadataBase: new URL(BASE_URL),
     alternates: {
       canonical: BASE_URL,
@@ -63,13 +84,15 @@ export async function generateMetadata(): Promise<Metadata | null> {
         "en-US": BASE_URL,
       },
     },
+
+    viewport: "width=device-width, initial-scale=1",
+    applicationName: STORE_NAME,
   };
 }
 
 export default async function SiteLayout({ children }: { children: ReactNode }) {
-  // Fetch both in parallel
-  const [storeResponse, pagesResponse] = await Promise.all([getActiveStore(), getActiveStorePagesWithPreviewData()]);
-  if (storeResponse.error || !storeResponse.data) {
+  const pagesResponse = await getActiveStorePagesWithPreviewData();
+  if (pagesResponse.error || !pagesResponse.data) {
     return (
       <CustomNotFound
         icon={<Store className="h-6 w-6 text-muted-foreground" />}
@@ -85,19 +108,10 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
     <CartProvider>
       <div>
         <div className="fixed w-full z-50">
-          <Navbar
-            store_name={storeResponse.data.store_name}
-            store_logo={storeResponse.data.store_logo}
-            store_subdomain={storeResponse.data.store_subdomain}
-            store_appearance={storeResponse.data.store_appearance as IStoreAppearance}
-            pages={pagesResponse.data || []}
-          />
+          <Navbar pages={pagesResponse.data || []} />
         </div>
         <div className="pt-16">{children}</div>
-        <Footer
-          store={storeResponse.data}
-          pages={pagesResponse.data || []}
-        />
+        <Footer pages={pagesResponse.data || []} />
       </div>
     </CartProvider>
   );

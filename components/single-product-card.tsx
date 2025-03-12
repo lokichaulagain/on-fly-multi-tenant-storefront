@@ -38,7 +38,6 @@ const SingleProductCard = memo(({ product }: { product: IProductPreview }) => {
             {/* Show discount badge only if discountPercentage is greater than 0 */}
             {discountPercentage > 0 && <Badge className="absolute right-2 top-2 bg-[var(--primary)] hover:bg-[var(--primary)] text-[10px]">{discountPercentage}% OFF</Badge>}
 
-            {/* <WishListButton product_id={product.id} /> */}
 
             <Heart
               size={16}

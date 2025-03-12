@@ -1,9 +1,13 @@
+"use client"
 import Link from "next/link";
 import { ChevronRight, Facebook, Instagram, MapPin, Youtube, Zap } from "lucide-react";
 import Image from "next/image";
-import { Stores } from "@/lib/db/schema";
+import { useCurrentStore } from "@/contexts/current-store-provider";
+import React from "react";
+import { IPagePreview } from "@/interfaces/page";
 
-export default function Footer({ store, pages }: { store: Stores; pages: IActiveStorePagesWithPreviewData[] }) {
+export default function Footer({ pages }: { pages: IPagePreview[] }) {
+  const store = useCurrentStore();
   const quickLinks = [
     {
       title: "Home",
@@ -152,7 +156,7 @@ export default function Footer({ store, pages }: { store: Stores; pages: IActive
         </div>
       </div>
 
-      <p className=" flex items-center justify-center gap-1 text-xs">
+      <p className=" flex items-center justify-center gap-1 text-xs mt-4">
         <Zap
           size={14}
           className=" text-white"
@@ -168,9 +172,6 @@ export default function Footer({ store, pages }: { store: Stores; pages: IActive
     </footer>
   );
 }
-
-import React from "react";
-import { IActiveStorePagesWithPreviewData } from "@/interfaces/page";
 
 function IconWhatsApp() {
   return (

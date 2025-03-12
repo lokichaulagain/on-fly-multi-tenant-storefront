@@ -24,8 +24,6 @@ interface CartContextType {
   addToCart: (product: ICartProduct, quantity: number) => void;
   removeFromCart: (productId: string) => void;
   clearCart: () => void;
-  isCartOpen: boolean;
-  setIsCartOpen: (isOpen: boolean) => void;
   increaseQuantity: (productId: string) => void;
   decreaseQuantity: (productId: string) => void;
 }
@@ -42,7 +40,6 @@ export const useCart = () => {
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<ICartItem[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
 
   useEffect(() => {
     const storedCart = localStorage.getItem(getStorageKey());
@@ -100,5 +97,5 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setCart([]);
   };
 
-  return <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, isCartOpen, setIsCartOpen, increaseQuantity, decreaseQuantity }}>{children}</CartContext.Provider>;
+  return <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, increaseQuantity, decreaseQuantity }}>{children}</CartContext.Provider>;
 };

@@ -1,6 +1,6 @@
 import { favicon, primary_color, secondary_color, DEFAULT_STORE_LOGO, border_radius, product_aspect_ratio, font_family } from "@/constants";
 import { ENUM_PRODUCT_STATUS, ENUM_SHIPPING_STATUS, ENUM_STORE_STATUS, ENUM_SUBSCRIPTION_PLAN, ENUM_SUBSCRIPTION_STATUS, ENUM_STORE_CATEGORY, ENUM_PAYMENT_STATUS, ENUM_CATEGORY_STATUS } from "@/enums";
-import { IShippingAndBillingAddress } from "@/interfaces/order";
+import { IOrderItem, IShippingAndBillingAddress } from "@/interfaces/order";
 import { IStoreAppearance, IStoreSocialLinks } from "@/interfaces/store";
 import { sql } from "drizzle-orm";
 import { pgTable, decimal, varchar, text, timestamp, integer, jsonb, index, boolean, uuid, AnyPgColumn, primaryKey, uniqueIndex } from "drizzle-orm/pg-core";
@@ -227,39 +227,27 @@ export const ordersTable = pgTable("orders", {
   shipping_address: jsonb("shipping_address").$type<IShippingAndBillingAddress>().default({
     full_name: "",
     email_address: "",
-    phone_number: null,
+    phone_number: 0,
     province: "",
     district: "",
     city: "",
     landmark: "",
-    postal_code: "",
+    postal_code: 0,
   }),
 
   billing_address: jsonb("billing_address").$type<IShippingAndBillingAddress>().default({
     full_name: "",
     email_address: "",
-    phone_number: null,
+    phone_number: 0,
     province: "",
     district: "",
     city: "",
     landmark: "",
-    postal_code: "",
+    postal_code: 0,
   }),
 
-  // 🛒 Order details
-  order_items: jsonb("order_items")
-    .default([
-      {
-        product_id: varchar("product_id", { length: 255 }),
-        product_name: varchar("product_name", { length: 100 }),
-        product_image: varchar("product_image", { length: 255 }),
-        product_price: integer("product_price"),
-        product_quantity: integer("product_quantity"),
-        user_id: varchar("user_id", { length: 255 }), // assign user_id from clerk
-        store_id: varchar("store_id", { length: 255 }), // assign store_id from clerk organization
-      },
-    ])
-    .default([]),
+  order_items: jsonb("order_items").$type<IOrderItem[]>().default([]),
+
   // subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
   // tax_amount: decimal("tax_amount", { precision: 10, scale: 2 }).notNull(),
   // tax_rate: decimal("tax_rate", { precision: 5, scale: 2 }).notNull(),
@@ -331,32 +319,7 @@ export const pagesTable = pgTable(
 );
 export type Pages = typeof pagesTable.$inferSelect;
 
-// ✅ WishList Table
-export const wishListTable = pgTable(
-  "wish_list",
-  {
-    id: uuid("id").defaultRandom().primaryKey().notNull().unique(),
-    user_id: varchar("user_id", { length: 255 }).notNull(),
-    store_id: varchar("store_id", { length: 255 })
-      .notNull()
-      .references(() => storesTable.id),
-    product_id: uuid("product_id")
-      .notNull()
-      .references(() => productsTable.id),
 
-    created_at: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
-    updated_at: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
-    deleted_at: timestamp("deleted_at", { mode: "date" }),
-  },
-  (table) => [
-    // Unique constraint for user_id and store_id
-    uniqueIndex("user_id_store_id_unique").on(table.user_id, table.store_id),
-
-    // Unique constraint for product_id and store_id
-    uniqueIndex("product_id_store_id_unique").on(table.product_id, table.store_id),
-  ]
-);
-export type WishList = typeof wishListTable.$inferSelect;
 
 // ✅ Reviews Table
 export const reviewsTable = pgTable(

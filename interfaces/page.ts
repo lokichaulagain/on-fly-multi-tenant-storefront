@@ -1,5 +1,5 @@
-export interface IActiveStorePagesWithPreviewData {
-    id: string;
-    title: string;
-    slug: string;
-  }
+export interface IPagePreview {
+  id: string;
+  title: string;
+  slug: string;
+}
