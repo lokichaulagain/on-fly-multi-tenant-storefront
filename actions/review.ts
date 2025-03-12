@@ -29,14 +29,15 @@ export async function createReview(reviewData: ReviewFormValues): Promise<Action
     return { data: null, status: 404, error: "Store not found" };
   }
 
-  // 3. Rate Limiting: Check if the user has exceeded the review submission limit
-  const rateLimitResponse = await rateLimiter(userId, "createReview");
-  if (rateLimitResponse.limited) {
-    return { data: null, status: 429, error: "Oops! You have made too many requests. Please try again later." };
-  }
+  // // 3. Rate Limiting: Check if the user has exceeded the review submission limit
+  // const rateLimitResponse = await rateLimiter(userId, "createReview");
+  // if (rateLimitResponse.limited) {
+  //   return { data: null, status: 429, error: "Oops! You have made too many requests. Please try again later." };
+  // }
 
   // 4. Sanitize input data to prevent XSS, SQL injection, etc.
-  const sanitizedReviewData = sanitizeInput(reviewData);
+  // const sanitizedReviewData = sanitizeInput(reviewData);
+  const sanitizedReviewData = reviewData
 
   // 5. Validate the sanitized reviewData
   const validatedReview = reviewFormSchema.safeParse(sanitizedReviewData);
@@ -88,11 +89,11 @@ export async function getActiveProductReviews(product_id: string): Promise<Actio
     return { data: null, status: 404, error: "Store not found" };
   }
 
-  // 3. Rate Limiting: Check if the user has exceeded the request limit
-  const rateLimitResult = await rateLimiter(userId, "getActiveProductReviews");
-  if (rateLimitResult.limited) {
-    return { data: null, status: 429, error: "Too many requests. Please try again later." };
-  }
+  // // 3. Rate Limiting: Check if the user has exceeded the request limit
+  // const rateLimitResult = await rateLimiter(userId, "getActiveProductReviews");
+  // if (rateLimitResult.limited) {
+  //   return { data: null, status: 429, error: "Too many requests. Please try again later." };
+  // }
 
   try {
     // 4. Get the reviews from the cache or database
@@ -114,6 +115,7 @@ export async function getActiveProductReviews(product_id: string): Promise<Actio
     );
 
     const reviews = await getCachedReviews();
+    console.log(reviews,"reviews")
     return {
       data: reviews,
       status: 200,
@@ -141,11 +143,11 @@ export async function updateActiveProductReview(id: string, reviewData: ReviewFo
     return { data: null, status: 404, error: "Store not found" };
   }
 
-  // 3. Rate Limiting: Check if the user has exceeded the request limit
-  const rateLimitResult = await rateLimiter(userId, "updateActiveProductReview");
-  if (rateLimitResult.limited) {
-    return { data: null, status: 429, error: "Oops! You have made too many requests. Please try again later." };
-  }
+  // // 3. Rate Limiting: Check if the user has exceeded the request limit
+  // const rateLimitResult = await rateLimiter(userId, "updateActiveProductReview");
+  // if (rateLimitResult.limited) {
+  //   return { data: null, status: 429, error: "Oops! You have made too many requests. Please try again later." };
+  // }
 
   // 4. Sanitize input data to prevent XSS, SQL injection, etc.
   const sanitizedReviewData = sanitizeInput(reviewData);
@@ -202,11 +204,11 @@ export async function deleteActiveProductReview(id: string): Promise<ActionRespo
     return { data: null, status: 404, error: "Store not found" };
   }
 
-  // 3. Rate Limiting: Check if the user has exceeded the request limit
-  const rateLimitResult = await rateLimiter(userId, "deleteActiveProductReview");
-  if (rateLimitResult.limited) {
-    return { data: null, status: 429, error: "Oops! You have made too many requests. Please try again later." };
-  }
+  // // 3. Rate Limiting: Check if the user has exceeded the request limit
+  // const rateLimitResult = await rateLimiter(userId, "deleteActiveProductReview");
+  // if (rateLimitResult.limited) {
+  //   return { data: null, status: 429, error: "Oops! You have made too many requests. Please try again later." };
+  // }
 
   // 4. Concurrency Control (Mutex to prevent race conditions)
   const release = await reviewMutex.acquire();

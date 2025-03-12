@@ -2,7 +2,7 @@
 import { db } from "@/lib/db/drizzle";
 import { Pages, pagesTable } from "@/lib/db/schema";
 import { handleDbError } from "@/utils/db-error";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, isNull } from "drizzle-orm";
 import { unstable_cache } from "next/cache";
 import { ActionResponse, getStoreIdFromSubdomain } from "@/actions/index";
 import { IActiveStorePagesWithPreviewData } from "@/interfaces/page";
@@ -57,6 +57,41 @@ export async function getActiveStorePagesWithPreviewData(): Promise<ActionRespon
     return { data: null, status: 500, error: handleDbError(error) };
   }
 }
+
+
+interface IPageSitemap { 
+  slug: string;
+  updated_at: Date;
+}
+
+export async function getPagesForSitemap(): Promise<ActionResponse<IPageSitemap[]>> {
+  // 1. Get store_id
+  const response = await getStoreIdFromSubdomain();
+  const store_id = response.data;
+  if (!store_id) {
+    return { data: null, status: 404, error: "Store not found" };
+  }
+
+  try {
+    // 2. Get pages
+    const pages = await db
+      .select({
+        slug: pagesTable.slug,
+        updated_at: pagesTable.updated_at,
+      })
+      .from(pagesTable)
+      .where(and(eq(pagesTable.store_id, store_id), isNull(pagesTable.deleted_at)))
+      .orderBy(desc(pagesTable.created_at));
+
+    // 3. Return pages
+    return { data: pages, status: 200, msg: "Pages fetched successfully", error: null };
+  } catch (error: unknown) {
+    console.error(`Error fetching pages for sitemap for store ${store_id} : Error: ${error}`);
+    return { data: null, status: 500, error: handleDbError(error) };
+  }
+}
+
+
 
 //✅ TODO:Update by slug not id in dashboard
 export async function getActiveStorePage(slug: string): Promise<ActionResponse<Pages>> {

@@ -1,0 +1,9 @@
+{
+  "extends": [
+    "development"
+  ],
+  "hints": {
+    // No warnings for inline css
+    "no-inline-styles": "off"
+  }
+}

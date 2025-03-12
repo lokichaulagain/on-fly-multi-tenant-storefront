@@ -2,8 +2,12 @@
 import React from "react";
 import { FacebookIcon, LinkedinIcon, TwitterIcon, TwitterShareButton, WhatsappIcon, WhatsappShareButton, LinkedinShareButton } from "react-share";
 import { FacebookShareButton } from "react-share";
+interface ProductShareButtonsProps {
+  shareUrl: string;
+  title: string;
+}
 
-export default function ProductShareBuuttons({ shareUrl, title }: { shareUrl: string; title: string }) {
+export default function ProductShareButtons({ shareUrl, title }: ProductShareButtonsProps) {
   return (
     <div className="flex space-x-2">
       <FacebookShareButton
@@ -14,6 +18,7 @@ export default function ProductShareBuuttons({ shareUrl, title }: { shareUrl: st
           round
         />
       </FacebookShareButton>
+      
       <TwitterShareButton
         url={shareUrl}
         title={title}>
@@ -22,6 +27,7 @@ export default function ProductShareBuuttons({ shareUrl, title }: { shareUrl: st
           round
         />
       </TwitterShareButton>
+
       <WhatsappShareButton
         url={shareUrl}
         title={title}>
@@ -30,6 +36,7 @@ export default function ProductShareBuuttons({ shareUrl, title }: { shareUrl: st
           round
         />
       </WhatsappShareButton>
+
       <LinkedinShareButton
         url={shareUrl}
         title={title}>

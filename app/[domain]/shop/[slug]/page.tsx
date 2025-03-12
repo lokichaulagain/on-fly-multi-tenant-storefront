@@ -1,24 +1,22 @@
 import React, { Suspense } from "react";
 import "@smastrom/react-rating/style.css";
 import { getProductBySlug } from "@/actions/product";
-import ProductDisplay from "@/components/product-display";
+import ProductDisplay from "@/components/product-detail/product-display";
 import dynamic from "next/dynamic";
 import { Metadata, ResolvingMetadata } from "next";
 import { getActiveStore } from "@/actions/store";
-import { Button } from "@/components/ui/button";
+import { CustomNotFound } from "@/components/not-found/custom-not-found";
+import { PackageSearch } from "lucide-react";
 const YouMayLikeSection = dynamic(() => import("@/components/sections/you-may-like-section"));
 const ProductCarouselSkeleton = dynamic(() => import("@/components/skeletons/product-carousel-skeleton"));
-const ProductShareButtons = dynamic(() => import("@/components/product-share-buttons"));
 
 // Generate metadata for the page
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }, parent: ResolvingMetadata): Promise<Metadata> {
   const { slug } = await params;
-
-  // do in parallel
-  const [productResponse, storeResponse] = await Promise.all([getProductBySlug(slug), getActiveStore()]);
+  // Fetch product and store in parallel
+  const [productResponse, storeResponse] = await Promise.all([getProductBySlug(slug), getActiveStore()]); // do in parallel
 
   // Fallback metadata if product not found
-
   if (productResponse.error || !productResponse.data || storeResponse.error || !storeResponse.data) {
     return {
       title: "Product Not Found",
@@ -62,24 +60,24 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  const response = await getProductBySlug(slug);
 
-  const [productResponse, storeResponse] = await Promise.all([getProductBySlug(slug), getActiveStore()]);
-
-  if (productResponse.error || !productResponse.data || storeResponse.error || !storeResponse.data) {
-    return <div>Product not found</div>;
+  if (response.error || !response.data) {
+      return <CustomNotFound
+      icon={<PackageSearch className="h-6 w-6 text-muted-foreground" />}
+      title="No product found"
+      description="We couldn't find any product that matches the br provided slug."
+      buttonText="Go Home"
+      buttonLink="/"
+    />;
   }
-
-  const shareUrl = `https://${storeResponse.data?.store_subdomain}.fenzora.com/shop/${productResponse.data?.slug}`;
-  const title = `${productResponse.data?.name} - ${storeResponse.data?.store_name}`;
 
   return (
     <div className="w-full container px-4 md:px-24  space-y-4 md:space-y-12 mx-auto pt-6">
-      <ProductDisplay product={productResponse.data} shareUrl={shareUrl} title={title} />
-
+      <ProductDisplay product={response.data} />
+      
       <Suspense fallback={<ProductCarouselSkeleton />}>
         <YouMayLikeSection />
-
-
       </Suspense>
     </div>
   );

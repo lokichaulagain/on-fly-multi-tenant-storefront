@@ -1,9 +1,17 @@
-import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
+import { ClerkProvider } from "@clerk/nextjs";
 import { getActiveStore } from "@/actions/store";
 import { CurrentStoreProvider } from "@/contexts/current-store-provider";
 import { Toaster } from "@/components/ui/sonner";
-import { NoStoreFound } from "@/components/no-store-found";
+import { CustomNotFound } from "@/components/not-found/custom-not-found";
+import { Store } from "lucide-react";
+import { fallbackMetadata } from "@/constants/metadata";
+import { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return fallbackMetadata;
+}
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const response = await getActiveStore();
@@ -12,7 +20,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     return (
       <html lang="en">
         <body>
-          <NoStoreFound />
+          <CustomNotFound
+            icon={<Store className="h-6 w-6 text-muted-foreground" />}
+            title="No store found"
+            description="We couldn't find any store that matches the br provided subdomain or custom domain."
+            buttonText="Create New Store"
+            buttonLink="https://app.fenzora.com"
+          />
         </body>
       </html>
     );
@@ -37,6 +51,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </head>
           <body>
             {children}
+            <Analytics />
             <Toaster />
           </body>
         </html>

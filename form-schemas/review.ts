@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const reviewFormSchema = z.object({
   review: z.string().optional().nullable().default(""),
-  rating: z.coerce.number().min(1, "Rating must be at least 1").max(5, "Rating must not exceed 5"),
+  rating: z.number().min(1, { message: "Rating must be at least 1 star." }).max(5, { message: "Rating must be at most 5 stars." }),
   product_id: z.string().uuid("Product ID must be a valid UUID"),
 });
 
