@@ -3,6 +3,7 @@ import { SignedIn } from "@clerk/nextjs";
 import moment from "moment";
 import { Reviews } from "@/lib/db/schema";
 import { CreateReviewDialog } from "./create-review-dialog";
+import { checkIfUserHasReviewedProduct } from "@/actions/review";
 
 interface ProductReviewsProps {
   product_id: string;
@@ -10,6 +11,9 @@ interface ProductReviewsProps {
 }
 
 export async function ProductDetailReviewSection({ product_id, reviews }: ProductReviewsProps) {
+  const response = await checkIfUserHasReviewedProduct(product_id);
+  const hasReviewed = response.data;
+
   const getStarDisplay = (rating: number) => {
     return [...Array(5)].map((_, i) => (
       <Star
@@ -51,7 +55,7 @@ export async function ProductDetailReviewSection({ product_id, reviews }: Produc
           </div>
         </div>
         <SignedIn>
-          <CreateReviewDialog product_id={product_id} />
+          {!hasReviewed && <CreateReviewDialog product_id={product_id} />}
         </SignedIn>
       </div>
 

@@ -9,6 +9,7 @@ export interface IShippingAndBillingAddress {
   postal_code: number;
 }
 
+
 export interface IOrderItem {
   product_id: string;
   product_name: string;

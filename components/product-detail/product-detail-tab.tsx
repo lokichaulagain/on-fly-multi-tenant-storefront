@@ -10,6 +10,7 @@ interface ProductDetailTabProps {
 
 export default async function ProductDetailTab({ description, product_id }: ProductDetailTabProps) {
   const response = await getActiveProductReviews(product_id);
+  console.log(response,"hahhaha")
   if (response.error || !response.data) {
     return null;
   }

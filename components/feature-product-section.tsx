@@ -1,17 +1,13 @@
 import React from "react";
 import ProductCarouselSection from "./product-carousel-section";
-import { getActiveStoreProductsWithPreviewData } from "@/actions/product";
+import { IProductPreview } from "@/interfaces/product";
 
-export default async function FeatureProductSection() {
-  const response = await getActiveStoreProductsWithPreviewData();
-  const products = response?.data || []
+interface FeatureProductSectionProps {
+  title: string;
+  products: IProductPreview[];
+}
 
-  if (response.error || products?.length === 0) {
-    console.log("Error fetching products", response.error);
-    return null;
-  }
-
-
+export default async function FeatureProductSection({ products }: FeatureProductSectionProps) {
   return (
     <ProductCarouselSection
       title="Featured Products"

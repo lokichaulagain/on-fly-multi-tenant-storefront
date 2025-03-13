@@ -1,54 +1,48 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
 
-// Define protected routes for Clerk
+// These routes are protected and require authentication to access
 const isProtectedRoute = createRouteMatcher(["/profile(.*)"]);
 
-// Combined middleware
-export default clerkMiddleware(async (auth, request) => {
-  const req = request as NextRequest;
+// Combined middleware that protects routes and rewrites paths based on the hostname
+export default clerkMiddleware(async (auth, req: NextRequest) => {
+  // Get the URL of the request
   const url = req.nextUrl;
 
-  // Protect routes using Clerk
+  // Protect the routes that are protected
   if (isProtectedRoute(req)) {
     await auth.protect();
   }
 
-  // Get hostname of request (e.g. demo.vercel.pub, demo.localhost:3000)
+  // Get hostname of request (e.g. demo.fenzora.com, demo.localhost:3000)
   let hostname = req.headers.get("host")!.replace(".localhost:3000", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`);
+  console.log(hostname, "This is the hostname from middleware function");
 
-  // Special case for Vercel preview deployment URLs
-  if (hostname.includes("---") && hostname.endsWith(`.${process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_SUFFIX}`)) {
-    hostname = `${hostname.split("---")[0]}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
-  }
-
+  // Get the pathname of the request (e.g. /, /about, /blog/first-post)
   const searchParams = req.nextUrl.searchParams.toString();
   const path = `${url.pathname}${searchParams.length > 0 ? `?${searchParams}` : ""}`;
+  console.log(path, "This is the path from middleware function");
 
-  // Rewrites for app pages using Next-Auth
-  if (hostname === `app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
-    const session = await getToken({ req });
-    if (!session && path !== "/login") {
-      return NextResponse.redirect(new URL("/login", req.url));
-    } else if (session && path === "/login") {
-      return NextResponse.redirect(new URL("/", req.url));
-    }
-    return NextResponse.rewrite(new URL(`/app${path === "/" ? "" : path}`, req.url));
+  const productionHostname = `app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+  const localHostnames = ["app.localhost:3000", "app.localhost:3001"]; // No protocol or trailing slashes
+
+  // If the subdomain is app then redirect to the dashboard URL
+  if (hostname === productionHostname || localHostnames.includes(hostname)) {
+    return NextResponse.redirect(process.env.NEXT_PUBLIC_APP_URL!);
   }
 
-  // Special case for `vercel.pub` domain
+  // Special case for `fenzora.com` domain
   if (hostname === "fenzora.com") {
-    return NextResponse.redirect("https://fenzora.com");
+    return NextResponse.redirect(process.env.NEXT_PUBLIC_ROOT_DOMAIN!);
   }
 
-  // Rewrite root application to `/home` folder
-  if (hostname === "localhost:3000" || hostname === process.env.NEXT_PUBLIC_ROOT_DOMAIN) {
-    return NextResponse.rewrite(new URL(`/home${path === "/" ? "" : path}`, req.url));
-  }
+  // If we have static routes or API  these route should not be rewritten
+  const excludedPaths = ["/api", "/_next", "/_static", "/_vercel"];
+  const shouldRewrite = !excludedPaths.some((path) => url.pathname.startsWith(path));
 
-  // Rewrite everything else to `/[domain]/[slug] dynamic route
-  return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
+  if (shouldRewrite) {
+    return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
+  }
 });
 
 export const config = {

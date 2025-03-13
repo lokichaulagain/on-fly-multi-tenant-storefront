@@ -10,6 +10,12 @@ export enum ENUM_SUBSCRIPTION_STATUS {
   EXPIRED = "expired",
 }
 
+
+export enum ENUM_COLLECTION_STATUS {
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+}
+
 export enum ENUM_STORE_STATUS {
   ACTIVE = "active",
   INACTIVE = "inactive",
