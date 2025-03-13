@@ -8,9 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/format-currency";
 import { ICartProduct, useCart } from "@/contexts/cart-provider";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { CartSheetContent } from "./cart-sheet-content";
 
 const SingleProductCard = memo(({ product }: { product: IProductPreview }) => {
@@ -32,12 +30,14 @@ const SingleProductCard = memo(({ product }: { product: IProductPreview }) => {
             <Image
               src={product.image_url || "/placeholder.svg"}
               alt={product.name}
-              fill
+              height={500}
+              width={500}
+              loading="eager"
+              priority={true}
               className={`object-cover transition-transform duration-700 ${isHovered ? "scale-110" : "scale-100"}`}
             />
             {/* Show discount badge only if discountPercentage is greater than 0 */}
             {discountPercentage > 0 && <Badge className="absolute right-2 top-2 bg-[var(--primary)] hover:bg-[var(--primary)] text-[10px]">{discountPercentage}% OFF</Badge>}
-
 
             <Heart
               size={16}

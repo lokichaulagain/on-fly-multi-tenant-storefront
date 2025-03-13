@@ -13,8 +13,8 @@ const SingleCategoryCard = memo(({ category }: { category: ICategoryPreview }) =
             alt={category.name}
             height={300}
             width={300}
-            layout="responsive"
-            loading="lazy"
+            loading="eager"
+            priority={true}
             className=" md:h-92 object-cover rounded-2xl  transition-all ease-in-out duration-700 group-hover:scale-105  "
           />
         </Link>
