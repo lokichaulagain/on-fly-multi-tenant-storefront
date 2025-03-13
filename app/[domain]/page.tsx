@@ -8,6 +8,7 @@ const HeroSection = dynamic(() => import("@/components/sections/hero-section"));
 import { LoaderCircle } from "lucide-react";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
+import CollectionCarouselSection from "@/components/collection-carousel-section";
 
 export default async function Page() {
   return (
@@ -28,8 +29,12 @@ export default async function Page() {
         </Suspense>
 
         <Suspense fallback={<ProductCarouselSkeleton />}>
-          <FeatureProductSection />
+          <CollectionCarouselSection />
         </Suspense>
+
+        {/* <Suspense fallback={<ProductCarouselSkeleton />}>
+          <FeatureProductSection />
+        </Suspense> */}
 
         <Suspense fallback={<GridProductsSkeleton />}>
           <GridProductSection />

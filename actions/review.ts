@@ -37,7 +37,7 @@ export async function createReview(reviewData: ReviewFormValues): Promise<Action
 
   // 4. Sanitize input data to prevent XSS, SQL injection, etc.
   // const sanitizedReviewData = sanitizeInput(reviewData);
-  const sanitizedReviewData = reviewData
+  const sanitizedReviewData = reviewData;
 
   // 5. Validate the sanitized reviewData
   const validatedReview = reviewFormSchema.safeParse(sanitizedReviewData);
@@ -76,12 +76,6 @@ export async function createReview(reviewData: ReviewFormValues): Promise<Action
 
 // ✅
 export async function getActiveProductReviews(product_id: string): Promise<ActionResponse<Reviews[]>> {
-  // 1. Get userId
-  const { userId } = await auth();
-  if (!userId) {
-    return { data: null, status: 401, error: "Oops! You are not authorized to get the reviews" };
-  }
-
   // 2. Get store_id
   const response = await getStoreIdFromSubdomain();
   const store_id = response.data;
@@ -115,7 +109,7 @@ export async function getActiveProductReviews(product_id: string): Promise<Actio
     );
 
     const reviews = await getCachedReviews();
-    console.log(reviews,"reviews")
+    console.log(reviews, "reviews");
     return {
       data: reviews,
       status: 200,

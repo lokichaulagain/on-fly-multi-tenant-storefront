@@ -1,9 +1,31 @@
-import { favicon, primary_color, secondary_color, DEFAULT_STORE_LOGO, border_radius, product_aspect_ratio, font_family } from "@/constants";
-import { ENUM_PRODUCT_STATUS, ENUM_SHIPPING_STATUS, ENUM_STORE_STATUS, ENUM_SUBSCRIPTION_PLAN, ENUM_SUBSCRIPTION_STATUS, ENUM_STORE_CATEGORY, ENUM_PAYMENT_STATUS, ENUM_CATEGORY_STATUS } from "@/enums";
+import {  DEFAULT_STORE_LOGO, border_radius, product_aspect_ratio, font_family, colorTemplates } from "@/constants";
+import { ENUM_PRODUCT_STATUS, ENUM_SHIPPING_STATUS, ENUM_STORE_STATUS, ENUM_SUBSCRIPTION_PLAN, ENUM_SUBSCRIPTION_STATUS, ENUM_STORE_CATEGORY, ENUM_PAYMENT_STATUS, ENUM_CATEGORY_STATUS, ENUM_COLLECTION_STATUS } from "@/enums";
 import { IOrderItem, IShippingAndBillingAddress } from "@/interfaces/order";
 import { IStoreAppearance, IStoreSocialLinks } from "@/interfaces/store";
 import { sql } from "drizzle-orm";
 import { pgTable, decimal, varchar, text, timestamp, integer, jsonb, index, boolean, uuid, AnyPgColumn, primaryKey, uniqueIndex } from "drizzle-orm/pg-core";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import { font_family, DEFAULT_STORE_LOGO, border_radius, product_aspect_ratio, colorTemplates } from "@/constants";
+// import { ENUM_PRODUCT_STATUS, ENUM_SHIPPING_STATUS, ENUM_STORE_STATUS, ENUM_SUBSCRIPTION_PLAN, ENUM_SUBSCRIPTION_STATUS, ENUM_STORE_CATEGORY, ENUM_PAYMENT_STATUS, ENUM_CATEGORY_STATUS, ENUM_COLLECTION_STATUS } from "@/enums";
+// import { IOrderItem, IShippingAndBillingAddress } from "@/interfaces/order";
+// import { IStoreAppearance, IStoreSocialLinks } from "@/interfaces/store";
+// import { sql } from "drizzle-orm";
+// import { pgTable, varchar, text, timestamp, integer, jsonb, index, boolean, uuid, AnyPgColumn, primaryKey, uniqueIndex, decimal } from "drizzle-orm/pg-core";
 
 // ✅ Stores Table
 export const storesTable = pgTable(
@@ -43,6 +65,7 @@ export const storesTable = pgTable(
     store_meta_title: varchar("store_meta_title", { length: 70 }),
     store_meta_description: varchar("store_meta_description", { length: 255 }),
     store_meta_image: varchar("store_meta_image", { length: 255 }).default(DEFAULT_STORE_LOGO),
+    has_variants: boolean("has_variants").default(false).notNull(),
 
     // 🛒 Business setting
     payment_methods: jsonb("payment_methods").default(["cod"]),
@@ -75,11 +98,12 @@ export const storesTable = pgTable(
 
     store_appearance: jsonb("store_appearance").$type<IStoreAppearance>().default({
       font_family: font_family,
-      primary_color: primary_color,
-      secondary_color: secondary_color,
+      // By default, use the first color template (Corporate Trust)
+      primary_color: colorTemplates[0].primary_color,
+      secondary_color: colorTemplates[0].secondary_color,
       border_radius: border_radius,
       product_aspect_ratio: product_aspect_ratio,
-      favicon: favicon,
+      favicon: DEFAULT_STORE_LOGO,
       desktop_banners: [],
       mobile_banners: [],
     }),
@@ -174,6 +198,10 @@ export const productsTable = pgTable(
       .references(() => categoriesTable.id, { onDelete: "set null" })
       .default(sql`NULL`),
 
+    collection_id: uuid("collection_id")
+      .references(() => collectionsTable.id, { onDelete: "set null" })
+      .default(sql`NULL`),
+
     continue_selling_even_out_of_stock: boolean("continue_selling_even_out_of_stock").default(false),
 
     // images: jsonb("images").default([]),
@@ -218,36 +246,30 @@ export const ordersTable = pgTable("orders", {
     .notNull()
     .references(() => storesTable.id), // assign store_id from clerk organization
 
-  // 🛒 Payment information
-  // payment_id: varchar("payment_id", { length: 255 }),
-  // payment_status: varchar("payment_status", { length: 50 }),
-  // payment_method: varchar("payment_method", { length: 50 }),
-  // payment_amount: integer("payment_amount"),
-
   shipping_address: jsonb("shipping_address").$type<IShippingAndBillingAddress>().default({
     full_name: "",
     email_address: "",
-    phone_number: 0,
+    phone_number: null,
     province: "",
     district: "",
     city: "",
     landmark: "",
-    postal_code: 0,
+    postal_code: "",
   }),
 
   billing_address: jsonb("billing_address").$type<IShippingAndBillingAddress>().default({
     full_name: "",
     email_address: "",
-    phone_number: 0,
+    phone_number: null,
     province: "",
     district: "",
     city: "",
     landmark: "",
-    postal_code: 0,
+    postal_code: "",
   }),
 
+  // 🛒 Order details
   order_items: jsonb("order_items").$type<IOrderItem[]>().default([]),
-
   // subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
   // tax_amount: decimal("tax_amount", { precision: 10, scale: 2 }).notNull(),
   // tax_rate: decimal("tax_rate", { precision: 5, scale: 2 }).notNull(),
@@ -319,7 +341,32 @@ export const pagesTable = pgTable(
 );
 export type Pages = typeof pagesTable.$inferSelect;
 
+// ✅ WishList Table
+export const wishListTable = pgTable(
+  "wish_list",
+  {
+    id: uuid("id").defaultRandom().primaryKey().notNull().unique(),
+    user_id: varchar("user_id", { length: 255 }).notNull(),
+    store_id: varchar("store_id", { length: 255 })
+      .notNull()
+      .references(() => storesTable.id),
+    product_id: uuid("product_id")
+      .notNull()
+      .references(() => productsTable.id),
 
+    created_at: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+    updated_at: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
+    deleted_at: timestamp("deleted_at", { mode: "date" }),
+  },
+  (table) => [
+    // Unique constraint for user_id and store_id
+    uniqueIndex("user_id_store_id_unique").on(table.user_id, table.store_id),
+
+    // Unique constraint for product_id and store_id
+    uniqueIndex("product_id_store_id_unique").on(table.product_id, table.store_id),
+  ]
+);
+export type WishList = typeof wishListTable.$inferSelect;
 
 // ✅ Reviews Table
 export const reviewsTable = pgTable(
@@ -334,7 +381,7 @@ export const reviewsTable = pgTable(
       .notNull()
       .references(() => productsTable.id),
     rating: integer("rating").notNull(),
-    review: text("review").default(sql`NULL`),
+    review: text("review").default(""),
     created_at: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
     updated_at: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
     deleted_at: timestamp("deleted_at", { mode: "date" }),
@@ -354,3 +401,73 @@ export const reviewsTable = pgTable(
   ]
 );
 export type Reviews = typeof reviewsTable.$inferSelect;
+
+// ✅ Collection Table
+export const collectionsTable = pgTable("collections", {
+  id: uuid("id").defaultRandom().primaryKey().notNull().unique(),
+  name: varchar("name", { length: 100 }).notNull(),
+  store_id: varchar("store_id")
+    .notNull()
+    .references(() => storesTable.id),
+
+  status: varchar("status", {
+    length: 20,
+    enum: Object.values(ENUM_COLLECTION_STATUS) as [string, ...string[]],
+  })
+    .notNull()
+    .default(ENUM_COLLECTION_STATUS.ACTIVE),
+
+  created_at: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
+  deleted_at: timestamp("deleted_at", { mode: "date" }),
+});
+export type Collections = typeof collectionsTable.$inferSelect;
+
+// ✅ Subscription Plans Table
+export const subscriptionPlans = pgTable("subscription_plans", {
+  id: uuid("id").defaultRandom().primaryKey().notNull().unique(),
+  name: varchar("name", { length: 100 }).notNull(),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  duration_days: integer("duration_days").notNull(),
+  is_active: boolean("is_active").default(true),
+  created_at: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
+  deleted_at: timestamp("deleted_at", { mode: "date" }),
+});
+export type SubscriptionPlans = typeof subscriptionPlans.$inferSelect;
+
+//
+export const subscriptions = pgTable("subscriptions", {
+  id: uuid("id").defaultRandom().primaryKey().notNull().unique(),
+  store_id: varchar("store_id")
+    .notNull()
+    .references(() => storesTable.id),
+  subscription_plan_id: uuid("subscription_plan_id")
+    .notNull()
+    .references(() => subscriptionPlans.id),
+
+  status: varchar("status", {
+    length: 20,
+    enum: Object.values(ENUM_SUBSCRIPTION_STATUS) as [string, ...string[]],
+  })
+    .notNull()
+    .default(ENUM_SUBSCRIPTION_STATUS.ACTIVE),
+  start_date: timestamp("start_date", { mode: "date" }).notNull().defaultNow(),
+  end_date: timestamp("end_date", { mode: "date" }),
+  payment_reference: text("payment_reference"), // eSewa transaction ID
+  created_at: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+});
+export type Subscriptions = typeof subscriptions.$inferSelect;
+
+export const payments = pgTable("payments", {
+  id: uuid("id").defaultRandom().primaryKey().notNull().unique(),
+  subscription_id: uuid("subscription_id")
+    .notNull()
+    .references(() => subscriptions.id),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  payment_reference: text("payment_reference"), // eSewa transaction ID
+  provider: text("provider").notNull(), // esewa, khalti , etc.
+  status: text("status").notNull(), // completed, failed, etc.
+  created_at: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+});
+export type Payments = typeof payments.$inferSelect;

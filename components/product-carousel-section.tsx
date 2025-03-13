@@ -9,6 +9,7 @@ interface ProductCarouselSectionProps {
 }
 
 export default async function ProductCarouselSection({ title, products }: ProductCarouselSectionProps) {
+  console.log(products, "products");
   if (products?.length === 0) {
     return null;
   }

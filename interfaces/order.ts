@@ -1,13 +1,14 @@
 export interface IShippingAndBillingAddress {
   full_name: string;
   email_address: string;
-  phone_number: number;
+  phone_number: number | null;
   province: string;
   district: string;
   city: string;
   landmark: string;
-  postal_code: number;
+  postal_code: string;
 }
+
 
 export interface IOrderItem {
   product_id: string;
