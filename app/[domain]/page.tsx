@@ -1,6 +1,5 @@
 const CategoryCarouselSection = dynamic(() => import("@/components/sections/category-carousel-section"));
 const GridProductSection = dynamic(() => import("@/components/sections/grid-product-section"));
-const FeatureProductSection = dynamic(() => import("@/components/feature-product-section"));
 import CategoryCarouselSkeleton from "@/components/skeletons/category-carousel-skeleton";
 import ProductCarouselSkeleton from "@/components/skeletons/product-carousel-skeleton";
 import GridProductsSkeleton from "@/components/skeletons/grid-products-sekelton";
@@ -31,10 +30,6 @@ export default async function Page() {
         <Suspense fallback={<ProductCarouselSkeleton />}>
           <CollectionCarouselSection />
         </Suspense>
-
-        {/* <Suspense fallback={<ProductCarouselSkeleton />}>
-          <FeatureProductSection />
-        </Suspense> */}
 
         <Suspense fallback={<GridProductsSkeleton />}>
           <GridProductSection />
