@@ -231,3 +231,43 @@ export async function deleteActiveProductReview(id: string): Promise<ActionRespo
     return { data: null, status: 500, error: handleDbError(error) };
   }
 }
+
+// Check if the logged in user has reviewed  the particular product
+export async function checkIfUserHasReviewedProduct(product_id: string): Promise<ActionResponse<boolean>> {
+  const { userId } = await auth();
+
+  // If the user is not logged in, return an error
+  if (!userId) {
+    return {
+      data: false,
+      status: 401,
+      error: "Oops! You need to be logged in to check if you have reviewed a product",
+    };
+  }
+
+  try {
+    // Directly query the database to check if a review exists for the given product_id and user_id
+    const review = await db
+      .select()
+      .from(reviewsTable)
+      .where(and(eq(reviewsTable.product_id, product_id), eq(reviewsTable.user_id, userId)))
+      .limit(1);
+
+    // If a review exists, return true; otherwise, return false
+    const hasReviewed = review.length > 0;
+
+    return {
+      data: hasReviewed,
+      status: 200,
+      msg: hasReviewed ? "User has reviewed the product" : "User has not reviewed the product",
+      error: null,
+    };
+  } catch (error) {
+    console.error(`Error checking if user has reviewed product: ${error}`);
+    return {
+      data: false,
+      status: 500,
+      error: "An error occurred while checking if the user has reviewed the product",
+    };
+  }
+}
