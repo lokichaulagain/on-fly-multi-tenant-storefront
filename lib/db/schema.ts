@@ -249,23 +249,23 @@ export const ordersTable = pgTable("orders", {
   shipping_address: jsonb("shipping_address").$type<IShippingAndBillingAddress>().default({
     full_name: "",
     email_address: "",
-    phone_number: null,
+    phone_number: 0,
     province: "",
     district: "",
     city: "",
     landmark: "",
-    postal_code: "",
+    postal_code: 0,
   }),
 
   billing_address: jsonb("billing_address").$type<IShippingAndBillingAddress>().default({
     full_name: "",
     email_address: "",
-    phone_number: null,
+    phone_number: 0,
     province: "",
     district: "",
     city: "",
     landmark: "",
-    postal_code: "",
+    postal_code: 0,
   }),
 
   // 🛒 Order details
