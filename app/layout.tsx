@@ -10,13 +10,6 @@ import { fallbackMetadata } from "@/constants/metadata";
 import { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 
-// If loading a variable font, you don't need to specify the font weight
-const roboto = Roboto({
-  weight: "400",
-  subsets: ["vietnamese"],
-  display: "swap",
-});
-
 export async function generateMetadata(): Promise<Metadata> {
   return fallbackMetadata;
 }
@@ -25,9 +18,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const response = await getActiveStore();
   if (response.error || !response.data) {
     return (
-      <html
-        lang="en"
-        className={roboto.className}>
+      <html lang="en">
         <body>
           <CustomNotFound
             icon={<Store className="h-6 w-6 text-muted-foreground" />}
@@ -44,9 +35,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <ClerkProvider dynamic>
       <CurrentStoreProvider store={response.data}>
-        <html
-          lang="en"
-          className={roboto.className}>
+        <html lang="en">
           <head>
             <style>
               {`

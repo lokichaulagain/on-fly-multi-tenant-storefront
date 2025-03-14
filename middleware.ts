@@ -37,12 +37,20 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   }
 
   // If we have static routes or API  these route should not be rewritten
-  const excludedPaths = ["/api", "/_next", "/_static", "/_vercel"];
-  const shouldRewrite = !excludedPaths.some((path) => url.pathname.startsWith(path));
+  // const excludedPaths = ["/api", "/_next", "/_static", "/_vercel"];
+  // const shouldRewrite = !excludedPaths.some((path) => url.pathname.startsWith(path));
 
-  if (shouldRewrite) {
-    return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
+  // if (shouldRewrite) {
+  //   return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
+  // }
+
+   // Rewrite root application to `/home` folder
+   if (hostname === "localhost:3000" || hostname === process.env.NEXT_PUBLIC_ROOT_DOMAIN) {
+    return NextResponse.rewrite(new URL(`/home${path === "/" ? "" : path}`, req.url));
   }
+
+
+  return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
 });
 
 export const config = {
