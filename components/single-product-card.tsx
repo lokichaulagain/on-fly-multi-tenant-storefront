@@ -20,7 +20,7 @@ const SingleProductCard = memo(({ product }: { product: IProductPreview }) => {
   return (
     <div className="space-y-1 group">
       <div
-        className="group overflow-hidden border border-border transition-all duration-300 hover:shadow-md rounded-[var(--radius)]"
+        className="group overflow-hidden border border-border transition-all duration-300 hover:shadow-sm rounded-[var(--radius)]"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}>
         <Link
@@ -34,7 +34,7 @@ const SingleProductCard = memo(({ product }: { product: IProductPreview }) => {
               width={500}
               loading="eager"
               priority={true}
-              className={`object-cover transition-transform duration-700 ${isHovered ? "scale-110" : "scale-100"}`}
+              className={`object-cover h-full w-full transition-transform duration-700 ${isHovered ? "scale-105" : "scale-100"}`}
             />
             {/* Show discount badge only if discountPercentage is greater than 0 */}
             {discountPercentage > 0 && <Badge className="absolute right-2 top-2 bg-[var(--primary)] hover:bg-[var(--primary)] text-[10px]">{discountPercentage}% OFF</Badge>}

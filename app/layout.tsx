@@ -40,7 +40,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <style>
               {`
               :root {
-                // --font-family: ${response.data.store_appearance?.font_family}; 
+                --font-family: ${response.data.store_appearance?.font_family}; 
                 --primary: ${response.data.store_appearance?.primary_color};
                 --secondary: ${response.data.store_appearance?.secondary_color};
                 --radius: ${response.data.store_appearance?.border_radius}px;

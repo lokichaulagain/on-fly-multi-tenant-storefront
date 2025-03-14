@@ -1,27 +1,17 @@
-import Image from "next/image";
 import React from "react";
+
 type Props = {
-  image: React.ComponentProps<typeof Image>["src"];
   title?: string;
   description?: string;
 };
 
-export default function PageBanner({ image, title, description }: Props) {
+export default function PageBanner({ title, description }: Props) {
   return (
-    <div className=" relative flex items-center justify-center mb-20 ">
-      <div className="w-full h-full absolute top-0 left-0 bg-black opacity-[0.5] z-10"></div>
-      <div className="space-y-3 text-center absolute px-4  z-10">
-        <h1 className="text-3xl md:text-6xl text-white font-semibold">{title}</h1>
-        <p className="text-white/90 max-w-xl mx-auto ">{description}</p>
+    <div className="  flex items-center justify-center mb-16 pt-12 px-4 ">
+      <div className="space-y-2 text-center">
+        <h1 className="text-3xl md:text-5xl font-semibold">{title}</h1>
+        <p className=" max-w-xl mx-auto ">{description}</p>
       </div>
-
-      <Image
-        src={image}
-        alt="banner"
-        height={500}
-        width={1500}
-        className=" w-full h-[50vh] object-cover "
-      />
     </div>
   );
 }

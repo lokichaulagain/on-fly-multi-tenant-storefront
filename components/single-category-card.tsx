@@ -2,12 +2,13 @@ import Link from "next/link";
 import React, { memo } from "react";
 import Image from "next/image";
 import { ICategoryPreview } from "@/interfaces/category";
+import { ArrowRight } from "lucide-react";
 
 const SingleCategoryCard = memo(({ category }: { category: ICategoryPreview }) => {
   return (
-    <div className=" relative md:h-92  overflow-hidden rounded-2xl">
+    <div className="  md:h-92  overflow-hidden group rounded-sm">
       {category.thumbnail && (
-        <Link href={`/shop?collection=${category.slug}`}>
+        <Link href={`/shop?collection=${category.slug}`} className="flex items-center justify-center">
           <Image
             src={category.thumbnail}
             alt={category.name}
@@ -15,11 +16,17 @@ const SingleCategoryCard = memo(({ category }: { category: ICategoryPreview }) =
             width={300}
             loading="eager"
             priority={true}
-            className=" md:h-92 object-cover rounded-2xl  transition-all ease-in-out duration-700 group-hover:scale-105  "
+            className=" md:h-92 w-full object-cover rounded-sm  transition-all ease-in-out duration-700 group-hover:scale-105 border border-gray-50    "
           />
         </Link>
       )}
-      <p className="prose line-clamp-2 text-sm md:text-base font-medium absolute top-2 md:top-4 left-2 md:left-4 group-hover:text-orange-500 duration-300 ">{category.name}</p>
+      <p className="  text-base  opacity-100 z-10  font-medium  ml-2 mt-2 flex items-center gap-1   ">
+        <span>{category.name}</span>{" "}
+        <ArrowRight
+          size={16}
+          className=" mt-1 group-hover:translate-x-1 transition-all ease-in-out duration-700"
+        />{" "}
+      </p>
     </div>
   );
 });
