@@ -74,18 +74,18 @@ export default function Navbar({ pages }: { pages: IPagePreview[] }) {
   return (
     <div>
       <Banner
-        className="bg-[var(--secondary)] text-white"
+        className="bg-[var(--primary)] text-white"
         message="Our system will be under maintenance on Sunday from 2-4 AM EST."
         
       />
 
-      <nav className="bg-[var(--primary)] shadow-sm w-full md:static md:text-sm h-16 flex items-center justify-center">
+      <nav className="bg-white shadow-sm w-full md:static md:text-sm h-16 flex items-center justify-center">
         <div className="items-center w-full container px-4 md:px-24 mx-auto md:flex">
           <div className="flex items-center justify-between md:block">
             <Link
               prefetch={true}
               href="/"
-              className="flex items-center gap-1 text-white">
+              className="flex items-center gap-1">
               <Image
                 src={store.store_logo}
                 alt="logo"
@@ -99,7 +99,7 @@ export default function Navbar({ pages }: { pages: IPagePreview[] }) {
               <Link
                 prefetch={true}
                 href="/checkout"
-                className=" text-white block md:hidden">
+                className=" block md:hidden">
                 <div className="relative">
                   <ShoppingCart
                     size={20}
@@ -115,14 +115,14 @@ export default function Navbar({ pages }: { pages: IPagePreview[] }) {
             </div>
           </div>
           <div className="flex-1 pb-3 mt-8 md:pb-0 md:mt-0 hidden md:block">
-            <div className="justify-end items-center space-y-6 md:flex md:space-x-6 md:space-y-0 text-white">
+            <div className="justify-end items-center space-y-6 md:flex md:space-x-6 md:space-y-0 ">
               {/* Display main navigation items and first 4 pages */}
               {visibleNavItems.map((item, idx) => (
                 <div key={idx}>
                   <Link
                     prefetch={true}
                     href={item.slug}
-                    className={`${pathname === item.slug ? "text-[var(--secondary)]" : "hover:text-[var(--secondary)] duration-300"} font-semibold`}>
+                    className={`${pathname === item.slug ? " " : ""}  font-medium  text-sm opacity-85`}>
                     {item.title}
                   </Link>
                 </div>
@@ -134,7 +134,8 @@ export default function Navbar({ pages }: { pages: IPagePreview[] }) {
                   className="relative"
                   ref={dropdownRef}>
                   <button
-                    className={`flex items-center gap-1 font-semibold ${dropdownPages.some((page) => pathname === `/p/${page.slug}`) ? "text-[var(--secondary)]" : "hover:text-[var(--secondary)] duration-300"}`}
+                  type="button"
+                    className={`flex items-center gap-1 font-medium  text-sm opacity-85 ${dropdownPages.some((page) => pathname === `/p/${page.slug}`) ? "" : "hover:text-[var(--secondary)] duration-300"}`}
                     onClick={() => setDropdownOpen(!dropdownOpen)}>
                     More
                     <ChevronDown
@@ -144,14 +145,14 @@ export default function Navbar({ pages }: { pages: IPagePreview[] }) {
                   </button>
 
                   {dropdownOpen && (
-                    <div className="absolute z-10 right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 text-gray-800">
+                    <div className="absolute z-10 right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 ">
                       {dropdownPages.map((page, idx) => (
                         <Link
                           prefetch={true}
                           key={idx}
                           href={`/p/${page.slug}`}
                           onClick={() => setDropdownOpen(false)}
-                          className={`block px-4 py-2 text-sm ${pathname === `/p/${page.slug}` ? "bg-gray-100 text-[var(--primary)]" : "hover:bg-gray-100"}`}>
+                          className={`block px-4 py-2   text-sm opacity-85 ${pathname === `/p/${page.slug}` ? "bg-gray-100 text-[var(--primary)]" : "hover:bg-gray-100"}`}>
                           {page.title}
                         </Link>
                       ))}
