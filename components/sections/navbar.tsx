@@ -12,6 +12,7 @@ import { IPagePreview } from "@/interfaces/page";
 import SignInModal from "../auth/sign-in-modal";
 import SignUpModal from "../auth/sign-up-modal";
 import { useCurrentStore } from "@/contexts/current-store-provider";
+import { Banner } from "../banner";
 
 export default function Navbar({ pages }: { pages: IPagePreview[] }) {
   const store = useCurrentStore();
@@ -71,93 +72,34 @@ export default function Navbar({ pages }: { pages: IPagePreview[] }) {
   }, []);
 
   return (
-    <nav className="bg-[var(--primary)] shadow-sm w-full md:static md:text-sm h-16 flex items-center justify-center">
-      <div className="items-center w-full container px-4 md:px-24 mx-auto md:flex">
-        <div className="flex items-center justify-between md:block">
-          <Link
-            prefetch={true}
-            href="/"
-            className="flex items-center gap-1 text-white">
-            <Image
-              src={store.store_logo}
-              alt="logo"
-              width={32}
-              height={32}
-            />
-            <p className="text-2xl tracking-wide font-serif">{store.store_name}</p>
-          </Link>
+    <div>
+      <Banner
+        className="bg-[var(--secondary)] text-white"
+        message="Our system will be under maintenance on Sunday from 2-4 AM EST."
+        
+      />
 
-          <div className="flex items-center gap-4">
+      <nav className="bg-[var(--primary)] shadow-sm w-full md:static md:text-sm h-16 flex items-center justify-center">
+        <div className="items-center w-full container px-4 md:px-24 mx-auto md:flex">
+          <div className="flex items-center justify-between md:block">
             <Link
               prefetch={true}
-              href="/checkout"
-              className=" text-white block md:hidden">
-              <div className="relative">
-                <ShoppingCart
-                  size={20}
-                  className="hover:text-[var(--secondary)] duration-300"
-                />
-                {cart.length > 0 && <span className="absolute -top-2 -right-2 bg-[var(--secondary)] text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]">{cart.length}</span>}
-              </div>
+              href="/"
+              className="flex items-center gap-1 text-white">
+              <Image
+                src={store.store_logo}
+                alt="logo"
+                width={32}
+                height={32}
+              />
+              <p className="text-2xl tracking-wide font-serif">{store.store_name}</p>
             </Link>
 
-            <div className="md:hidden">
-              <MobileSheet navitems={navitems} />
-            </div>
-          </div>
-        </div>
-        <div className="flex-1 pb-3 mt-8 md:pb-0 md:mt-0 hidden md:block">
-          <div className="justify-end items-center space-y-6 md:flex md:space-x-6 md:space-y-0 text-white">
-            {/* Display main navigation items and first 4 pages */}
-            {visibleNavItems.map((item, idx) => (
-              <div key={idx}>
-                <Link
-                  prefetch={true}
-                  href={item.slug}
-                  className={`${pathname === item.slug ? "text-[var(--secondary)]" : "hover:text-[var(--secondary)] duration-300"} font-semibold`}>
-                  {item.title}
-                </Link>
-              </div>
-            ))}
-
-            {/* More pages dropdown (only if there are more than 4 pages) */}
-            {hasDropdownPages && (
-              <div
-                className="relative"
-                ref={dropdownRef}>
-                <button
-                  className={`flex items-center gap-1 font-semibold ${dropdownPages.some((page) => pathname === `/p/${page.slug}`) ? "text-[var(--secondary)]" : "hover:text-[var(--secondary)] duration-300"}`}
-                  onClick={() => setDropdownOpen(!dropdownOpen)}>
-                  More
-                  <ChevronDown
-                    size={16}
-                    className={`transition-transform duration-300 ${dropdownOpen ? "rotate-180" : ""}`}
-                  />
-                </button>
-
-                {dropdownOpen && (
-                  <div className="absolute z-10 right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 text-gray-800">
-                    {dropdownPages.map((page, idx) => (
-                      <Link
-                        prefetch={true}
-                        key={idx}
-                        href={`/p/${page.slug}`}
-                        onClick={() => setDropdownOpen(false)}
-                        className={`block px-4 py-2 text-sm ${pathname === `/p/${page.slug}` ? "bg-gray-100 text-[var(--primary)]" : "hover:bg-gray-100"}`}>
-                        {page.title}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            <span className="hidden w-px h-6 bg-white opacity-50 md:block"></span>
-
-            <div className="flex items-center gap-x-2">
+            <div className="flex items-center gap-4">
               <Link
                 prefetch={true}
-                href="/checkout">
+                href="/checkout"
+                className=" text-white block md:hidden">
                 <div className="relative">
                   <ShoppingCart
                     size={20}
@@ -167,51 +109,118 @@ export default function Navbar({ pages }: { pages: IPagePreview[] }) {
                 </div>
               </Link>
 
-              <SignedIn>
-                <Link
-                  prefetch={true}
-                  href="/profile">
-                  <Button variant="link">
-                    <Image
-                      src={user?.imageUrl || "/placeholder.svg"}
-                      alt="user"
-                      height={100}
-                      width={100}
-                      className="w-8 h-8 rounded-full hover:opacity-80 transition-opacity duration-300 border-2 border-accent"
+              <div className="md:hidden">
+                <MobileSheet navitems={navitems} />
+              </div>
+            </div>
+          </div>
+          <div className="flex-1 pb-3 mt-8 md:pb-0 md:mt-0 hidden md:block">
+            <div className="justify-end items-center space-y-6 md:flex md:space-x-6 md:space-y-0 text-white">
+              {/* Display main navigation items and first 4 pages */}
+              {visibleNavItems.map((item, idx) => (
+                <div key={idx}>
+                  <Link
+                    prefetch={true}
+                    href={item.slug}
+                    className={`${pathname === item.slug ? "text-[var(--secondary)]" : "hover:text-[var(--secondary)] duration-300"} font-semibold`}>
+                    {item.title}
+                  </Link>
+                </div>
+              ))}
+
+              {/* More pages dropdown (only if there are more than 4 pages) */}
+              {hasDropdownPages && (
+                <div
+                  className="relative"
+                  ref={dropdownRef}>
+                  <button
+                    className={`flex items-center gap-1 font-semibold ${dropdownPages.some((page) => pathname === `/p/${page.slug}`) ? "text-[var(--secondary)]" : "hover:text-[var(--secondary)] duration-300"}`}
+                    onClick={() => setDropdownOpen(!dropdownOpen)}>
+                    More
+                    <ChevronDown
+                      size={16}
+                      className={`transition-transform duration-300 ${dropdownOpen ? "rotate-180" : ""}`}
                     />
-                  </Button>
-                </Link>
-              </SignedIn>
+                  </button>
+
+                  {dropdownOpen && (
+                    <div className="absolute z-10 right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 text-gray-800">
+                      {dropdownPages.map((page, idx) => (
+                        <Link
+                          prefetch={true}
+                          key={idx}
+                          href={`/p/${page.slug}`}
+                          onClick={() => setDropdownOpen(false)}
+                          className={`block px-4 py-2 text-sm ${pathname === `/p/${page.slug}` ? "bg-gray-100 text-[var(--primary)]" : "hover:bg-gray-100"}`}>
+                          {page.title}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <span className="hidden w-px h-6 bg-white opacity-50 md:block"></span>
 
               <div className="flex items-center gap-x-2">
-                <SignInModal
-                  primary_color={store.store_appearance?.primary_color}
-                  border_radius={`${(store.store_appearance?.border_radius ?? 0) / 32}rem`}
-                  font_family={store.store_appearance?.font_family}
-                  store_logo={store.store_logo}
-                  store_subdomain={store.store_subdomain}
-                  button={
-                    <Button
-                      variant="link"
-                      className="hover:text-[var(--secondary)] duration-300">
-                      Sign In
-                    </Button>
-                  }
-                />
+                <Link
+                  prefetch={true}
+                  href="/checkout">
+                  <div className="relative">
+                    <ShoppingCart
+                      size={20}
+                      className="hover:text-[var(--secondary)] duration-300"
+                    />
+                    {cart.length > 0 && <span className="absolute -top-2 -right-2 bg-[var(--secondary)] text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]">{cart.length}</span>}
+                  </div>
+                </Link>
 
-                <SignUpModal
-                  primary_color={store.store_appearance?.primary_color}
-                  border_radius={`${(store.store_appearance?.border_radius ?? 0) / 32}rem`}
-                  font_family={store.store_appearance?.font_family}
-                  store_logo={store.store_logo}
-                  store_subdomain={store.store_subdomain}
-                  button={<Button className="bg-[var(--secondary)] hover:bg-[var(--secondary)] duration-300">Sign Up</Button>}
-                />
+                <SignedIn>
+                  <Link
+                    prefetch={true}
+                    href="/profile">
+                    <Button variant="link">
+                      <Image
+                        src={user?.imageUrl || "/placeholder.svg"}
+                        alt="user"
+                        height={100}
+                        width={100}
+                        className="w-8 h-8 rounded-full hover:opacity-80 transition-opacity duration-300 border-2 border-accent"
+                      />
+                    </Button>
+                  </Link>
+                </SignedIn>
+
+                <div className="flex items-center gap-x-2">
+                  <SignInModal
+                    primary_color={store.store_appearance?.primary_color}
+                    border_radius={`${(store.store_appearance?.border_radius ?? 0) / 32}rem`}
+                    font_family={store.store_appearance?.font_family}
+                    store_logo={store.store_logo}
+                    store_subdomain={store.store_subdomain}
+                    button={
+                      <Button
+                        variant="link"
+                        className="hover:text-[var(--secondary)] duration-300">
+                        Sign In
+                      </Button>
+                    }
+                  />
+
+                  <SignUpModal
+                    primary_color={store.store_appearance?.primary_color}
+                    border_radius={`${(store.store_appearance?.border_radius ?? 0) / 32}rem`}
+                    font_family={store.store_appearance?.font_family}
+                    store_logo={store.store_logo}
+                    store_subdomain={store.store_subdomain}
+                    button={<Button className="bg-[var(--secondary)] hover:bg-[var(--secondary)] duration-300">Sign Up</Button>}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </div>
   );
 }
