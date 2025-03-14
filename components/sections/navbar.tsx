@@ -1,9 +1,9 @@
 "use client";
 import Link from "next/link";
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
-import { ChevronDown, ShoppingCart } from "lucide-react";
+import {  ShoppingCart } from "lucide-react";
 import MobileSheet from "@/components/mobile-sheet";
 import { useCart } from "@/contexts/cart-provider";
 import { SignedIn, useUser } from "@clerk/nextjs";
@@ -22,61 +22,15 @@ export default function Navbar({ pages }: { pages: IPagePreview[] }) {
 
   const navitems = [
     { title: "Home", slug: "/" },
-    { title: "Shop", slug: "/shop" },
-    { title: "Cart", slug: "/checkout" },
-    ...pages
-      .filter((page) => !["help", "privacy-policy", "terms-of-service"].includes(page.slug))
-      .map((page) => ({
-        title: page.title,
-        slug: `/p/${page.slug}`,
-      })),
-  ];
-
-  // Main navigation items (Home and Shop)
-  const mainNavItems = [
-    { title: "Home", slug: "/" },
+    { title: "Categories", slug: "/categories" },
     { title: "Shop", slug: "/shop" },
   ];
-
-  const visiblePages = pages
-    .filter((page) => !["help", "privacy-policy", "terms-of-service"].includes(page.slug)) // Exclude specific pages
-    .slice(0, 3) // Take the first 3 after filtering
-    .map((page) => ({
-      title: page.title,
-      slug: `/p/${page.slug}`,
-    }));
-
-  // Remaining pages for dropdown
-  const dropdownPages = pages.slice(4);
-  const hasDropdownPages = dropdownPages.length > 0;
-
-  // Combined visible navigation items
-  const visibleNavItems = [...mainNavItems, ...visiblePages];
-
-  // Dropdown state
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setDropdownOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   return (
     <div>
       <Banner
         className="bg-[var(--primary)] text-white"
         message="Our system will be under maintenance on Sunday from 2-4 AM EST."
-        
       />
 
       <nav className="bg-white shadow-sm w-full md:static md:text-sm h-16 flex items-center justify-center">
@@ -117,7 +71,7 @@ export default function Navbar({ pages }: { pages: IPagePreview[] }) {
           <div className="flex-1 pb-3 mt-8 md:pb-0 md:mt-0 hidden md:block">
             <div className="justify-end items-center space-y-6 md:flex md:space-x-6 md:space-y-0 ">
               {/* Display main navigation items and first 4 pages */}
-              {visibleNavItems.map((item, idx) => (
+              {navitems.map((item, idx) => (
                 <div key={idx}>
                   <Link
                     prefetch={true}
@@ -128,40 +82,7 @@ export default function Navbar({ pages }: { pages: IPagePreview[] }) {
                 </div>
               ))}
 
-              {/* More pages dropdown (only if there are more than 4 pages) */}
-              {hasDropdownPages && (
-                <div
-                  className="relative"
-                  ref={dropdownRef}>
-                  <button
-                  type="button"
-                    className={`flex items-center gap-1 font-medium  text-sm opacity-85 ${dropdownPages.some((page) => pathname === `/p/${page.slug}`) ? "" : "hover:text-[var(--secondary)] duration-300"}`}
-                    onClick={() => setDropdownOpen(!dropdownOpen)}>
-                    More
-                    <ChevronDown
-                      size={16}
-                      className={`transition-transform duration-300 ${dropdownOpen ? "rotate-180" : ""}`}
-                    />
-                  </button>
-
-                  {dropdownOpen && (
-                    <div className="absolute z-10 right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 ">
-                      {dropdownPages.map((page, idx) => (
-                        <Link
-                          prefetch={true}
-                          key={idx}
-                          href={`/p/${page.slug}`}
-                          onClick={() => setDropdownOpen(false)}
-                          className={`block px-4 py-2   text-sm opacity-85 ${pathname === `/p/${page.slug}` ? "bg-gray-100 text-[var(--primary)]" : "hover:bg-gray-100"}`}>
-                          {page.title}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              <span className="hidden w-px h-6 bg-white opacity-50 md:block"></span>
+              <span className="hidden w-px h-6 bg-gray-300 opacity-50 md:block"></span>
 
               <div className="flex items-center gap-x-2">
                 <Link

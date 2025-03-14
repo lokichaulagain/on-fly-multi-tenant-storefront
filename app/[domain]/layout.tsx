@@ -110,7 +110,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
         <div className="fixed w-full z-50">
           <Navbar pages={pagesResponse.data || []} />
         </div>
-        <div className="pt-16">{children}</div>
+        <div className=" pt-24">{children}</div>
         <Footer pages={pagesResponse.data || []} />
       </div>
     </CartProvider>

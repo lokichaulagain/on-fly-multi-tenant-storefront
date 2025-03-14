@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Link from "next/link";
 import { ChevronRight, Facebook, Instagram, MapPin, Youtube, Zap } from "lucide-react";
 import Image from "next/image";
@@ -13,20 +13,21 @@ export default function Footer({ pages }: { pages: IPagePreview[] }) {
       title: "Home",
       href: "/",
     },
+
     {
-      title: "Cart",
-      href: "/checkout",
+      title: "Categories",
+      href: "/categories",
     },
+
     {
       title: "Shop",
       href: "/shop",
     },
-    ...pages
-      .filter((page) => !["help", "privacy-policy", "terms-of-service"].includes(page.slug))
-      .map((page) => ({
-        title: page.title,
-        href: `/p/${page.slug}`,
-      })),
+
+    {
+      title: "Cart",
+      href: "/checkout",
+    },
   ];
 
   const helpLinks = [
@@ -89,17 +90,16 @@ export default function Footer({ pages }: { pages: IPagePreview[] }) {
           </div>
         </div>
 
-        <div className="col-span-4 sm:col-span-1 space-y-4 ">
-          <h4 className="font-medium">Our Socials</h4>
+        <div className="col-span-4 sm:col-span-1 space-y-4  ">
+          <h4 className="font-medium  justify-center whitespace-nowrap">Our Socials</h4>
 
-          <div className="space-y-2 text-sm">
+          <div className=" flex gap-1 text-sm">
             {store.social_links?.facebook_url && (
               <Link
                 target="_blank"
                 href="https://www.facebook.com/stocknp"
                 className="flex items-center text-white hover:text-[var(--secondary)] duration-300">
                 <Facebook className="mr-2 h-4 w-4 text-blue-700" />
-                Follow us on Facebook
               </Link>
             )}
 
@@ -109,7 +109,6 @@ export default function Footer({ pages }: { pages: IPagePreview[] }) {
                 href="https://www.instagram.com/stocknp"
                 className="flex items-center text-white hover:text-[var(--secondary)] duration-300">
                 <Instagram className="mr-2 h-4 w-4 text-pink-500" />
-                Follow us on Instagram
               </Link>
             )}
 
@@ -119,7 +118,6 @@ export default function Footer({ pages }: { pages: IPagePreview[] }) {
                 href="https://wa.me/9779864755749"
                 className="flex items-center text-white hover:text-[var(--secondary)] duration-300">
                 <IconWhatsApp />
-                Message us on Whatsapp
               </Link>
             )}
 
@@ -129,7 +127,6 @@ export default function Footer({ pages }: { pages: IPagePreview[] }) {
                 href="https://wa.me/9779864755749"
                 className="flex items-center text-white hover:text-[var(--secondary)] duration-300">
                 <MapPin className="mr-2 h-4 w-4 text-white" />
-                Visit Our Location
               </Link>
             )}
 
@@ -139,7 +136,6 @@ export default function Footer({ pages }: { pages: IPagePreview[] }) {
                 href="https://wa.me/9779864755749"
                 className="flex items-center text-white hover:text-[var(--secondary)] duration-300">
                 <Youtube className="mr-2 h-4 w-4 text-red-500" />
-                Subscribe to our Youtube
               </Link>
             )}
 
@@ -149,7 +145,6 @@ export default function Footer({ pages }: { pages: IPagePreview[] }) {
                 href="https://wa.me/9779864755749"
                 className="flex items-center text-white hover:text-[var(--secondary)] duration-300">
                 <IconTiktok />
-                Follow us on Tiktok
               </Link>
             )}
           </div>

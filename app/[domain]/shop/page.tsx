@@ -13,7 +13,6 @@ export default async function Page() {
   return (
     <div>
       <PageBanner
-        image={banner1}
         title="SHOP"
         description="Lets find your favorite products here and more"
       />
