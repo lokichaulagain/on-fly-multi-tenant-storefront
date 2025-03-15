@@ -106,6 +106,7 @@ export const storesTable = pgTable(
       favicon: DEFAULT_STORE_LOGO,
       desktop_banners: [],
       mobile_banners: [],
+      banner_content: "",
     }),
   },
   (table) => [

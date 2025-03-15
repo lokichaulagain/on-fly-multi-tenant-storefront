@@ -5,12 +5,12 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 interface BannerProps {
-  message: string;
+  message?: string;
   dismissible?: boolean;
   className?: string;
 }
 
-export function Banner({ message, dismissible = true, className }: BannerProps) {
+export function Banner({ message, dismissible = false, className }: BannerProps) {
   const [isVisible, setIsVisible] = useState(true);
 
   if (!isVisible) return null;

@@ -1,5 +1,6 @@
-export interface IPagePreview {
-  id: string;
-  title: string;
+
+
+export interface IPageSitemap {
   slug: string;
+  updated_at: Date;
 }

@@ -4,9 +4,9 @@ import { ChevronRight, Facebook, Instagram, MapPin, Youtube, Zap } from "lucide-
 import Image from "next/image";
 import { useCurrentStore } from "@/contexts/current-store-provider";
 import React from "react";
-import { IPagePreview } from "@/interfaces/page";
 
-export default function Footer({ pages }: { pages: IPagePreview[] }) {
+
+export default function Footer() {
   const store = useCurrentStore();
   const quickLinks = [
     {
@@ -39,123 +39,157 @@ export default function Footer({ pages }: { pages: IPagePreview[] }) {
       title: "Privacy Policy",
       href: "/p/privacy-policy",
     },
+
     {
       title: "Terms of Service",
       href: "/p/terms-of-service",
     },
+
+    {
+      title: "Shipping & Returns",
+      href: "/p/shipping-returns",
+    },
   ];
+
+  const socialLinks = [
+    {
+      title: "Facebook",
+      icon: (
+        <Facebook
+          size={16}
+          className=" text-blue-700"
+        />
+      ),
+      href: store?.social_links?.facebook_url,
+    },
+    {
+      title: "Instagram",
+      icon: (
+        <Instagram
+          size={16}
+          className=" text-pink-500"
+        />
+      ),
+      href: store?.social_links?.instagram_url,
+    },
+    {
+      title: "WhatsApp",
+      icon: (
+        <IconWhatsApp
+          size={16}
+          className="text-green-500"
+        />
+      ),
+      href: store?.social_links?.primary_whatsapp_number,
+    },
+
+    {
+      title: "Google Map",
+      icon: (
+        <MapPin
+          size={16}
+          className="text-blue-700"
+        />
+      ),
+      href: store?.social_links?.google_map_url,
+    },
+
+    {
+      title: "TikTok",
+      icon: (
+        <IconTiktok
+          size={16}
+          className="text-purple-500"
+        />
+      ),
+      href: store?.social_links?.tiktok_url,
+    },
+
+    {
+      title: "Youtube",
+      icon: (
+        <Youtube
+          size={16}
+          className="text-red-500"
+        />
+      ),
+      href: store?.social_links?.youtube_url,
+    },
+  ];
+
   return (
-    <footer className="footerbg pt-12 pb-4 bg-[var(--primary)]  text-white mt-16 ">
-      <div className=" container mx-auto px-4 md:px-24 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-10">
-        <div className=" col-span-4 sm:col-span-4 lg:col-span-1">
-          <Image
-            src={store?.store_logo}
-            alt="logo"
-            width={32}
-            height={32}
-          />
-          <p className=" text-2xl md:text-3xl">{store?.store_name}</p>
-          <p className=" text-sm">{store?.store_meta_description}</p>
-        </div>
-
-        <div className="col-span-4 sm:col-span-1 space-y-4 ">
-          <h4 className="font-medium">Quick Links</h4>
-          <div className=" space-y-2 text-sm">
-            {quickLinks.map((link, index) => (
-              <Link
-                prefetch={true}
-                key={index}
-                href={link.href}
-                className=" flex items-center  hover:text-[var(--secondary)] duration-300">
-                {link.title}
-                <ChevronRight size={16} />
-              </Link>
-            ))}
+    <footer className="mt-16">
+      <div className="footerbg py-12  bg-[var(--primary)]  text-white/80   ">
+        <div className=" container mx-auto px-4 md:px-24 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-10">
+          <div className=" col-span-4 sm:col-span-4 lg:col-span-1">
+            <Image
+              src={store?.store_logo}
+              alt="logo"
+              width={32}
+              height={32}
+            />
+            <p className=" text-sm ">{store?.store_meta_description}</p>
           </div>
-        </div>
 
-        <div className="col-span-4 sm:col-span-1 space-y-4 ">
-          <h4 className="font-medium">Help & Legal</h4>
-          <div className=" space-y-2 text-sm">
-            {helpLinks.map((link, index) => (
-              <Link
-                prefetch={true}
-                key={index}
-                href={link.href}
-                className=" flex items-center hover:text-[var(--secondary)] duration-300 ">
-                {link.title}
-                <ChevronRight size={16} />
-              </Link>
-            ))}
+          <div className="col-span-4 sm:col-span-1 space-y-4 ">
+            <h4 className="font-medium text-white">Quick Links</h4>
+            <div className=" space-y-2 text-xs font-light ">
+              {quickLinks.map((link, index) => (
+                <Link
+                  prefetch={true}
+                  key={index}
+                  href={link.href}
+                  className=" flex items-center   hover:text-[var(--secondary)] duration-300 group">
+                  <span>{link.title}</span>
+                  <ChevronRight
+                    size={16}
+                    className=" mt-1 group-hover:translate-x-1 duration-300"
+                  />
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div className="col-span-4 sm:col-span-1 space-y-4  ">
-          <h4 className="font-medium  justify-center whitespace-nowrap">Our Socials</h4>
+          <div className="col-span-4 sm:col-span-1 space-y-4 ">
+            <h4 className="font-medium text-white">Help & Legal</h4>
+            <div className=" space-y-2 text-xs font-light">
+              {helpLinks.map((link, index) => (
+                <Link
+                  prefetch={true}
+                  key={index}
+                  href={link.href}
+                  className=" flex items-center   hover:text-[var(--secondary)] duration-300 group">
+                  <span>{link.title}</span>
+                  <ChevronRight
+                    size={16}
+                    className=" mt-1 group-hover:translate-x-1 duration-300"
+                  />
+                </Link>
+              ))}
+            </div>
+          </div>
 
-          <div className=" flex gap-1 text-sm">
-            {store.social_links?.facebook_url && (
-              <Link
-                target="_blank"
-                href="https://www.facebook.com/stocknp"
-                className="flex items-center text-white hover:text-[var(--secondary)] duration-300">
-                <Facebook className="mr-2 h-4 w-4 text-blue-700" />
-              </Link>
-            )}
+          <div className="col-span-4 sm:col-span-1 space-y-4  ">
+            <h4 className="font-medium text-white">Our Socials</h4>
 
-            {store.social_links?.instagram_url && (
-              <Link
-                target="_blank"
-                href="https://www.instagram.com/stocknp"
-                className="flex items-center text-white hover:text-[var(--secondary)] duration-300">
-                <Instagram className="mr-2 h-4 w-4 text-pink-500" />
-              </Link>
-            )}
-
-            {store.social_links?.primary_whatsapp_number && (
-              <Link
-                target="_blank"
-                href="https://wa.me/9779864755749"
-                className="flex items-center text-white hover:text-[var(--secondary)] duration-300">
-                <IconWhatsApp />
-              </Link>
-            )}
-
-            {store.social_links?.google_map_url && (
-              <Link
-                target="_blank"
-                href="https://wa.me/9779864755749"
-                className="flex items-center text-white hover:text-[var(--secondary)] duration-300">
-                <MapPin className="mr-2 h-4 w-4 text-white" />
-              </Link>
-            )}
-
-            {store.social_links?.youtube_url && (
-              <Link
-                target="_blank"
-                href="https://wa.me/9779864755749"
-                className="flex items-center text-white hover:text-[var(--secondary)] duration-300">
-                <Youtube className="mr-2 h-4 w-4 text-red-500" />
-              </Link>
-            )}
-
-            {store.social_links?.tiktok_url && (
-              <Link
-                target="_blank"
-                href="https://wa.me/9779864755749"
-                className="flex items-center text-white hover:text-[var(--secondary)] duration-300">
-                <IconTiktok />
-              </Link>
-            )}
+            <div className=" flex gap-2 text-xs font-light ">
+              {socialLinks.map((link, index) => (
+                <Link
+                  key={index}
+                  target="_blank"
+                  href={link.href || ""}
+                  className=" bg-white/10 h-6 w-6 rounded-full p-1 flex items-center justify-center hover:bg-white/30   hover:-translate-y-1 hover:scale-110 duration-300 ">
+                  {link.icon}
+                </Link>
+              ))}
+            </div>
+            <p className="font-light text-xs">© {new Date().getFullYear()} {store?.store_name}. All rights reserved.</p>
           </div>
         </div>
       </div>
 
-      <p className=" flex items-center justify-center gap-1 text-xs mt-4">
-        <Zap
-          size={14}
-          className=" text-white"
-        />
+      <p className=" flex items-center justify-center gap-1 text-[10px]  bg-blue-500 text-white py-1">
+        <Zap size={14} />
         Powered by
         <Link
           target="_blank"
@@ -168,13 +202,13 @@ export default function Footer({ pages }: { pages: IPagePreview[] }) {
   );
 }
 
-function IconWhatsApp() {
+function IconWhatsApp({ size = 18, className }: { size?: number; className?: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="18"
-      height="18"
-      className="mr-2  text-green-500"
+      width={size}
+      height={size}
+      className={className}
       viewBox="0 0 24 24">
       <path
         fill="currentColor"
@@ -190,13 +224,13 @@ function IconWhatsApp() {
   );
 }
 
-function IconTiktok() {
+function IconTiktok({ size = 20, className }: { size?: number; className?: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      className=" mr-2 text-purple-500"
+      width={size}
+      height={size}
+      className={className}
       viewBox="0 0 48 48">
       <path
         fill="none"

@@ -8,13 +8,12 @@ import MobileSheet from "@/components/mobile-sheet";
 import { useCart } from "@/contexts/cart-provider";
 import { SignedIn, useUser } from "@clerk/nextjs";
 import Image from "next/image";
-import { IPagePreview } from "@/interfaces/page";
 import SignInModal from "../auth/sign-in-modal";
 import SignUpModal from "../auth/sign-up-modal";
 import { useCurrentStore } from "@/contexts/current-store-provider";
 import { Banner } from "../banner";
 
-export default function Navbar({ pages }: { pages: IPagePreview[] }) {
+export default function Navbar() {
   const store = useCurrentStore();
   const { cart } = useCart();
   const { user } = useUser();
@@ -28,10 +27,12 @@ export default function Navbar({ pages }: { pages: IPagePreview[] }) {
 
   return (
     <div>
-      <Banner
-        className="bg-[var(--primary)] text-white"
-        message="Our system will be under maintenance on Sunday from 2-4 AM EST."
-      />
+      {store.store_appearance?.banner_content && (
+        <Banner
+          className="bg-[var(--primary)] text-white"
+          message={store.store_appearance?.banner_content}
+        />
+      )}
 
       <nav className="bg-white shadow-sm w-full md:static md:text-sm h-16 flex items-center justify-center">
         <div className="items-center w-full container px-4 md:px-24 mx-auto md:flex">
