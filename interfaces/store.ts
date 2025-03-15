@@ -7,6 +7,7 @@ export interface IStoreAppearance {
   favicon: string;
   desktop_banners: string[];
   mobile_banners: string[];
+  banner_content: string;
 }
 
 export interface IStoreSocialLinks {

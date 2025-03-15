@@ -59,7 +59,7 @@ export default function CarouselWithPagination() {
             <Image
               src={banner}
               alt="carousel"
-              className="h-52 md:h-[90vh] object-cover w-full"
+              className="h-52 md:h-[calc(100vh-6rem)] object-cover w-full"
               height={1000}
               width={1000}
               priority={index === 0}

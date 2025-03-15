@@ -1,24 +1,45 @@
 "use client";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react"; // Import useEffect and useState
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
-import {  ShoppingCart } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import MobileSheet from "@/components/mobile-sheet";
 import { useCart } from "@/contexts/cart-provider";
 import { SignedIn, useUser } from "@clerk/nextjs";
 import Image from "next/image";
-import { IPagePreview } from "@/interfaces/page";
 import SignInModal from "../auth/sign-in-modal";
 import SignUpModal from "../auth/sign-up-modal";
 import { useCurrentStore } from "@/contexts/current-store-provider";
 import { Banner } from "../banner";
 
-export default function Navbar({ pages }: { pages: IPagePreview[] }) {
+export default function Navbar() {
   const store = useCurrentStore();
   const { cart } = useCart();
   const { user } = useUser();
   const pathname = usePathname();
+
+  // State to track if the user has scrolled
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // Add scroll event listener
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setIsScrolled(true); // User has scrolled down
+      } else {
+        setIsScrolled(false); // User is at the top
+      }
+    };
+
+    // Attach the scroll event listener
+    window.addEventListener("scroll", handleScroll);
+
+    // Cleanup the event listener on unmount
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   const navitems = [
     { title: "Home", slug: "/" },
@@ -28,38 +49,50 @@ export default function Navbar({ pages }: { pages: IPagePreview[] }) {
 
   return (
     <div>
-      <Banner
-        className="bg-[var(--primary)] text-white"
-        message="Our system will be under maintenance on Sunday from 2-4 AM EST."
-      />
+      {store.store_appearance?.banner_content && (
+        <Banner
+          className="bg-[var(--primary)] text-white"
+          message={store.store_appearance?.banner_content}
+        />
+      )}
 
-      <nav className="bg-white shadow-sm w-full md:static md:text-sm h-16 flex items-center justify-center">
+      {/* Add shadow class conditionally */}
+      <nav
+        className={`bg-white shadow-sm w-full md:static md:text-sm h-16 flex items-center justify-center sticky top-0 z-50 transition-shadow duration-300 ${
+          isScrolled ? "shadow-2xl " : "shadow-none"
+        }`}
+      >
         <div className="items-center w-full container px-4 md:px-24 mx-auto md:flex">
           <div className="flex items-center justify-between md:block">
             <Link
               prefetch={true}
               href="/"
-              className="flex items-center gap-1">
+              className="flex items-center gap-1"
+            >
               <Image
                 src={store.store_logo}
                 alt="logo"
                 width={32}
                 height={32}
               />
-              <p className="text-2xl tracking-wide font-serif">{store.store_name}</p>
             </Link>
 
             <div className="flex items-center gap-4">
               <Link
                 prefetch={true}
                 href="/checkout"
-                className=" block md:hidden">
+                className=" block md:hidden"
+              >
                 <div className="relative">
                   <ShoppingCart
                     size={20}
                     className="hover:text-[var(--secondary)] duration-300"
                   />
-                  {cart.length > 0 && <span className="absolute -top-2 -right-2 bg-[var(--secondary)] text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]">{cart.length}</span>}
+                  {cart.length > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-[var(--secondary)] text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]">
+                      {cart.length}
+                    </span>
+                  )}
                 </div>
               </Link>
 
@@ -76,7 +109,8 @@ export default function Navbar({ pages }: { pages: IPagePreview[] }) {
                   <Link
                     prefetch={true}
                     href={item.slug}
-                    className={`${pathname === item.slug ? " " : ""}  font-medium  text-sm opacity-85`}>
+                    className={`${pathname === item.slug ? " " : ""}  font-medium  text-sm opacity-85`}
+                  >
                     {item.title}
                   </Link>
                 </div>
@@ -87,20 +121,26 @@ export default function Navbar({ pages }: { pages: IPagePreview[] }) {
               <div className="flex items-center gap-x-2">
                 <Link
                   prefetch={true}
-                  href="/checkout">
+                  href="/checkout"
+                >
                   <div className="relative">
                     <ShoppingCart
                       size={20}
                       className="hover:text-[var(--secondary)] duration-300"
                     />
-                    {cart.length > 0 && <span className="absolute -top-2 -right-2 bg-[var(--secondary)] text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]">{cart.length}</span>}
+                    {cart.length > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-[var(--secondary)] text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]">
+                        {cart.length}
+                      </span>
+                    )}
                   </div>
                 </Link>
 
                 <SignedIn>
                   <Link
                     prefetch={true}
-                    href="/profile">
+                    href="/profile"
+                  >
                     <Button variant="link">
                       <Image
                         src={user?.imageUrl || "/placeholder.svg"}
@@ -123,7 +163,8 @@ export default function Navbar({ pages }: { pages: IPagePreview[] }) {
                     button={
                       <Button
                         variant="link"
-                        className="hover:text-[var(--secondary)] duration-300">
+                        className="hover:text-[var(--secondary)] duration-300"
+                      >
                         Sign In
                       </Button>
                     }

@@ -1,7 +1,7 @@
 "use server";
 import { and, desc, eq, isNull, sql } from "drizzle-orm";
 import { db } from "@/lib/db/drizzle";
-import { Products, productsTable } from "@/lib/db/schema";
+import { categoriesTable, Products, productsTable, productsToCategories } from "@/lib/db/schema";
 import { handleDbError } from "@/utils/db-error";
 import { ActionResponse, getStoreIdFromSubdomain } from ".";
 import { IProductPreview } from "@/interfaces/product";
@@ -52,6 +52,59 @@ export async function getActiveStoreProductsWithPreviewData(): Promise<ActionRes
     return { data: products, status: 200, msg: "Products fetched successfully", error: null };
   } catch (error: unknown) {
     console.error(`Error fetching active store products for store ${store_id} : Error: ${error}`);
+    return { data: null, status: 500, error: handleDbError(error) };
+  }
+}
+
+export async function getActiveStoreProductsWithPreviewDataThatBelongsToCategory(category_slug: string): Promise<ActionResponse<IProductPreview[]>> {
+  try {
+    // 2. Get category id from slug
+    const categoryResponse = await db
+      .select({ id: categoriesTable.id })
+      .from(categoriesTable)
+      .where(and(eq(categoriesTable.slug, category_slug)))
+      .limit(1); // Limit to 1 to avoid unnecessary processing
+
+    if (!categoryResponse.length) {
+      return { data: null, status: 404, msg: "Category not found", error: "Category not found" };
+    }
+
+    const category_id = categoryResponse[0].id;
+
+    // 3. Get products that belong to the category
+    const getProducts = unstable_cache(
+      async () => {
+        return await db
+          .select({
+            id: productsTable.id,
+            name: productsTable.name,
+            slug: productsTable.slug,
+            selling_price: productsTable.selling_price,
+            crossed_price: productsTable.crossed_price,
+            image_url: sql<string>`${productsTable.image_urls}->0`,
+          })
+          .from(productsTable)
+          .innerJoin(productsToCategories, eq(productsTable.id, productsToCategories.product_id))
+          .where(and(eq(productsToCategories.category_id, category_id), eq(productsTable.status, "active")))
+          .orderBy(desc(productsTable.created_at));
+      },
+      [`active-store-products-category-${category_id}`],
+      {
+        tags: [`active-store-products-category-${category_id}`],
+        revalidate: CACHE_REVALIDATION_TIME,
+      }
+    );
+
+    const products = await getProducts();
+
+    return {
+      data: products as IProductPreview[],
+      status: 200,
+      msg: "Products fetched successfully",
+      error: null,
+    };
+  } catch (error: unknown) {
+    console.error(`Error fetching products for category ${category_slug}:`, error);
     return { data: null, status: 500, error: handleDbError(error) };
   }
 }

@@ -4,10 +4,7 @@ import { getActiveStore } from "@/actions/store";
 import Navbar from "@/components/sections/navbar";
 import Footer from "@/components/sections/footer";
 import { CartProvider } from "@/contexts/cart-provider";
-import { getActiveStorePagesWithPreviewData } from "@/actions/page";
 import { fallbackMetadata } from "@/constants/metadata";
-import { CustomNotFound } from "@/components/not-found/custom-not-found";
-import { Store } from "lucide-react";
 
 export async function generateMetadata(): Promise<Metadata | null> {
   const response = await getActiveStore();
@@ -91,27 +88,14 @@ export async function generateMetadata(): Promise<Metadata | null> {
 }
 
 export default async function SiteLayout({ children }: { children: ReactNode }) {
-  const pagesResponse = await getActiveStorePagesWithPreviewData();
-  if (pagesResponse.error || !pagesResponse.data) {
-    return (
-      <CustomNotFound
-        icon={<Store className="h-6 w-6 text-muted-foreground" />}
-        title="No store found"
-        description="We couldn't find any store that matches the br provided subdomain or custom domain."
-        buttonText="Create New Store"
-        buttonLink="https://app.fenzora.com"
-      />
-    );
-  }
-
   return (
     <CartProvider>
       <div>
         <div className="fixed w-full z-50">
-          <Navbar pages={pagesResponse.data || []} />
+          <Navbar />
         </div>
         <div className=" pt-24">{children}</div>
-        <Footer pages={pagesResponse.data || []} />
+        <Footer />
       </div>
     </CartProvider>
   );
