@@ -25,10 +25,7 @@ export default async function Page() {
 
   return (
     <div>
-      <PageBanner
-        title="Categories"
-        description="Explore our categories"
-      />
+      <PageBanner title="Categories" description="Explore our categories" />
 
       <div className="w-full container px-4 md:px-24  space-y-4 md:space-y-12 mx-auto ">
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
