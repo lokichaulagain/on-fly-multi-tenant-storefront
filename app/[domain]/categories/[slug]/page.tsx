@@ -1,6 +1,6 @@
 import { CustomNotFound } from "@/components/not-found/custom-not-found";
 import PageBanner from "@/components/page-banner";
-import { CircleX } from "lucide-react";
+import { BoxIcon, CircleX, Package } from "lucide-react";
 import React from "react";
 import { extractCategoryNameFromSlug } from "@/utils/extract-name-from-slug";
 import { getActiveStoreProductsWithPreviewDataThatBelongsToCategory } from "@/actions/product";
@@ -26,8 +26,19 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   }
 
   return (
-    <div>
+    <div className=" min-h-screen">
       <PageBanner title={categoryName} />
+
+      {response.data.length === 0 && (
+        <CustomNotFound
+          className=""
+          icon={<Package />}
+          title="Oops! No no any product on this category"
+          description="Explore other categories"
+          buttonText="Explore Categories"
+          buttonLink="/categories"
+        />
+      )}
 
       <div className="w-full container px-4 md:px-24  space-y-4 md:space-y-12 mx-auto ">
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
