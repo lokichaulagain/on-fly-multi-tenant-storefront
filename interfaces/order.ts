@@ -1,12 +1,12 @@
 export interface IShippingAndBillingAddress {
-  full_name: string;
-  email_address: string;
-  phone_number: number;
-  province: string;
-  district: string;
-  city: string;
-  landmark: string;
-  postal_code: number;
+  full_name: string | null;
+  email_address: string | null;
+  phone_number: number | null;
+  province: string | null;
+  district: string | null;
+  city: string | null;
+  landmark: string | null;
+  postal_code: number | null;
 }
 
 

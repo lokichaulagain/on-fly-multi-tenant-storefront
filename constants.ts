@@ -3,9 +3,11 @@ export const DEFAULT_STORE_LOGO = "https://itmpwbjutsadjvzubrmf.supabase.co/stor
 export const BLUR_DATA_URL = DEFAULT_STORE_LOGO;
 export const FENZORA_LOGO = "https://itmpwbjutsadjvzubrmf.supabase.co/storage/v1/object/public/fenzora/logos/logo-horizontal.png";
 
-export const font_family = "Inter";
-export const border_radius = 10;
-export const product_aspect_ratio = "1:1";
+
+export const DEFAULT_FONT_FAMILY = "Inter";
+export const DEFAULT_BORDER_RADIUS = 10;
+export const DEFAULT_PRODUCT_ASPECT_RATIO = "1:1";
+export const DEFAULT_BANNER_CONTENT = "Welcome to our store! We offer a wide range of products AND services. Check out our products and services now!";
 
 export const colorTemplates = [
   {
