@@ -16,6 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const response = await getActiveStore();
+  console.log(response, "active store from root layout");
   if (response.error || !response.data) {
     return (
       <html lang="en">
