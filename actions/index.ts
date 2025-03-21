@@ -20,6 +20,7 @@ export async function getStoreIdFromSubdomain(): Promise<ActionResponse<string>>
   const headersList = await headers();
   const host = headersList.get("host") || "";
   const store_subdomain = host.split(".")[0];
+  console.log(store_subdomain, "store_subdomain");
 
   try {
     //2. Use unstable_cache to fetch store ID by subdomain
