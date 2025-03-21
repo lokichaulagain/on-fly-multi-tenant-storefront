@@ -1,7 +1,7 @@
 "use server";
 import { and, desc, eq, isNull, sql } from "drizzle-orm";
 import { db } from "@/lib/db/drizzle";
-import { categoriesTable, Products, productsTable, productsToCategories } from "@/lib/db/schema";
+import { categoriesTable, Products, productsTable, productsToCategoriesTable } from "@/lib/db/schema";
 import { handleDbError } from "@/utils/db-error";
 import { ActionResponse, getStoreIdFromSubdomain } from ".";
 import { IProductPreview } from "@/interfaces/product";
@@ -84,8 +84,8 @@ export async function getActiveStoreProductsWithPreviewDataThatBelongsToCategory
             image_url: sql<string>`${productsTable.image_urls}->0`,
           })
           .from(productsTable)
-          .innerJoin(productsToCategories, eq(productsTable.id, productsToCategories.product_id))
-          .where(and(eq(productsToCategories.category_id, category_id), eq(productsTable.status, "active")))
+          .innerJoin(productsToCategoriesTable, eq(productsTable.id, productsToCategoriesTable.product_id))
+          .where(and(eq(productsToCategoriesTable.category_id, category_id), eq(productsTable.status, ENUM_PRODUCT_STATUS.ACTIVE)))
           .orderBy(desc(productsTable.created_at));
       },
       [`active-store-products-category-${category_id}`],

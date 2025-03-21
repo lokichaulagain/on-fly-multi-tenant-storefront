@@ -199,12 +199,7 @@ function OrderComponent({ orders }: { orders: Orders[] }) {
                       <span className="text-muted-foreground">Shipping</span>
                       <span>{formatCurrency(order.shipping_cost || 0)}</span>
                     </div>
-                    {order.promo_code && (
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Discount ({order.promo_code})</span>
-                        <span className="text-green-600">-{formatCurrency(1000)}</span>
-                      </div>
-                    )}
+                 
                     <Separator className="my-2" />
                     <div className="flex justify-between font-medium">
                       <span>Total</span>
