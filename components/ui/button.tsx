@@ -26,7 +26,7 @@ const buttonVariants = cva(
     },
     defaultVariants: {
       variant: "gradient",
-      size: "sm",
+      size: "default",
     },
   }
 );

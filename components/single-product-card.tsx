@@ -3,7 +3,7 @@ import React, { memo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { IProductPreview } from "@/interfaces/product";
-import { Heart, LoaderCircle, ShoppingCart } from "lucide-react";
+import {  LoaderCircle, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/format-currency";
@@ -39,10 +39,7 @@ const SingleProductCard = memo(({ product }: { product: IProductPreview }) => {
             {/* Show discount badge only if discountPercentage is greater than 0 */}
             {discountPercentage > 0 && <Badge className="absolute right-2 top-2 bg-[var(--primary)] hover:bg-[var(--primary)] text-[10px]">{discountPercentage}% OFF</Badge>}
 
-            <Heart
-              size={16}
-              className="absolute right-2 bottom-2 text-muted-foreground"
-            />
+            
           </div>
 
           <div className="p-4">

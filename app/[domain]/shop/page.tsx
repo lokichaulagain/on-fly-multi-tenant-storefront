@@ -9,20 +9,15 @@ import { PackageSearch } from "lucide-react";
 export default async function Page() {
   const response = await getActiveStoreProductsWithPreviewData();
 
-
-
   return (
     <div>
       <PageBanner
         title="SHOP"
         description="Lets find your favorite products here and more"
       />
-      <div className="container mx-auto px-4 md:px-24">
 
-        
-
-
-        {/* {response.error ? (
+      <div className="container mx-auto px-4 md:px-24 mt-12">
+        {response.error ? (
           <ErrorAlert />
         ) : response.data?.length ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
@@ -41,7 +36,7 @@ export default async function Page() {
             buttonText="Go Home"
             buttonLink="/"
           />
-        )} */}
+        )}
       </div>
     </div>
   );

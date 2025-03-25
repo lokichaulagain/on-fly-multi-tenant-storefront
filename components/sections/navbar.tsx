@@ -49,26 +49,16 @@ export default function Navbar() {
 
   return (
     <div>
-      {store.store_appearance?.banner_content && (
-        <Banner
-          className="bg-[var(--primary)] text-white"
-          message={store.store_appearance?.banner_content}
-        />
-      )}
+      {store.store_appearance?.banner_content && <Banner message={store.store_appearance?.banner_content} />}
 
       {/* Add shadow class conditionally */}
-      <nav
-        className={`bg-white shadow-sm w-full md:static md:text-sm h-16 flex items-center justify-center sticky top-0 z-50 transition-shadow duration-300 ${
-          isScrolled ? "shadow-2xl " : "shadow-none"
-        }`}
-      >
+      <nav className={`bg-white shadow-sm w-full md:static md:text-sm h-16 flex items-center justify-center sticky top-0 z-50 transition-shadow duration-300 ${isScrolled ? "shadow-2xl " : "shadow-none"}`}>
         <div className="items-center w-full container px-4 md:px-24 mx-auto md:flex">
           <div className="flex items-center justify-between md:block">
             <Link
               prefetch={true}
               href="/"
-              className="flex items-center gap-1"
-            >
+              className="flex items-center gap-1">
               <Image
                 src={store.store_logo}
                 alt="logo"
@@ -81,18 +71,13 @@ export default function Navbar() {
               <Link
                 prefetch={true}
                 href="/checkout"
-                className=" block md:hidden"
-              >
+                className=" block md:hidden">
                 <div className="relative">
                   <ShoppingCart
                     size={20}
                     className="hover:text-[var(--secondary)] duration-300"
                   />
-                  {cart.length > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-[var(--secondary)] text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]">
-                      {cart.length}
-                    </span>
-                  )}
+                  {cart.length > 0 && <span className="absolute -top-2 -right-2 bg-[var(--secondary)] text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]">{cart.length}</span>}
                 </div>
               </Link>
 
@@ -109,8 +94,7 @@ export default function Navbar() {
                   <Link
                     prefetch={true}
                     href={item.slug}
-                    className={`${pathname === item.slug ? " " : ""}  font-medium  text-sm opacity-85`}
-                  >
+                    className={`${pathname === item.slug ? " " : ""}  font-medium  text-sm opacity-85`}>
                     {item.title}
                   </Link>
                 </div>
@@ -121,26 +105,20 @@ export default function Navbar() {
               <div className="flex items-center gap-x-2">
                 <Link
                   prefetch={true}
-                  href="/checkout"
-                >
+                  href="/checkout">
                   <div className="relative">
                     <ShoppingCart
                       size={20}
                       className="hover:text-[var(--secondary)] duration-300"
                     />
-                    {cart.length > 0 && (
-                      <span className="absolute -top-2 -right-2 bg-[var(--secondary)] text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]">
-                        {cart.length}
-                      </span>
-                    )}
+                    {cart.length > 0 && <span className="absolute -top-2 -right-2 bg-[var(--secondary)] text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]">{cart.length}</span>}
                   </div>
                 </Link>
 
                 <SignedIn>
                   <Link
                     prefetch={true}
-                    href="/profile"
-                  >
+                    href="/profile">
                     <Button variant="link">
                       <Image
                         src={user?.imageUrl || "/placeholder.svg"}
@@ -163,8 +141,7 @@ export default function Navbar() {
                     button={
                       <Button
                         variant="link"
-                        className="hover:text-[var(--secondary)] duration-300"
-                      >
+                        className="hover:text-[var(--secondary)] duration-300">
                         Sign In
                       </Button>
                     }

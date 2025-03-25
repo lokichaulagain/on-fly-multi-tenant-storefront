@@ -27,7 +27,7 @@ export default function MobileSheet({ navitems }: { navitems: { title: string; s
   const border_radius = `${(store.store_appearance?.border_radius ?? 0) / 16}rem`;
 
   const handleClose = () => {
-    setTimeout(() => setOpen(false), 100); // Delay of 100ms
+    setOpen(false);
   };
 
   const { cart } = useCart();
@@ -38,8 +38,8 @@ export default function MobileSheet({ navitems }: { navitems: { title: string; s
       onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Menu
-          size={26}
-          className="md:hidden  text-white"
+          size={24}
+          className="md:hidden"
         />
       </SheetTrigger>
       <SheetContent
@@ -110,8 +110,9 @@ export default function MobileSheet({ navitems }: { navitems: { title: string; s
               store_subdomain={store_subdomain}
               button={
                 <Button
+                  variant="outline"
                   onClick={handleClose}
-                  className="bg-[var(--secondary)] hover:bg-[var(--secondary)] w-full">
+                  className=" w-full">
                   Sign In
                 </Button>
               }
@@ -126,7 +127,7 @@ export default function MobileSheet({ navitems }: { navitems: { title: string; s
               button={
                 <Button
                   onClick={handleClose}
-                  className="bg-[var(--primary)] hover:bg-[var(--primary)] w-full">
+                  className=" w-full">
                   Sign Up
                 </Button>
               }
