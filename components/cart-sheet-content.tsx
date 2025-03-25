@@ -94,7 +94,7 @@ export function CartSheetContent() {
       <div className=" absolute bottom-0 left-0 right-0 w-full ">
         <div className=" flex items-center gap-4 mt-4 w-full px-4  py-2 bg-gray-50">
           <div className="flex gap-2 text-sm font-medium w-full cursor-text">
-            <p>Total (Rs): </p>
+            <p>Total: </p>
             <p>{formatCurrency(totalPrice)}</p>
           </div>
           <Link

@@ -8,7 +8,7 @@ interface BannerProps {
 export function Banner({ message }: BannerProps) {
   return (
     <GradientBlurBackground>
-      <p className="flex text-xs text-center h-6 items-center justify-center">{message}</p>
+      <p className="flex text-xs text-center  py-1.5">{message}</p>
     </GradientBlurBackground>
   );
 }

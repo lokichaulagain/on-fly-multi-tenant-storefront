@@ -4,6 +4,7 @@ import { getActiveStore } from "@/actions/store";
 import EditorContentParser from "@/components/editor-content-parser";
 import { CustomNotFound } from "@/components/not-found/custom-not-found";
 import { Pen } from "lucide-react";
+import PageBanner from "@/components/page-banner";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -63,8 +64,11 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   }
 
   return (
-    <article className="container mx-auto px-4 md:px-24 min-h-screen">
-      <EditorContentParser content={response.data.content || ""} />
-    </article>
+    <div>
+      <PageBanner title={response.data.title} />
+      <article className="container mx-auto px-4 md:px-24 min-h-screen mt-12  ">
+        <EditorContentParser content={response.data.content || ""} />
+      </article>
+    </div>
   );
 }
