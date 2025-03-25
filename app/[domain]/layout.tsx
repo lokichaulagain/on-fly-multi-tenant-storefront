@@ -94,7 +94,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
         <div className="fixed w-full z-50">
           <Navbar />
         </div>
-        <div className=" pt-24">{children}</div>
+        <div className=" pt-20">{children}</div>
         <Footer />
       </div>
     </CartProvider>

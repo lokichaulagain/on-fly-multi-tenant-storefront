@@ -32,18 +32,17 @@ export default async function Page() {
 
       {categories?.length === 0 && (
         <CustomNotFound
-          className=""
           icon={<Package />}
-          title="Oops! Admin has not added any category yet"
+          title="Oops! No categories found"
           description="Please check back later."
           buttonText="Go Home"
           buttonLink="/"
         />
       )}
 
-      {categories?.length !== 0 && (
-        <div className="w-full container px-4 md:px-24  space-y-4 md:space-y-12 mx-auto ">
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+      {categories?.length >=1 && (
+        <div className="w-full container mx-auto px-4 md:px-24 mt-12">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
             {categories?.map((category: ICategoryPreview) => (
               <SingleCategoryCard
                 key={category.slug}
