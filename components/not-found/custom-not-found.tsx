@@ -17,7 +17,7 @@ interface CustomNotFoundProps {
 
 export function CustomNotFound({ icon, title, description, buttonText, buttonLink, buttonbg = "bg-primary", className = "h-[70vh]" }: CustomNotFoundProps) {
   return (
-    <div className={`flex flex-col  items-center justify-center text-center px-4    ${className}`}>
+    <div className={`flex flex-col  items-center justify-center text-center px-4     ${className}`}>
       <div className="rounded-full bg-muted p-4 mb-4">{icon}</div>
       <h3 className="text-lg font-medium mb-1">{title}</h3>
       <p className="text-sm text-muted-foreground mb-2">{description}</p>

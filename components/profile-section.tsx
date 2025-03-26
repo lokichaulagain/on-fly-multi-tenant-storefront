@@ -59,6 +59,7 @@ export default function ProfileSection({ orders }: ProfileSectionProps) {
               buttonText="Shop Now"
               buttonLink="/shop"
               buttonbg="bg-[var(--primary)]"
+              className="h-[50vh]"
             />
           )}
         </TabsContent>
