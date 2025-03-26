@@ -46,7 +46,7 @@ export default function AddToCart({ product }: AddToCartProps) {
           onClick={handleAddToCart}
           disabled={isAddingToCart}
           size="lg"
-          className="flex-1 bg-[var(--secondary)] hover:bg-[var(--secondary)] active:bg-[var(--secondary)]">
+          className="flex-1  active:bg-[var(--secondary)]">
           <span className="flex items-center gap-2">
             {isAddingToCart ? (
               <LoaderCircle

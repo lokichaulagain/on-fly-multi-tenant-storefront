@@ -403,7 +403,7 @@ export default function CheckoutPageSection() {
             <SignedIn>
               <Button
                 type="submit"
-                className="w-full bg-[var(--secondary)] hover:bg-[var(--secondary)] text-white">
+                className="w-full ">
                 {isPending ? "Placing Order..." : "Order Now"}
               </Button>
             </SignedIn>
@@ -417,7 +417,7 @@ export default function CheckoutPageSection() {
               button={
                 <Button
                   type="button"
-                  className="w-full bg-[var(--secondary)] hover:bg-[var(--secondary)] text-white">
+                  className="w-full ">
                   Sign In
                 </Button>
               }

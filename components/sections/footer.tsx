@@ -3,6 +3,8 @@ import Link from "next/link";
 import { ChevronRight, Facebook, Instagram, MapPin, Youtube, Zap } from "lucide-react";
 import Image from "next/image";
 import { useCurrentStore } from "@/contexts/current-store-provider";
+import { GradientBlurBackground } from "../gradient-blur-background";
+import PowerByFenzora from "../power-by-fenzora";
 
 export default function Footer() {
   const store = useCurrentStore();
@@ -123,27 +125,7 @@ export default function Footer() {
 
   return (
     <footer className="mt-16">
-      <div className="footerbg py-12 relative overflow-hidden bg-gradient-to-br from-[var(--primary)] to-[var(--secondary)] text-white/80">
-        {/* Background overlay */}
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
-
-        {/* Background decorative elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {/* Large blurred circles with primary/secondary colors */}
-          <div className="absolute left-1/4 top-1/3 h-[40rem] w-[40rem] rounded-full bg-[var(--primary)]/20 mix-blend-overlay blur-3xl" />
-          <div className="absolute right-1/4 bottom-1/3 h-[40rem] w-[40rem] rounded-full bg-[var(--secondary)]/20 mix-blend-overlay blur-3xl" />
-
-          {/* Additional gradient orbs using only primary/secondary */}
-          <div className="absolute left-1/3 bottom-1/4 h-[30rem] w-[30rem] rounded-full bg-gradient-to-tr from-[var(--primary)]/15 to-[var(--secondary)]/15 mix-blend-overlay blur-3xl" />
-          <div className="absolute right-1/3 top-1/4 h-[30rem] w-[30rem] rounded-full bg-gradient-to-bl from-[var(--secondary)]/15 to-[var(--primary)]/15 mix-blend-overlay blur-3xl" />
-
-          {/* Subtle grid pattern */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,white/10_1px,transparent_1px),linear-gradient(to_bottom,white/10_1px,transparent_1px)] bg-[size:40px_40px] opacity-20" />
-
-          {/* Diagonal lines with primary/secondary gradients */}
-          <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-white/20 via-[var(--primary)]/20 to-transparent opacity-40 transform -skew-y-6" />
-          <div className="absolute bottom-0 right-0 w-full h-32 bg-gradient-to-l from-white/20 via-[var(--secondary)]/20 to-transparent opacity-40 transform skew-y-6" />
-        </div>
+      <GradientBlurBackground className=" py-12 px-0">
         <div className="relative z-10 container mx-auto px-4 md:px-24 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-10">
           <div className=" col-span-4 sm:col-span-4 lg:col-span-1">
             <div className="bg-white/5 p-3 inline-block rounded-lg  shadow-inner">
@@ -206,7 +188,7 @@ export default function Footer() {
                       target="_blank"
                       href={link.href || ""}
                       className=" bg-white/20 h-6 w-6 rounded-full p-1 flex items-center justify-center hover:bg-white/30   hover:-translate-y-1 hover:scale-110 duration-300 ">
-                      {link.icon} 
+                      {link.icon}
                     </Link>
                   )}
                 </div>
@@ -217,18 +199,9 @@ export default function Footer() {
             </p>
           </div>
         </div>
-      </div>
+      </GradientBlurBackground>
 
-      <p className=" flex items-center justify-center gap-1 text-[10px]  bg-blue-500 text-white py-1">
-        <Zap size={14} />
-        Powered by
-        <Link
-          target="_blank"
-          href="https://fenzora.com"
-          className=" font-medium underline ">
-          Fenzora
-        </Link>
-      </p>
+      <PowerByFenzora />
     </footer>
   );
 }

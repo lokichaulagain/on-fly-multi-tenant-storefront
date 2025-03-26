@@ -22,23 +22,12 @@ export default function Navbar() {
   // State to track if the user has scrolled
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Add scroll event listener
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 0) {
-        setIsScrolled(true); // User has scrolled down
-      } else {
-        setIsScrolled(false); // User is at the top
-      }
+      setIsScrolled(window.scrollY > 20);
     };
-
-    // Attach the scroll event listener
     window.addEventListener("scroll", handleScroll);
-
-    // Cleanup the event listener on unmount
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const navitems = [
@@ -52,7 +41,7 @@ export default function Navbar() {
       {store.store_appearance?.banner_content && <Banner message={store.store_appearance?.banner_content} />}
 
       {/* Add shadow class conditionally */}
-      <nav className={`bg-white shadow-sm w-full md:static md:text-sm h-16 flex items-center justify-center sticky top-0 z-50 transition-shadow duration-300 ${isScrolled ? "shadow-2xl " : "shadow-none"}`}>
+      <nav className={`bg-white shadow-sm w-full md:static md:text-sm h-16 flex items-center justify-center sticky top-0 z-50 transition-shadow duration-300 ${isScrolled ? "bg-white backdrop-blur-md  shadow-md border" : " "}`}>
         <div className="items-center w-full container px-4 md:px-24 mx-auto md:flex">
           <div className="flex items-center justify-between md:block">
             <Link
@@ -153,7 +142,7 @@ export default function Navbar() {
                     font_family={store.store_appearance?.font_family}
                     store_logo={store.store_logo}
                     store_subdomain={store.store_subdomain}
-                    button={<Button className="bg-[var(--secondary)] hover:bg-[var(--secondary)] duration-300">Sign Up</Button>}
+                    button={<Button className="">Sign Up</Button>}
                   />
                 </div>
               </div>

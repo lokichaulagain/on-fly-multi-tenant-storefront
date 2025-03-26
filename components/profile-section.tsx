@@ -28,13 +28,14 @@ export default function ProfileSection({ orders }: ProfileSectionProps) {
       <Tabs defaultValue="orders">
         <div className=" flex items-center justify-between">
           <TabsList className="flex justify-between">
-            <TabsTrigger value="orders">Order History</TabsTrigger>
+            <TabsTrigger value="orders">My Orders</TabsTrigger>
             <TabsTrigger value="profile">Profile Settings</TabsTrigger>
           </TabsList>
 
           <div className="flex">
             <SignOutButton>
               <Button
+                size={"sm"}
                 variant={"destructive"}
                 className="w-full">
                 Logout <LogOut size={16} />

@@ -11,7 +11,7 @@ import CollectionCarouselSection from "@/components/collection-carousel-section"
 
 export default async function Page() {
   return (
-    <div className=" space-y-4 md:space-y-12 ">
+    <div className=" space-y-4 md:space-y-16 ">
       <Suspense
         fallback={
           <LoaderCircle
@@ -22,7 +22,7 @@ export default async function Page() {
         <HeroSection />
       </Suspense>
 
-      <div className=" w-full container px-4 md:px-24  space-y-4 md:space-y-12 mx-auto ">
+      <div className=" w-full container px-4 md:px-24  space-y-4 md:space-y-16 mx-auto ">
         <Suspense fallback={<CategoryCarouselSkeleton />}>
           <CategoryCarouselSection />
         </Suspense>
