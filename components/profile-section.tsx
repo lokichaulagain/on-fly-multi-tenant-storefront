@@ -14,14 +14,14 @@ import { formatCurrency } from "@/lib/format-currency";
 import { CustomNotFound } from "./not-found/custom-not-found";
 import { calculateOrderTotal } from "@/utils/calculate-order-total";
 import { IOrderItem } from "@/interfaces/order";
-import { useCurrentStore } from "@/contexts/current-store-provider";
+// import { useCurrentStore } from "@/contexts/current-store-provider";
 interface ProfileSectionProps {
   orders: Orders[];
 }
 
 export default function ProfileSection({ orders }: ProfileSectionProps) {
-  const store = useCurrentStore();
-  const store_appearance = store.store_appearance;
+  // const store = useCurrentStore();
+  // const store_appearance = store.store_appearance;
   
   return (
     <div className="px-4 w-full md:max-w-4xl mx-auto mt-4  min-h-screen">

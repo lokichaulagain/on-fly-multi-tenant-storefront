@@ -90,13 +90,12 @@ export async function generateMetadata(): Promise<Metadata | null> {
 export default async function SiteLayout({ children }: { children: ReactNode }) {
   return (
     <CartProvider>
-      <div>
-        <div className="fixed w-full z-50">
-          <Navbar />
-        </div>
-        <div className="pt-28 sm:pt-24">{children}</div>
-        <Footer />
+      <div className="fixed w-full z-50">
+        <Navbar />
       </div>
+
+      <div className="pt-28 sm:pt-24">{children}</div>
+      <Footer />
     </CartProvider>
   );
 }

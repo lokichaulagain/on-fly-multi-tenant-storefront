@@ -1,24 +1,24 @@
 "use client";
 import { CustomNotFound } from "@/components/not-found/custom-not-found";
-import { useCurrentStore } from "@/contexts/current-store-provider";
+// import { useCurrentStore } from "@/contexts/current-store-provider";
 // import { SignUp } from "@clerk/nextjs";
 import { LoaderCircle, Store } from "lucide-react";
 
 export default function Page() {
-  const store = useCurrentStore();
-  if (!store) {
-    return (
-      <CustomNotFound
-        title="No store found"
-        description="This store is not active or does not exist."
-        icon={<Store className="h-6 w-6 text-muted-foreground" />}
-        buttonText="Create New Store"
-        buttonLink="https://app.fenzora.com"
-      />
-    );
-  }
+  // const store = useCurrentStore();
+  // if (!store) {
+  //   return (
+  //     <CustomNotFound
+  //       title="No store found"
+  //       description="This store is not active or does not exist."
+  //       icon={<Store className="h-6 w-6 text-muted-foreground" />}
+  //       buttonText="Create New Store"
+  //       buttonLink="https://app.fenzora.com"
+  //     />
+  //   );
+  // }
 
-  const { store_name, store_logo, store_subdomain, store_appearance } = store;
+  // const { store_name, store_logo, store_subdomain, store_appearance } = store;
 
   return (
     <div className="w-full h-screen flex items-center justify-center">

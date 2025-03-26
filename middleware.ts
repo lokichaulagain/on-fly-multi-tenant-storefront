@@ -58,6 +58,17 @@
 // 2nd method
 import { NextRequest, NextResponse } from "next/server";
 
+export const config = {
+  matcher: [
+    // Match all paths except for:
+    // 1. /api routes
+    // 2. /_next (Next.js internals)
+    // 3. /_static (inside /public)
+    // 4. All root files inside /public (e.g. /favicon.ico)
+    "/((?!api/|_next/|_static/|_vercel|[\\w-]+\\.\\w+).*)",
+  ],
+};
+
 export default async function middleware(req: NextRequest) {
   // Get the URL of the request
   const url = req.nextUrl;
@@ -69,6 +80,7 @@ export default async function middleware(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams.toString();
   const path = `${url.pathname}${searchParams.length > 0 ? `?${searchParams}` : ""}`;
 
+  // rewrite to the dashboard URL
   const productionHostname = `app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
   const localHostnames = ["app.localhost:3000", "app.localhost:3001"]; // No protocol or trailing slashes
 
@@ -89,14 +101,3 @@ export default async function middleware(req: NextRequest) {
 
   return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
 }
-
-export const config = {
-  matcher: [
-    // Match all paths except for:
-    // 1. /api routes
-    // 2. /_next (Next.js internals)
-    // 3. /_static (inside /public)
-    // 4. All root files inside /public (e.g. /favicon.ico)
-    "/((?!api/|_next/|_static/|_vercel|[\\w-]+\\.\\w+).*)",
-  ],
-};
