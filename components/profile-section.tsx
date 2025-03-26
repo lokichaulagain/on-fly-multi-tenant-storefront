@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { SignOutButton, UserProfile } from "@clerk/nextjs";
+// import { SignOutButton, UserProfile } from "@clerk/nextjs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, CreditCard, LoaderCircle, MapPin, Package, LogOut } from "lucide-react";
@@ -33,14 +33,14 @@ export default function ProfileSection({ orders }: ProfileSectionProps) {
           </TabsList>
 
           <div className="flex">
-            <SignOutButton>
+            {/* <SignOutButton>
               <Button
                 size={"sm"}
                 variant={"destructive"}
                 className="w-full">
                 Logout <LogOut size={16} />
               </Button>
-            </SignOutButton>
+            </SignOutButton> */}
           </div>
         </div>
 
@@ -64,7 +64,7 @@ export default function ProfileSection({ orders }: ProfileSectionProps) {
           )}
         </TabsContent>
 
-        <TabsContent value="profile">
+        {/* <TabsContent value="profile">
           <UserProfile
             routing="hash"
             fallback={
@@ -83,7 +83,7 @@ export default function ProfileSection({ orders }: ProfileSectionProps) {
               },
             }}
           />
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
     </div>
   );

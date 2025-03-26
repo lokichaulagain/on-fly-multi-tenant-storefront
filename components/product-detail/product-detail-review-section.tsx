@@ -1,5 +1,5 @@
 import { Star } from "lucide-react";
-import { SignedIn } from "@clerk/nextjs";
+// import { SignedIn } from "@clerk/nextjs";
 import moment from "moment";
 import { Reviews } from "@/lib/db/schema";
 import { CreateReviewDialog } from "./create-review-dialog";
@@ -54,9 +54,9 @@ export async function ProductDetailReviewSection({ product_id, reviews }: Produc
             </span>
           </div>
         </div>
-        <SignedIn>
+        {/* <SignedIn>
           {!hasReviewed && <CreateReviewDialog product_id={product_id} />}
-        </SignedIn>
+        </SignedIn> */}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
