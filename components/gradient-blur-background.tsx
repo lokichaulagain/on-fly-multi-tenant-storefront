@@ -14,7 +14,7 @@ interface GradientBlurBackgroundProps {
 
 export function GradientBlurBackground({ children, className, primaryColor = "var(--primary)", secondaryColor = "var(--secondary)", overlay = true, grid = true, diagonalLines = true }: GradientBlurBackgroundProps) {
   return (
-    <div className={cn("relative overflow-hidden bg-gradient-to-br from-[var(--primary)] to-[var(--secondary)] flex items-center justify-center",
+    <div className={cn("relative w-full overflow-hidden bg-gradient-to-br from-[var(--primary)] to-[var(--secondary)] flex items-center justify-center",
         "text-white/80 ", className)}>
       {/* Background overlay */}
       {overlay && <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>}
@@ -42,7 +42,7 @@ export function GradientBlurBackground({ children, className, primaryColor = "va
       </div>
 
       {/* Content with proper z-index */}
-      <div className="relative z-10">{children}</div>
+      <div className="relative w-full z-10">{children}</div>
     </div>
   );
 }

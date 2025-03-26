@@ -59,7 +59,7 @@ export function CreateReviewDialog({ product_id }: { product_id: string }) {
       open={open}
       onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className=" bg-[var(--secondary)] hover:bg-[var(--secondary)]">Write a Review</Button>
+        <Button className=" ">Write a Review</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
@@ -115,7 +115,7 @@ export function CreateReviewDialog({ product_id }: { product_id: string }) {
                 Cancel
               </Button>
               <Button
-                className=" bg-[var(--secondary)] hover:bg-[var(--secondary)]"
+                className=" "
                 type="submit"
                 disabled={isPending}>
                 {isPending && (

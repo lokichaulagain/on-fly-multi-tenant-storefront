@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useCart } from "@/contexts/cart-provider";
 import SignUpModal from "./auth/sign-up-modal";
 import SignInModal from "./auth/sign-in-modal";
+import PowerByFenzora from "./power-by-fenzora";
 
 export default function MobileSheet({ navitems }: { navitems: { title: string; slug: string }[] }) {
   const [open, setOpen] = useState(false);
@@ -45,7 +46,7 @@ export default function MobileSheet({ navitems }: { navitems: { title: string; s
       <SheetContent
         side="right"
         className="w-[300px] sm:w-[400px] flex flex-col border-none p-0 ">
-        <SheetHeader className=" h-32 bg-[var(--primary)] flex items-center justify-center ">
+        <SheetHeader className=" h-32 bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] flex items-center justify-center ">
           <Link
             prefetch={true}
             href="/checkout"
@@ -138,7 +139,7 @@ export default function MobileSheet({ navitems }: { navitems: { title: string; s
             <p className="w-full border-t border-dashed border-accent" />
           </div>
 
-          <nav className="flex flex-col  ">
+          <nav className="flex flex-col gap-1 ">
             {navitems.map((item, index) => {
               const isActive = pathname === item.slug;
               return (
@@ -157,11 +158,9 @@ export default function MobileSheet({ navitems }: { navitems: { title: string; s
 
         {/* Footer */}
 
-        <Link href={"https://fenzora.com"}>
-          <SheetFooter className="bg-[var(--primary)] absolute bottom-0 left-0 right-0">
-            <p className="text-white text-center p-2 text-[10px]">Powered by Fenzora</p>
-          </SheetFooter>
-        </Link>
+        <SheetFooter className="absolute bottom-0 left-0 right-0">
+          <PowerByFenzora />
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   );

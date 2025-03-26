@@ -14,15 +14,7 @@ export function CartSheetContent() {
   return (
     <div>
       <div className="space-y-4 mt-4">
-        {/* Promotions Banner */}
-        <div className="flex items-center justify-between bg-emerald-50 p-2 text-xs text-emerald-800 rounded-md">
-          <div className="flex gap-4">
-            <span className="flex items-center gap-1">✓ Free Shipping</span>
-            <span className="flex items-center gap-1">✓ 5% off</span>
-            <span className="flex items-center gap-1">✓ 8% off</span>
-          </div>
-          <span>Mystery Gift ✨</span>
-        </div>
+        
 
         {/* Cart Items */}
         <div className="space-y-4">
@@ -93,16 +85,17 @@ export function CartSheetContent() {
 
       <div className=" absolute bottom-0 left-0 right-0 w-full ">
         <div className=" flex items-center gap-4 mt-4 w-full px-4  py-2 bg-gray-50">
-          <div className="flex gap-2 text-sm font-medium w-full cursor-text">
-            <p>Total: </p>
+          <div className="flex gap-1 text-sm font-medium w-full cursor-text">
+            <p>Total:</p>
             <p>{formatCurrency(totalPrice)}</p>
           </div>
           <Link
             href={"/checkout"}
             className="w-full">
             <Button
+              size={"sm"}
               type="button"
-              className="w-full bg-[var(--secondary)] hover:bg-[var(--secondary)] text-white">
+              className="w-full">
               Checkout
             </Button>
           </Link>
