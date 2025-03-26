@@ -6,7 +6,7 @@ import { CircleX } from "lucide-react";
 
 export default async function Page() {
   const response = await getActiveUserOrders();
-  if (response.error) {
+  if (response.error || !response.data) {
     return (
       <CustomNotFound
         icon={<CircleX className="text-red-400" />}
