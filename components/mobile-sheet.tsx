@@ -4,7 +4,7 @@ import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger
 import { ChevronRight, LogOut, Menu, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { SignedIn, SignOutButton, useUser } from "@clerk/nextjs";
+// import { SignedIn, SignOutButton, useUser } from "@clerk/nextjs";
 import { useCurrentStore } from "@/contexts/current-store-provider";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -17,7 +17,7 @@ import PowerByFenzora from "./power-by-fenzora";
 
 export default function MobileSheet({ navitems }: { navitems: { title: string; slug: string }[] }) {
   const [open, setOpen] = useState(false);
-  const { user } = useUser();
+  // const { user } = useUser();
   const store = useCurrentStore();
   const pathname = usePathname();
 
@@ -61,13 +61,13 @@ export default function MobileSheet({ navitems }: { navitems: { title: string; s
             </div>
           </Link>
 
-          <SignedIn>
+          {/* <SignedIn>
             <SignOutButton>
               <Button className="text-red-500 bg-red-500/20 rounded-full p-2 absolute top-20 right-1 hover:bg-red-500/30">
                 <LogOut size={16} />
               </Button>
             </SignOutButton>
-          </SignedIn>
+          </SignedIn> */}
 
           <SheetTitle className="text-white">
             <Image
@@ -81,8 +81,8 @@ export default function MobileSheet({ navitems }: { navitems: { title: string; s
         </SheetHeader>
 
         <div className=" px-4 space-y-4">
-          <SignedIn>
-            <Link
+          {/* <SignedIn> */}
+            {/* <Link
               prefetch={true}
               href="/profile"
               onClick={handleClose}
@@ -100,7 +100,7 @@ export default function MobileSheet({ navitems }: { navitems: { title: string; s
               </div>
               <ChevronRight className="h-4 w-4 ml-auto text-muted-foreground" />
             </Link>
-          </SignedIn>
+          </SignedIn> */}
 
           <div className=" flex items-center gap-2">
             <SignInModal

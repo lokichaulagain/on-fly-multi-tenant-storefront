@@ -1,6 +1,6 @@
 import "./globals.css";
-import { Roboto } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
+// import { Roboto } from "next/font/google";
+// import { ClerkProvider } from "@clerk/nextjs";
 import { getActiveStore } from "@/actions/store";
 import { CurrentStoreProvider } from "@/contexts/current-store-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -34,7 +34,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   }
 
   return (
-    <ClerkProvider dynamic>
+    // <ClerkProvider dynamic>
       <CurrentStoreProvider store={response.data}>
         <html lang="en">
           <head>
@@ -57,6 +57,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </body>
         </html>
       </CurrentStoreProvider>
-    </ClerkProvider>
+    // </ClerkProvider>
   );
 }

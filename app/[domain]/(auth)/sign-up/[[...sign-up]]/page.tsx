@@ -1,7 +1,7 @@
 "use client";
 import { CustomNotFound } from "@/components/not-found/custom-not-found";
 import { useCurrentStore } from "@/contexts/current-store-provider";
-import { SignUp } from "@clerk/nextjs";
+// import { SignUp } from "@clerk/nextjs";
 import { LoaderCircle, Store } from "lucide-react";
 
 export default function Page() {
@@ -22,7 +22,7 @@ export default function Page() {
 
   return (
     <div className="w-full h-screen flex items-center justify-center">
-      <SignUp
+      {/* <SignUp
         fallback={
           <LoaderCircle
             size={16}
@@ -46,7 +46,7 @@ export default function Page() {
             unsafe_disableDevelopmentModeWarnings: false,
           },
         }}
-      />
+      /> */}
     </div>
   );
 }

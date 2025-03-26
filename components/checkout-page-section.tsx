@@ -17,7 +17,7 @@ import { orderFormSchema, OrderFormValues } from "@/form-schemas/order";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { formatCurrency } from "@/lib/format-currency";
 import { CustomNotFound } from "@/components/not-found/custom-not-found";
-import { SignedIn } from "@clerk/nextjs";
+// import { SignedIn } from "@clerk/nextjs";
 import SignInModal from "@/components/auth/sign-in-modal";
 import { useCurrentStore } from "@/contexts/current-store-provider";
 
@@ -400,13 +400,13 @@ export default function CheckoutPageSection() {
               </div>
             </div>
 
-            <SignedIn>
+            {/* <SignedIn>
               <Button
                 type="submit"
                 className="w-full ">
                 {isPending ? "Placing Order..." : "Order Now"}
               </Button>
-            </SignedIn>
+            </SignedIn> */}
 
             <SignInModal
               primary_color={store.store_appearance?.primary_color}

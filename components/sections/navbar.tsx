@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { ShoppingCart } from "lucide-react";
 import MobileSheet from "@/components/mobile-sheet";
 import { useCart } from "@/contexts/cart-provider";
-import { SignedIn, useUser } from "@clerk/nextjs";
+// import { SignedIn, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import SignInModal from "../auth/sign-in-modal";
 import SignUpModal from "../auth/sign-up-modal";
@@ -16,7 +16,7 @@ import { Banner } from "../banner";
 export default function Navbar() {
   const store = useCurrentStore();
   const { cart } = useCart();
-  const { user } = useUser();
+  // const { user } = useUser();
   const pathname = usePathname();
 
   // State to track if the user has scrolled
@@ -104,7 +104,7 @@ export default function Navbar() {
                   </div>
                 </Link>
 
-                <SignedIn>
+                {/* <SignedIn>
                   <Link
                     prefetch={true}
                     href="/profile">
@@ -118,9 +118,9 @@ export default function Navbar() {
                       />
                     </Button>
                   </Link>
-                </SignedIn>
+                </SignedIn> */}
 
-                <div className="flex items-center gap-x-2">
+                {/* <div className="flex items-center gap-x-2">
                   <SignInModal
                     primary_color={store.store_appearance?.primary_color}
                     border_radius={`${(store.store_appearance?.border_radius ?? 0) / 32}rem`}
@@ -144,7 +144,7 @@ export default function Navbar() {
                     store_subdomain={store.store_subdomain}
                     button={<Button className="">Sign Up</Button>}
                   />
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
