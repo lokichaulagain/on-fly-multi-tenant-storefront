@@ -2,12 +2,12 @@
 import Link from "next/link";
 import { ChevronRight, Facebook, Instagram, MapPin, Youtube, Zap } from "lucide-react";
 import Image from "next/image";
-import { useCurrentStore } from "@/contexts/current-store-provider";
+// import { useCurrentStore } from "@/contexts/current-store-provider";
 import { GradientBlurBackground } from "../gradient-blur-background";
 import PowerByFenzora from "../power-by-fenzora";
 
 export default function Footer() {
-  const store = useCurrentStore();
+  // const store = useCurrentStore();
   const quickLinks = [
     {
       title: "Home",
@@ -60,8 +60,8 @@ export default function Footer() {
           className=" text-blue-700"
         />
       ),
-      href: store?.social_links?.facebook_url,
-      show: store?.social_links?.facebook_url,
+      // href: store?.social_links?.facebook_url,
+      // show: store?.social_links?.facebook_url,
     },
     {
       title: "Instagram",
@@ -71,8 +71,8 @@ export default function Footer() {
           className=" text-pink-500"
         />
       ),
-      href: store?.social_links?.instagram_url,
-      show: store?.social_links?.instagram_url,
+      // href: store?.social_links?.instagram_url,
+      // show: store?.social_links?.instagram_url,
     },
     {
       title: "WhatsApp",
@@ -82,8 +82,8 @@ export default function Footer() {
           className="text-green-500"
         />
       ),
-      href: store?.social_links?.primary_whatsapp_number,
-      show: store?.social_links?.primary_whatsapp_number,
+      // href: store?.social_links?.primary_whatsapp_number,
+      // show: store?.social_links?.primary_whatsapp_number,
     },
 
     {
@@ -94,8 +94,8 @@ export default function Footer() {
           className="text-blue-700"
         />
       ),
-      href: store?.social_links?.google_map_url,
-      show: store?.social_links?.google_map_url,
+      // href: store?.social_links?.google_map_url,
+      // show: store?.social_links?.google_map_url,
     },
 
     {
@@ -106,8 +106,8 @@ export default function Footer() {
           className="text-purple-500"
         />
       ),
-      href: store?.social_links?.tiktok_url,
-      show: store?.social_links?.tiktok_url,
+      // href: store?.social_links?.tiktok_url,
+      // show: store?.social_links?.tiktok_url,
     },
 
     {
@@ -118,8 +118,8 @@ export default function Footer() {
           className="text-red-500"
         />
       ),
-      href: store?.social_links?.youtube_url,
-      show: store?.social_links?.youtube_url,
+      // href: store?.social_links?.youtube_url,
+      // show: store?.social_links?.youtube_url,
     },
   ];
 
@@ -129,14 +129,14 @@ export default function Footer() {
         <div className="relative z-10 container mx-auto px-4 md:px-24 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-10">
           <div className=" col-span-4 sm:col-span-4 lg:col-span-1">
             <div className="bg-white/5 p-3 inline-block rounded-lg  shadow-inner">
-              <Image
+              {/* <Image
                 src={store?.store_logo || "/placeholder.svg"}
                 alt="logo"
                 width={32}
                 height={32}
-              />
+              /> */}
             </div>
-            <p className=" text-sm ">{store?.store_meta_description}</p>
+            {/* <p className=" text-sm ">{store?.store_meta_description}</p> */}
           </div>
 
           <div className="col-span-4 sm:col-span-1 space-y-4 ">
@@ -178,10 +178,10 @@ export default function Footer() {
           </div>
 
           <div className="col-span-4 sm:col-span-1 space-y-4  ">
-            {socialLinks.some((link) => link.show) && <h4 className="font-medium text-white">Our Socials</h4>}
+            {/* {socialLinks.some((link) => link.show) && <h4 className="font-medium text-white">Our Socials</h4>} */}
 
             <div className=" flex gap-2 text-xs font-light ">
-              {socialLinks.map((link, index) => (
+              {/* {socialLinks.map((link, index) => (
                 <div key={index}>
                   {link.show && (
                     <Link
@@ -192,10 +192,10 @@ export default function Footer() {
                     </Link>
                   )}
                 </div>
-              ))}
+              ))} */}
             </div>
             <p className="font-light text-xs">
-              © {new Date().getFullYear()} {store?.store_name}. All rights reserved.
+              {/* © {new Date().getFullYear()} {store?.store_name}. All rights reserved. */}
             </p>
           </div>
         </div>

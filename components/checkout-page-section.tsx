@@ -19,10 +19,10 @@ import { formatCurrency } from "@/lib/format-currency";
 import { CustomNotFound } from "@/components/not-found/custom-not-found";
 // import { SignedIn } from "@clerk/nextjs";
 import SignInModal from "@/components/auth/sign-in-modal";
-import { useCurrentStore } from "@/contexts/current-store-provider";
+// import { useCurrentStore } from "@/contexts/current-store-provider";
 
 export default function CheckoutPageSection() {
-  const store = useCurrentStore();
+  // const store = useCurrentStore();
   const router = useRouter();
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity, clearCart } = useCart();
 
@@ -408,7 +408,7 @@ export default function CheckoutPageSection() {
               </Button>
             </SignedIn> */}
 
-            <SignInModal
+            {/* <SignInModal
               primary_color={store.store_appearance?.primary_color}
               border_radius={`${(store.store_appearance?.border_radius ?? 0) / 32}rem`}
               font_family={store.store_appearance?.font_family}
@@ -421,7 +421,7 @@ export default function CheckoutPageSection() {
                   Sign In
                 </Button>
               }
-            />
+            /> */}
           </form>
         </Form>
       </div>

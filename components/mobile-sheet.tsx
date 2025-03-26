@@ -5,7 +5,7 @@ import { ChevronRight, LogOut, Menu, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 // import { SignedIn, SignOutButton, useUser } from "@clerk/nextjs";
-import { useCurrentStore } from "@/contexts/current-store-provider";
+// import { useCurrentStore } from "@/contexts/current-store-provider";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -18,14 +18,14 @@ import PowerByFenzora from "./power-by-fenzora";
 export default function MobileSheet({ navitems }: { navitems: { title: string; slug: string }[] }) {
   const [open, setOpen] = useState(false);
   // const { user } = useUser();
-  const store = useCurrentStore();
+  // const store = useCurrentStore();
   const pathname = usePathname();
 
-  const store_logo = store.store_logo;
-  const store_subdomain = store.store_subdomain;
-  const primary_color = store.store_appearance?.primary_color;
-  const font_family = store.store_appearance?.font_family;
-  const border_radius = `${(store.store_appearance?.border_radius ?? 0) / 16}rem`;
+  // const store_logo = store.store_logo;
+  // const store_subdomain = store.store_subdomain;
+  // const primary_color = store.store_appearance?.primary_color;
+  // const font_family = store.store_appearance?.font_family;
+  // const border_radius = `${(store.store_appearance?.border_radius ?? 0) / 16}rem`;
 
   const handleClose = () => {
     setOpen(false);
@@ -69,7 +69,7 @@ export default function MobileSheet({ navitems }: { navitems: { title: string; s
             </SignOutButton>
           </SignedIn> */}
 
-          <SheetTitle className="text-white">
+          {/* <SheetTitle className="text-white">
             <Image
               src={store_logo}
               alt={store.store_name}
@@ -77,7 +77,7 @@ export default function MobileSheet({ navitems }: { navitems: { title: string; s
               height={100}
               className="w-16"
             />
-          </SheetTitle>
+          </SheetTitle> */}
         </SheetHeader>
 
         <div className=" px-4 space-y-4">
@@ -103,7 +103,7 @@ export default function MobileSheet({ navitems }: { navitems: { title: string; s
           </SignedIn> */}
 
           <div className=" flex items-center gap-2">
-            <SignInModal
+            {/* <SignInModal
               primary_color={primary_color}
               border_radius={border_radius}
               font_family={font_family}
@@ -117,9 +117,9 @@ export default function MobileSheet({ navitems }: { navitems: { title: string; s
                   Sign In
                 </Button>
               }
-            />
+            /> */}
 
-            <SignUpModal
+            {/* <SignUpModal
               primary_color={primary_color}
               border_radius={border_radius}
               font_family={font_family}
@@ -132,7 +132,7 @@ export default function MobileSheet({ navitems }: { navitems: { title: string; s
                   Sign Up
                 </Button>
               }
-            />
+            /> */}
           </div>
 
           <div className=" py-1">

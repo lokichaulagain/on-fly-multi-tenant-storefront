@@ -10,11 +10,11 @@ import { useCart } from "@/contexts/cart-provider";
 import Image from "next/image";
 import SignInModal from "../auth/sign-in-modal";
 import SignUpModal from "../auth/sign-up-modal";
-import { useCurrentStore } from "@/contexts/current-store-provider";
+// import { useCurrentStore } from "@/contexts/current-store-provider";
 import { Banner } from "../banner";
 
 export default function Navbar() {
-  const store = useCurrentStore();
+  // const store = useCurrentStore();
   const { cart } = useCart();
   // const { user } = useUser();
   const pathname = usePathname();
@@ -38,7 +38,7 @@ export default function Navbar() {
 
   return (
     <div>
-      {store.store_appearance?.banner_content && <Banner message={store.store_appearance?.banner_content} />}
+      {/* {store.store_appearance?.banner_content && <Banner message={store.store_appearance?.banner_content} />} */}
 
       {/* Add shadow class conditionally */}
       <nav className={`bg-white shadow-sm w-full md:static md:text-sm h-16 flex items-center justify-center sticky top-0 z-50 transition-shadow duration-300 ${isScrolled ? "bg-white backdrop-blur-md  shadow-md " : " "}`}>
@@ -48,12 +48,12 @@ export default function Navbar() {
               prefetch={true}
               href="/"
               className="flex items-center gap-1">
-              <Image
+              {/* <Image
                 src={store.store_logo}
                 alt="logo"
                 width={32}
                 height={32}
-              />
+              /> */}
             </Link>
 
             <div className="flex items-center gap-4">

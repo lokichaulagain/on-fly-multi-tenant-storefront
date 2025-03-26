@@ -1,8 +1,5 @@
 import "./globals.css";
-// import { Roboto } from "next/font/google";
-// import { ClerkProvider } from "@clerk/nextjs";
-import { getActiveStore } from "@/actions/store";
-import { CurrentStoreProvider } from "@/contexts/current-store-provider";
+import { getActiveStoreAppearance } from "@/actions/store";
 import { Toaster } from "@/components/ui/sonner";
 import { CustomNotFound } from "@/components/not-found/custom-not-found";
 import { Store } from "lucide-react";
@@ -15,8 +12,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const response = await getActiveStore();
-  console.log(response, "active store from root layout");
+  const response = await getActiveStoreAppearance();
+
   if (response.error || !response.data) {
     return (
       <html lang="en">
@@ -34,29 +31,25 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   }
 
   return (
-    // <ClerkProvider dynamic>
-      <CurrentStoreProvider store={response.data}>
-        <html lang="en">
-          <head>
-            <style>
-              {`
+    <html lang="en">
+      <head>
+        <style>
+          {`
               :root {
-                --font-family: ${response.data.store_appearance?.font_family}; 
-                --primary: ${response.data.store_appearance?.primary_color};
-                --secondary: ${response.data.store_appearance?.secondary_color};
-                --radius: ${response.data.store_appearance?.border_radius}px;
-                --ring: ${response.data.store_appearance?.primary_color} 
+                --font-family: ${response.data.font_family};  
+                --primary: ${response.data.primary_color};
+                --secondary: ${response.data.secondary_color};
+                --radius: ${response.data.border_radius}px;
+                --ring: ${response.data.primary_color} 
               }
             `}
-            </style>
-          </head>
-          <body>
-            {children}
-            <Analytics />
-            <Toaster />
-          </body>
-        </html>
-      </CurrentStoreProvider>
-    // </ClerkProvider>
+        </style>
+      </head>
+      <body>
+        {children}
+        <Analytics />
+        <Toaster />
+      </body>
+    </html>
   );
 }
